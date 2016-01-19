@@ -2,21 +2,21 @@ package com.thoughtworks.mindit.mindit.model;
 
 import com.thoughtworks.mindit.mindit.exceptions.NodeAlreadyDeletedException;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 
-public class Tree {
+public class Tree implements Serializable{
     private HashMap<String, Node> nodes;
     private Node root;
 
     private void setRoot() {
-        Iterator it = this.nodes.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            Node node = (Node)pair.getValue();
-            if(node.isARoot()){
+        for (String nodeId : this.nodes.keySet()) {
+            Node node = this.getNode(nodeId);
+            if(node.isARoot()) {
                 this.root = node;
                 break;
             }
@@ -66,5 +66,19 @@ public class Tree {
         return "Tree{" +
                 "nodes=" + nodes +
                 '}';
+    }
+
+    public void fillRootChildSubtree () {
+        Node root = this.getRoot();
+        ArrayList<String> temp = root.getLeft();
+        temp.addAll(root.getRight());
+        root.setChildSubTree(temp);
+    }
+
+    public void updateDepthOfAllNodes (Node node, int parentDepth) {
+        node.setDepth(parentDepth + 1);
+        for (String nodeId : node.getChildSubTree()) {
+            updateDepthOfAllNodes(this.getNode(nodeId), node.getDepth());
+        }
     }
 }

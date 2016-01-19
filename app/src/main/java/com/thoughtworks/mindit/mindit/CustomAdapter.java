@@ -19,6 +19,11 @@ import java.util.ArrayList;
 
 public class CustomAdapter extends BaseAdapter {
     private Context context;
+
+    public ArrayList<UINode> getNodeArrayList() {
+        return nodeArrayList;
+    }
+
     private ArrayList<UINode> nodeArrayList;
     private LayoutInflater layoutInflater;
     private int newNodePosition=-1;
@@ -27,7 +32,7 @@ public class CustomAdapter extends BaseAdapter {
     public CustomAdapter(Context context, Presenter presenter) {
         this.context = context;
         this.presenter = presenter;
-        this.nodeArrayList = presenter.getArrayList();
+        this.nodeArrayList = presenter.buildNodeListFromTree();
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -67,7 +72,7 @@ public class CustomAdapter extends BaseAdapter {
         setEventToExpandCollpse(position, nodeHolder, currentNode);
         setEventToAddNode(position, nodeHolder, rowView, currentNode);
 
-        if(position==newNodePosition)
+        if(position == newNodePosition)
         {
             nodeHolder.textViewForName.setVisibility(View.GONE);
             nodeHolder.editText.setVisibility(View.VISIBLE);

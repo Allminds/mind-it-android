@@ -2,10 +2,11 @@ package com.thoughtworks.mindit.mindit.model;
 
 import com.thoughtworks.mindit.mindit.exceptions.NodeDoesNotExistException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class Node {
+public class Node implements Serializable {
     private String _id;
     private String name;
 
@@ -19,9 +20,19 @@ public class Node {
 
     private ArrayList<String> left;
     private ArrayList<String> right;
+
+    public void setChildSubTree(ArrayList<String> childSubTree) {
+        this.childSubTree = childSubTree;
+    }
+
     private ArrayList<String> childSubTree;
     private String parentId;
     private String rootId;
+
+    public void setDepth(int depth) {
+        this.depth = depth;
+    }
+
     private int depth;
 
     public int getIndex() {

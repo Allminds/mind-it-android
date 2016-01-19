@@ -1,103 +1,68 @@
 package com.thoughtworks.mindit.mindit;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.ContextMenu;
+
 import android.view.View;
-import android.view.MenuItem;
-import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.ProgressBar;
 
+import com.thoughtworks.mindit.mindit.model.Tree;
 
-import com.thoughtworks.mindit.mindit.presenter.Presenter;
+import java.io.Serializable;
 
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    ArrayList<UINode>nodeArrayList;
-    ListView listView;
-    CustomAdapter adapter;
+    Tracker tracker;
+    ProgressBar progressBar;
+    Tree tree;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                new WaitForTree().execute();
+
             }
         });
-        nodeArrayList=new ArrayList<>();
-      //  UINode node=new UINode("Root",0);
-       // nodeArrayList.add(node);
-        listView=(ListView)findViewById(R.id.listView);
-        registerForContextMenu(listView);
-        Presenter presenter =new Presenter(nodeArrayList);
-        adapter=new CustomAdapter(this, presenter);
-        listView.setAdapter(adapter);
-
+        progressBar = (ProgressBar)findViewById(R.id.progressBar);
     }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
+    private class WaitForTree extends AsyncTask<Void,Void,Integer>
     {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        menu.setHeaderTitle("Select The Action");
-        menu.add(0, v.getId(), 0, "Add");
-        menu.add(0, v.getId(), 0, "Delete");
-    }
-    @Override
-    public boolean onContextItemSelected(MenuItem item){
-        if(item.getTitle()=="Add"){
-            addNewNode(item);
+        @Override
+        protected void onPreExecute(){
+            progressBar.setVisibility(View.VISIBLE);
         }
-        else if(item.getTitle()=="Delete"){
-            deleteNode(item);
-        }else{
-            return false;
+        @Override
+        protected Integer doInBackground(Void... params) {
+            tracker = new Tracker(getApplicationContext());
+            while (tracker.getTree() == null)
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            System.out.println("after wait : " + tracker.getTree());
+            return 1;
         }
-        return true;
-    }
-
-    private void deleteNode(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        int position = info.position;
-        View view = info.targetView;
-        for (int i = position + 1; i < nodeArrayList.size(); ) {
-            if (nodeArrayList.get(i).getDepth() > nodeArrayList.get(position).getDepth()) {
-                nodeArrayList.remove(i);
-            } else {
-
-                break;
-            }
+        @Override
+        protected void onPostExecute(Integer result) {
+            progressBar.setVisibility(View.GONE);
+            Intent intent = new Intent(getApplicationContext(), MindmapActivity.class);
+            intent.putExtra("Tree",tracker.getTree());
+            startActivity(intent);
         }
-        nodeArrayList.remove(position);
-        adapter.notifyDataSetChanged();
-    }
-
-    private void addNewNode(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        int position = info.position;
-        View view = info.targetView;
-        int childPosition=position;
-//        while (++childPosition < nodeArrayList.size() && nodeArrayList.get(childPosition).getDepth() > nodeArrayList.get(position).getDepth()) ;
-//        adapter.showInputDialog(position,childPosition);
-
 
 
     }
-
-
-
-
-
 
 }
