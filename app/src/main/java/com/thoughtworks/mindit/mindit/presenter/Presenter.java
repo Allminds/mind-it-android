@@ -34,7 +34,7 @@ public class Presenter {
     }
 
     public UINode convertModelNodeToUINode(Node node) {
-        UINode uiNode = new UINode(node.getName(), node.getDepth() * Constants.paddingForDepth);
+        UINode uiNode = new UINode(node.getName(), node.getDepth() * Constants.PADDING_FOR_DEPTH);
         uiNode.setId(node.getId());
         updateUIChildSubtree(node, uiNode);
         return uiNode;
@@ -67,7 +67,7 @@ public class Presenter {
         ArrayList<UINode> childSubTree = new ArrayList<>();
         for (int i = 0; i < keys.size(); i++) {
             Node node1 = tree.getNode(keys.get(i));
-            UINode uiNode1 = new UINode(node1.getName(), node1.getDepth() * Constants.paddingForDepth);
+            UINode uiNode1 = new UINode(node1.getName(), node1.getDepth() * Constants.PADDING_FOR_DEPTH);
             uiNode1.setId(node1.getId());
             for (int j = 0; j < node1.getChildSubTree().size(); j++) {
                 updateUIChildSubtree(node1, uiNode1);

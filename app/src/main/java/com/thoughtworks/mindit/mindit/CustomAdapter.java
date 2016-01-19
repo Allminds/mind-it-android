@@ -1,6 +1,9 @@
 package com.thoughtworks.mindit.mindit;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Point;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +21,8 @@ import com.thoughtworks.mindit.mindit.presenter.Presenter;
 import java.util.ArrayList;
 
 public class CustomAdapter extends BaseAdapter {
+    private final int deviceWidth;
+    private final int deviceHeight;
     private Context context;
 
     public ArrayList<UINode> getNodeArrayList() {
@@ -34,6 +39,12 @@ public class CustomAdapter extends BaseAdapter {
         this.presenter = presenter;
         this.nodeArrayList = presenter.buildNodeListFromTree();
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        Display display = ((Activity)context).getWindowManager().getDefaultDisplay();
+
+        Point size = new Point();
+        display.getSize(size);
+        deviceWidth = size.x;
+        deviceHeight = size.y;
     }
 
     @Override
@@ -101,6 +112,11 @@ public class CustomAdapter extends BaseAdapter {
     private void setText(final NodeHolder nodeHolder, View rowView, final UINode currentNode) {
         nodeHolder.textViewForName = (TextView) rowView.findViewById(R.id.name);
         nodeHolder.textViewForName.setText(currentNode.getName());
+
+
+
+        nodeHolder.textViewForName.setHeight(deviceHeight/Constants.HEIGHT_DIVIDER);
+
         editText(nodeHolder, currentNode);
     }
 
@@ -115,7 +131,7 @@ public class CustomAdapter extends BaseAdapter {
                 nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
                 final InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (inputMethodManager != null) {
-                    inputMethodManager.showSoftInput(nodeHolder.editText,InputMethodManager.SHOW_FORCED);
+                    inputMethodManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_FORCED);
                 }
                 nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
                     @Override
@@ -125,8 +141,8 @@ public class CustomAdapter extends BaseAdapter {
                             currentNode.setName("" + nodeHolder.editText.getText());
                             nodeHolder.editText.setVisibility(View.GONE);
                             nodeHolder.textViewForName.setVisibility(View.VISIBLE);
-                            if(inputMethodManager!=null) {
-                                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+                            if (inputMethodManager != null) {
+                                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                             }
                             return true;
                         }
@@ -176,7 +192,12 @@ public class CustomAdapter extends BaseAdapter {
         if (currentNode.getStatus().equalsIgnoreCase("expand")) {
             nodeHolder.expandCollapseButton.setImageResource(R.drawable.expand);
         } else {
-            nodeHolder.expandCollapseButton.setImageResource(R.drawable.collapse);
+            if(currentNode.getChildSubTree().size()==0){
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.leaf);
+            }
+            else {
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.collapse);
+            }
         }
 
     }
