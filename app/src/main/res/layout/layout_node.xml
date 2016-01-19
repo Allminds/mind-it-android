@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/layout">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/collapse"
+        android:tag="expand"
+        android:id="@+id/expandCollapse"
+        android:onClick="toggle"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/name"
+        android:textSize="20dp"
+        android:inputType="textMultiLine|textNoSuggestions"
+        android:editable="false"
+        android:layout_toEndOf="@+id/expandCollapse"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/expandCollapse"
+        android:layout_toStartOf="@+id/options"
+        android:layout_toLeftOf="@+id/options" />
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15dp"
+        android:id="@+id/editText"
+        android:inputType="textMultiLine|textNoSuggestions"
+        android:layout_toEndOf="@+id/expandCollapse"
+        android:layout_toRightOf="@+id/expandCollapse"
+        android:layout_toStartOf="@+id/options"
+        android:layout_toLeftOf="@+id/options"
+        android:layout_below="@+id/options" />
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:id="@+id/options"
+        android:src="@drawable/add"
+
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>
