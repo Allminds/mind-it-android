@@ -5,6 +5,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -72,6 +73,7 @@ public class CustomAdapter extends BaseAdapter {
             nodeHolder.editText.setVisibility(View.VISIBLE);
             nodeHolder.editText.requestFocus();
             String s=""+nodeHolder.textViewForName.getText();
+
             nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
                 @Override
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -104,6 +106,12 @@ public class CustomAdapter extends BaseAdapter {
                 nodeHolder.textViewForName.setVisibility(View.GONE);
                 nodeHolder.editText.setVisibility(View.VISIBLE);
                 nodeHolder.editText.requestFocus();
+                nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
+                nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
+                final InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (inputMethodManager != null) {
+                    inputMethodManager.showSoftInput(nodeHolder.editText,InputMethodManager.SHOW_FORCED);
+                }
                 nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
                     @Override
                     public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -112,6 +120,9 @@ public class CustomAdapter extends BaseAdapter {
                             currentNode.setName("" + nodeHolder.editText.getText());
                             nodeHolder.editText.setVisibility(View.GONE);
                             nodeHolder.textViewForName.setVisibility(View.VISIBLE);
+                            if(inputMethodManager!=null) {
+                                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+                            }
                             return true;
                         }
                         return false;
