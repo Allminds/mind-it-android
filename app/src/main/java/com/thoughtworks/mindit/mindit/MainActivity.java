@@ -26,15 +26,10 @@ public class MainActivity extends AppCompatActivity {
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new WaitForTree().execute();
-
-            }
-        });
         progressBar = (ProgressBar)findViewById(R.id.progressBar);
+    }
+    public void imports(View view){
+        new WaitForTree().execute();
     }
     private class WaitForTree extends AsyncTask<Void,Void,Integer>
     {

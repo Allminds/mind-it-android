@@ -81,6 +81,7 @@ public class MindmapActivity extends AppCompatActivity {
                 break;
             }
         }
+        
         nodeArrayList.remove(position);
         adapter.notifyDataSetChanged();
     }
