@@ -5,13 +5,14 @@ import com.thoughtworks.mindit.mindit.model.Node;
 import com.thoughtworks.mindit.mindit.model.Tree;
 import com.thoughtworks.mindit.mindit.presenter.Presenter;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import im.delight.android.ddp.Meteor;
 import im.delight.android.ddp.MeteorCallback;
 import im.delight.android.ddp.ResultListener;
 
-public class Tracker implements MeteorCallback{
-    private Meteor meteor;
+public class Tracker implements MeteorCallback, Serializable{
+    private transient Meteor meteor;
     private String rootId;
 
     public Tree getTree() {

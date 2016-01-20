@@ -5,6 +5,7 @@ import com.thoughtworks.mindit.mindit.CustomAdapter;
 import com.thoughtworks.mindit.mindit.JsonParserService;
 import com.thoughtworks.mindit.mindit.MockDB;
 import com.thoughtworks.mindit.mindit.PublishSubscribe.IObserver;
+import com.thoughtworks.mindit.mindit.Tracker;
 import com.thoughtworks.mindit.mindit.UINode;
 import com.thoughtworks.mindit.mindit.model.Tree;
 import com.thoughtworks.mindit.mindit.model.Node;
@@ -15,6 +16,12 @@ import java.util.ArrayList;
 
 public class Presenter implements IObserver{
     private Tree tree;
+    private Tracker tracker;
+
+    public void setTracker(Tracker tracker) {
+        this.tracker = tracker;
+    }
+
     private ArrayList<UINode> nodeList;
 
     public void setCustomAdapter(CustomAdapter customAdapter) {
@@ -23,10 +30,9 @@ public class Presenter implements IObserver{
 
     private CustomAdapter customAdapter;
 
-    public Presenter(Tree tree) {
-        this.tree = tree;
+    public Presenter() {
         nodeList = new ArrayList<>();
-        this.tree.register(this);
+
     }
 
     public UINode convertModelNodeToUINode(Node node) {
@@ -44,6 +50,7 @@ public class Presenter implements IObserver{
 
     public void setTree(Tree tree) {
         this.tree = tree;
+        this.tree.register(this);
     }
 
     public Tree getTree() {
