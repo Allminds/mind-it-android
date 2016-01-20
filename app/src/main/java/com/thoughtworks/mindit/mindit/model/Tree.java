@@ -59,8 +59,9 @@ public class Tree implements Serializable, ISubject{
         return nodes.get(id);
     }
 
-    public Tree addNode(Node node, int index) {
+    public Tree addNode(Node node) {
         Node parent = this.getNode(node.getParentId());
+        int index = parent.getChildSubTree().size();
         if(node.isNotARoot())
             parent.addThisChild(node, index);
         nodes.put(node.getId(), node);

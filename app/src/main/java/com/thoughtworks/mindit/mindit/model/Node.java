@@ -159,4 +159,5 @@ public class Node implements Serializable {
     public int hashCode() {
         return getId().hashCode();
     }
+
 }

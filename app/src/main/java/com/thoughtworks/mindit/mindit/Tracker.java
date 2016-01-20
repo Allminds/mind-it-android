@@ -7,13 +7,23 @@ import com.thoughtworks.mindit.mindit.presenter.Presenter;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
+
 import im.delight.android.ddp.Meteor;
 import im.delight.android.ddp.MeteorCallback;
 import im.delight.android.ddp.ResultListener;
 
-public class Tracker implements MeteorCallback, Serializable{
-    private transient Meteor meteor;
+public class Tracker implements MeteorCallback{
+    private Meteor meteor;
     private String rootId;
+
+    private static Tracker instance;
+
+    public static Tracker getInstance(Context context, String rootId) {
+        if(instance == null)
+            instance = new Tracker(context, rootId);
+        return instance;
+    }
 
     public Tree getTree() {
         return tree;
@@ -21,7 +31,7 @@ public class Tracker implements MeteorCallback, Serializable{
 
     private Tree tree;
 
-    public Tracker(Context context, String rootId) {
+    private Tracker(Context context, String rootId) {
         this.rootId = rootId;
         Meteor.setLoggingEnabled(true);
         meteor = new Meteor(context, "ws://10.12.23.82:3000/websocket");
@@ -72,15 +82,6 @@ public class Tracker implements MeteorCallback, Serializable{
         System.out.println("    Added: " + fieldsJson);
         Node node = JsonParserService.parseNode(fieldsJson);
         node.set_id(documentID);
-
-        if(!tree.isNodeExists(node)) {
-            Node parent = tree.getNode(node.getParentId());
-            if (parent == null)
-                node.setDepth(0);
-            else
-                node.setDepth(parent.getDepth() + 1);
-            tree.addNode(node, node.getIndex());
-        }
     }
 
     @Override
@@ -99,5 +100,30 @@ public class Tracker implements MeteorCallback, Serializable{
     @Override
     public void onException(Exception e) {
 
+    }
+
+    public void addChild(final Node node) {
+        tree.addNode(node);
+        Map<String, Object> values = new HashMap<String, Object>();
+        values.put("name", node.getName());
+        values.put("left", node.getLeft());
+        values.put("right", node.getRight());
+        values.put("childSubTree", node.getChildSubTree());
+        values.put("parentId", node.getParentId());
+        values.put("rootId", node.getRootId());
+        values.put("index", node.getIndex());
+
+        meteor.insert("mindmap", values, new ResultListener() {
+            @Override
+            public void onSuccess(String s) {
+                System.out.println(s);
+                node.set_id(s);
+            }
+
+            @Override
+            public void onError(String s, String s1, String s2) {
+
+            }
+        });
     }
 }

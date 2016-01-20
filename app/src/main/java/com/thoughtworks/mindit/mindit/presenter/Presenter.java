@@ -32,7 +32,6 @@ public class Presenter implements IObserver{
 
     public Presenter() {
         nodeList = new ArrayList<>();
-
     }
 
     public UINode convertModelNodeToUINode(Node node) {
@@ -90,5 +89,20 @@ public class Presenter implements IObserver{
         System.out.println("presenter is calling update");
         if (customAdapter != null)
             customAdapter.notifyDataSetChanged();
+    }
+
+    public void addChild(int position, UINode currentNode) {
+        int i = position;
+        while (++i < nodeList.size() && nodeList.get(i).getDepth() > currentNode.getDepth()) ;
+        currentNode.toggleStatus();
+        customAdapter.setNewNodePosition(i);
+        UINode parentNode = nodeList.get(position);
+        UINode node = new UINode("Enter Text", parentNode.getDepth() + 20);
+        nodeList.add(i, node);
+        parentNode.getChildSubTree().add(parentNode.getChildSubTree().size(), node);
+        customAdapter.notifyDataSetChanged();
+
+        Node parent = tree.getNode(parentNode.getId());
+        tracker.addChild(this.convertUINodeToModelNode(node, parent));
     }
 }

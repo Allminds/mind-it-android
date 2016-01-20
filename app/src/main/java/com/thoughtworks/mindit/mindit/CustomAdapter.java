@@ -114,7 +114,7 @@ public class CustomAdapter extends BaseAdapter {
 
 
 
-        nodeHolder.textViewForName.setHeight(deviceHeight/Constants.HEIGHT_DIVIDER);
+        nodeHolder.textViewForName.setHeight(deviceHeight / Constants.HEIGHT_DIVIDER);
 
         editText(nodeHolder, currentNode);
     }
@@ -176,7 +176,7 @@ public class CustomAdapter extends BaseAdapter {
         nodeHolder.addNodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addChild(position, currentNode);
+                presenter.addChild(position, currentNode);
             }
         });
     }
@@ -199,18 +199,6 @@ public class CustomAdapter extends BaseAdapter {
             }
         }
 
-    }
-
-    private void addChild(int position, UINode currentNode) {
-        int i = position;
-        while (++i < nodeArrayList.size() && nodeArrayList.get(i).getDepth() > currentNode.getDepth()) ;
-        currentNode.toggleStatus();
-        newNodePosition=i;
-        UINode parentNode = nodeArrayList.get(position);
-        UINode node = new UINode("Enter Text", parentNode.getDepth() + 20);
-        nodeArrayList.add(i, node);
-        parentNode.getChildSubTree().add(parentNode.getChildSubTree().size(), node);
-        notifyDataSetChanged();
     }
 
     private void expand(int position, UINode currentNode) {
@@ -238,4 +226,7 @@ public class CustomAdapter extends BaseAdapter {
         relativeLayout.setPadding(nodeArrayList.get(position).getDepth(), 0, 0, 0);
     }
 
+    public void setNewNodePosition(int newNodePosition) {
+        this.newNodePosition = newNodePosition;
+    }
 }

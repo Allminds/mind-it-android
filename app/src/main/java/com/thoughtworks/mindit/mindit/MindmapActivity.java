@@ -10,8 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
-import com.thoughtworks.mindit.mindit.model.Tree;
 import com.thoughtworks.mindit.mindit.presenter.Presenter;
 
 import java.util.ArrayList;
