@@ -30,6 +30,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/imports"
         android:src="@drawable/imports"
-        android:onClick="imports"/>
+        android:onClick="imports"
+        />
 
 </RelativeLayout>
