@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
             tracker.subscribe(rootId);
             progressBar.setVisibility(View.GONE);
             Intent intent = new Intent(getApplicationContext(), MindmapActivity.class);
-            intent.putExtra("Tree", tracker.getTree());
+            intent.putExtra("Tracker", tracker);
             startActivity(intent);
         }
 
