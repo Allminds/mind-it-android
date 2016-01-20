@@ -4,6 +4,7 @@ import com.thoughtworks.mindit.mindit.Constants;
 import com.thoughtworks.mindit.mindit.CustomAdapter;
 import com.thoughtworks.mindit.mindit.JsonParserService;
 import com.thoughtworks.mindit.mindit.MockDB;
+import com.thoughtworks.mindit.mindit.PublishSubscribe.IObserver;
 import com.thoughtworks.mindit.mindit.UINode;
 import com.thoughtworks.mindit.mindit.model.Tree;
 import com.thoughtworks.mindit.mindit.model.Node;
@@ -11,26 +12,21 @@ import com.thoughtworks.mindit.mindit.model.Node;
 
 import java.util.ArrayList;
 
-public class Presenter {
-    private MockDB mockDB;
-    private JsonParserService jsonParserService;
 
+public class Presenter implements IObserver{
     private Tree tree;
     private ArrayList<UINode> nodeList;
 
+    public void setCustomAdapter(CustomAdapter customAdapter) {
+        this.customAdapter = customAdapter;
+    }
+
     private CustomAdapter customAdapter;
-
-    public Presenter() {
-        this.nodeList = null;
-    }
-
-    public Presenter(ArrayList<UINode> nodeList) {
-        this.nodeList = nodeList;
-    }
 
     public Presenter(Tree tree) {
         this.tree = tree;
         nodeList = new ArrayList<>();
+        this.tree.register(this);
     }
 
     public UINode convertModelNodeToUINode(Node node) {
@@ -81,4 +77,11 @@ public class Presenter {
         return nodeList;
     }
 
+    @Override
+    public void update() {
+        this.nodeList = this.buildNodeListFromTree();
+        System.out.println("presenter is calling update");
+        if (customAdapter != null)
+            customAdapter.notifyDataSetChanged();
+    }
 }

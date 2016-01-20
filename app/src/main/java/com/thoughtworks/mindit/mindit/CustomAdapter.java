@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-
 import com.thoughtworks.mindit.mindit.presenter.Presenter;
 
 import java.util.ArrayList;

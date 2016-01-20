@@ -44,6 +44,7 @@ public class MindmapActivity extends AppCompatActivity {
         Presenter presenter = new Presenter((Tree) getIntent().getSerializableExtra("Tree"));
         adapter = new CustomAdapter(this, presenter);
         listView.setAdapter(adapter);
+        presenter.setCustomAdapter(adapter);
     }
 
     @Override

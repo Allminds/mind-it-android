@@ -12,13 +12,13 @@ import android.widget.ProgressBar;
 
 import com.thoughtworks.mindit.mindit.model.Tree;
 
-import java.io.Serializable;
-
 
 public class MainActivity extends AppCompatActivity {
     Tracker tracker;
     ProgressBar progressBar;
     Tree tree;
+    String rootId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +39,8 @@ public class MainActivity extends AppCompatActivity {
         }
         @Override
         protected Integer doInBackground(Void... params) {
-            tracker = new Tracker(getApplicationContext());
+            rootId = "LLkN4HrcoqtorwkJz";
+            tracker = new Tracker(getApplicationContext(), rootId);
             while (tracker.getTree() == null)
                 try {
                     Thread.sleep(1000);
@@ -51,9 +52,11 @@ public class MainActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(Integer result) {
+            rootId = "LLkN4HrcoqtorwkJz";
+            tracker.subscribe(rootId);
             progressBar.setVisibility(View.GONE);
             Intent intent = new Intent(getApplicationContext(), MindmapActivity.class);
-            intent.putExtra("Tree",tracker.getTree());
+            intent.putExtra("Tree", tracker.getTree());
             startActivity(intent);
         }
 

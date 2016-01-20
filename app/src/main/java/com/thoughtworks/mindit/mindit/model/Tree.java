@@ -1,17 +1,24 @@
 package com.thoughtworks.mindit.mindit.model;
 
+import com.thoughtworks.mindit.mindit.PublishSubscribe.IObserver;
+import com.thoughtworks.mindit.mindit.PublishSubscribe.ISubject;
 import com.thoughtworks.mindit.mindit.exceptions.NodeAlreadyDeletedException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Observer;
 
-
-public class Tree implements Serializable{
+public class Tree implements Serializable, ISubject{
+    private static final Object MUTEX = new Object();
+    private static Tree instance;
     private HashMap<String, Node> nodes;
     private Node root;
+    private List<IObserver> observers;
+    private boolean changed;
 
     private void setRoot() {
         for (String nodeId : this.nodes.keySet()) {
@@ -27,13 +34,25 @@ public class Tree implements Serializable{
         return (this.getNode(nodeId) == null);
     }
 
-    public Node getRoot() {
-        return this.root;
+    public boolean isNodeExists(Node node) {
+        return this.nodes.containsKey(node.getId());
     }
 
-    public Tree(HashMap<String, Node> nodes) {
+    private Tree(HashMap<String, Node> nodes) {
         this.nodes = nodes;
         this.setRoot();
+        observers = new ArrayList<IObserver>();
+    }
+
+    public static Tree getInstance(HashMap<String, Node> nodes) {
+        if(instance == null){
+            instance = new Tree(nodes);
+        }
+        return instance;
+    }
+
+    public Node getRoot() {
+        return this.root;
     }
 
     public Node getNode(String id) {
@@ -45,6 +64,7 @@ public class Tree implements Serializable{
         if(node.isNotARoot())
             parent.addThisChild(node, index);
         nodes.put(node.getId(), node);
+        this.notifyObservers();
         return this;
     }
 
@@ -58,6 +78,7 @@ public class Tree implements Serializable{
             parent.removeThisChild(node);
             nodes.remove(nodeId);
         }
+        this.notifyObservers();
         return this;
     }
 
@@ -79,6 +100,36 @@ public class Tree implements Serializable{
         node.setDepth(parentDepth + 1);
         for (String nodeId : node.getChildSubTree()) {
             updateDepthOfAllNodes(this.getNode(nodeId), node.getDepth());
+        }
+    }
+
+    @Override
+    public void register(IObserver obj) {
+        if(obj == null) throw new NullPointerException("Null Observer");
+        synchronized (MUTEX) {
+            if(!observers.contains(obj)) observers.add(obj);
+        }
+    }
+
+    @Override
+    public void unregister(IObserver obj) {
+        synchronized (MUTEX) {
+            observers.remove(obj);
+        }
+    }
+
+    @Override
+    public void notifyObservers() {
+        List<IObserver> observersLocal = null;
+        //synchronization is used to make sure any observer registered after message is received is not notified
+        synchronized (MUTEX) {
+            if (!changed)
+                return;
+            observersLocal = new ArrayList<IObserver>(this.observers);
+            this.changed=false;
+        }
+        for (IObserver obj : observersLocal) {
+            obj.update();
         }
     }
 }

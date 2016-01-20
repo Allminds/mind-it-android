@@ -38,6 +38,6 @@ public class JsonParserService {
         for (Node node : nodes) {
             nodeMap.put(node.getId(), node);
         }
-        return new Tree(nodeMap);
+        return Tree.getInstance(nodeMap);
     }
 }
