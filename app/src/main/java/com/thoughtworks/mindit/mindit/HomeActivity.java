@@ -1,5 +1,6 @@
 package com.thoughtworks.mindit.mindit;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -88,7 +89,7 @@ public class HomeActivity extends AppCompatActivity
             return true;
         }
         if (id == R.id.imports){
-            new WaitForTree().execute();
+
         }
         return super.onOptionsItemSelected(item);
     }
