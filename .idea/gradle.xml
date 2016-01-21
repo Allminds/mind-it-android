@@ -6,7 +6,11 @@
         <option name="distributionType" value="LOCAL" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="gradleHome" value="$APPLICATION_HOME_DIR$/gradle/gradle-2.8" />
+<<<<<<< 77a7e1c006ba5d5ef6e92dbe0d14d2bc09efe3aa
         <option name="gradleJvm" value="1.7" />
+=======
+        <option name="gradleJvm" value="1.8" />
+>>>>>>> [Chinmay/Shilkumar] Add new node to db
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />

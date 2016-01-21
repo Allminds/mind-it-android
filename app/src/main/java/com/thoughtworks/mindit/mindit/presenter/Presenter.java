@@ -18,10 +18,6 @@ public class Presenter implements IObserver{
     private Tree tree;
     private Tracker tracker;
 
-    public void setTracker(Tracker tracker) {
-        this.tracker = tracker;
-    }
-
     private ArrayList<UINode> nodeList;
 
     public void setCustomAdapter(CustomAdapter customAdapter) {
@@ -32,10 +28,13 @@ public class Presenter implements IObserver{
 
     public Presenter() {
         nodeList = new ArrayList<>();
+        tracker = Tracker.getInstance();
+        tree = tracker.getTree();
+        tree.register(this);
     }
 
     public UINode convertModelNodeToUINode(Node node) {
-        UINode uiNode = new UINode(node.getName(), node.getDepth() * Constants.PADDING_FOR_DEPTH);
+        UINode uiNode = new UINode(node.getName(), node.getDepth() * Constants.PADDING_FOR_DEPTH,node.getParentId());
         uiNode.setId(node.getId());
         updateUIChildSubtree(node, uiNode);
         return uiNode;
@@ -43,13 +42,8 @@ public class Presenter implements IObserver{
 
     public Node convertUINodeToModelNode(UINode uiNode, Node parent) {
         Node node;
-        node = new Node(uiNode.getId(), uiNode.getName(), parent, parent.getRootId(), 0);
+        node = new Node(uiNode.getId(), uiNode.getName(), parent, parent.getRootId(), parent.getChildSubTree().size());
         return node;
-    }
-
-    public void setTree(Tree tree) {
-        this.tree = tree;
-        this.tree.register(this);
     }
 
     public Tree getTree() {
@@ -69,7 +63,7 @@ public class Presenter implements IObserver{
         ArrayList<UINode> childSubTree = new ArrayList<>();
         for (int i = 0; i < keys.size(); i++) {
             Node node1 = tree.getNode(keys.get(i));
-            UINode uiNode1 = new UINode(node1.getName(), node1.getDepth() * Constants.PADDING_FOR_DEPTH);
+            UINode uiNode1 = new UINode(node1.getName(), node1.getDepth() * Constants.PADDING_FOR_DEPTH,node.getId());
             uiNode1.setId(node1.getId());
             for (int j = 0; j < node1.getChildSubTree().size(); j++) {
                 updateUIChildSubtree(node1, uiNode1);
@@ -91,18 +85,9 @@ public class Presenter implements IObserver{
             customAdapter.notifyDataSetChanged();
     }
 
-    public void addChild(int position, UINode currentNode) {
-        int i = position;
-        while (++i < nodeList.size() && nodeList.get(i).getDepth() > currentNode.getDepth()) ;
-        currentNode.toggleStatus();
-        customAdapter.setNewNodePosition(i);
-        UINode parentNode = nodeList.get(position);
-        UINode node = new UINode("Enter Text", parentNode.getDepth() + 20);
-        nodeList.add(i, node);
-        parentNode.getChildSubTree().add(parentNode.getChildSubTree().size(), node);
-        customAdapter.notifyDataSetChanged();
-
-        Node parent = tree.getNode(parentNode.getId());
-        tracker.addChild(this.convertUINodeToModelNode(node, parent));
+    public void addChild(int position) {
+        UINode uiNode=nodeList.get(position);
+        Node parent = tree.getNode(uiNode.getParentId());
+        tracker.addChild(this.convertUINodeToModelNode(uiNode, parent));
     }
 }

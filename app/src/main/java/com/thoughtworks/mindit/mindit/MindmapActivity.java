@@ -32,10 +32,7 @@ public class MindmapActivity extends AppCompatActivity {
         listView=(ListView)findViewById(R.id.listView);
         registerForContextMenu(listView);
 
-        Tracker tracker = (Tracker) getIntent().getSerializableExtra("Tracker");
         Presenter presenter = new Presenter();
-        presenter.setTracker(tracker);
-        presenter.setTree(tracker.getTree());
 
         adapter = new CustomAdapter(this, presenter);
         listView.setAdapter(adapter);

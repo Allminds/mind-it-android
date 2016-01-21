@@ -98,6 +98,7 @@ public class CustomAdapter extends BaseAdapter {
                         nodeHolder.editText.setVisibility(View.GONE);
                         nodeHolder.textViewForName.setVisibility(View.VISIBLE);
                         newNodePosition=-1;
+                        presenter.addChild(position);
                         return true;
                     }
                     return false;
@@ -176,9 +177,21 @@ public class CustomAdapter extends BaseAdapter {
         nodeHolder.addNodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presenter.addChild(position, currentNode);
+                addChild(position, currentNode);
             }
         });
+    }
+
+    private void addChild(int position, UINode currentNode) {
+        int i = position;
+        while (++i < nodeArrayList.size() && nodeArrayList.get(i).getDepth() > currentNode.getDepth()) ;
+        currentNode.toggleStatus();
+        this.setNewNodePosition(i);
+        UINode parentNode = nodeArrayList.get(position);
+        UINode node = new UINode("Enter Text", parentNode.getDepth() + 20,parentNode.getId());
+        nodeArrayList.add(i, node);
+        parentNode.getChildSubTree().add(parentNode.getChildSubTree().size(), node);
+        notifyDataSetChanged();
     }
 
     private void addPadding(int position, View rowView) {

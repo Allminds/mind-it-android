@@ -126,8 +126,8 @@ public class HomeActivity extends AppCompatActivity
         }
         @Override
         protected Integer doInBackground(Void... params) {
-            rootId = "LLkN4HrcoqtorwkJz";
-            tracker = new Tracker(getApplicationContext(), rootId);
+            rootId = "Wu5y9Bh9syrD5cd94";
+            tracker = Tracker.getInstance(getApplicationContext(), rootId);
             while (tracker.getTree() == null)
                 try {
                     Thread.sleep(1000);
@@ -139,11 +139,9 @@ public class HomeActivity extends AppCompatActivity
         }
         @Override
         protected void onPostExecute(Integer result) {
-            rootId = "LLkN4HrcoqtorwkJz";
-            tracker.subscribe(rootId);
+            rootId = "Wu5y9Bh9syrD5cd94";
             progressBar.setVisibility(View.GONE);
             Intent intent = new Intent(getApplicationContext(), MindmapActivity.class);
-            intent.putExtra("Tracker", tracker);
             startActivity(intent);
         }
 

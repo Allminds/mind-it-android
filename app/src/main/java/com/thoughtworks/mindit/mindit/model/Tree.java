@@ -98,10 +98,12 @@ public class Tree implements Serializable, ISubject{
     }
 
     public void updateDepthOfAllNodes (Node node, int parentDepth) {
-        node.setDepth(parentDepth + 1);
-        for (String nodeId : node.getChildSubTree()) {
-            updateDepthOfAllNodes(this.getNode(nodeId), node.getDepth());
-        }
+
+            node.setDepth(parentDepth + 1);
+            for (String nodeId : node.getChildSubTree()) {
+                updateDepthOfAllNodes(this.getNode(nodeId), node.getDepth());
+            }
+
     }
 
     @Override

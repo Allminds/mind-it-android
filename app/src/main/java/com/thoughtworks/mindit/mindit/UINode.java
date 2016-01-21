@@ -9,12 +9,23 @@ public class UINode
     private int depth;
     private String status;
     private ArrayList<UINode>childSubTree;
-    public UINode(String name, int depth)
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
+    private String parentId;
+    public UINode(String name, int depth,String parentId)
     {
         this.id="";
         this.name=name;
         this.depth=depth;
         this.status="collapse";
+        this.parentId=parentId;
         childSubTree=new ArrayList<UINode>();
 
     }
