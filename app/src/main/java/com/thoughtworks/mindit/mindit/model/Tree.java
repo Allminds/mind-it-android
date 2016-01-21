@@ -62,8 +62,7 @@ public class Tree implements Serializable, ISubject{
     public Tree addNode(Node node) {
         Node parent = this.getNode(node.getParentId());
         int index = parent.getChildSubTree().size();
-        if(node.isNotARoot())
-            parent.addThisChild(node, index);
+        parent.addThisChild(node, index);
         nodes.put(node.getId(), node);
         this.notifyObservers();
         return this;
@@ -92,7 +91,7 @@ public class Tree implements Serializable, ISubject{
 
     public void fillRootChildSubtree () {
         Node root = this.getRoot();
-        ArrayList<String> temp = root.getLeft();
+        ArrayList<String> temp = (ArrayList<String>) root.getLeft().clone();
         temp.addAll(root.getRight());
         root.setChildSubTree(temp);
     }

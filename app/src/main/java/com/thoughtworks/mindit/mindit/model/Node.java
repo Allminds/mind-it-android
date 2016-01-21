@@ -9,6 +9,37 @@ import java.util.ArrayList;
 public class Node implements Serializable {
     private String _id;
     private String name;
+    private ArrayList<String> childSubTree;
+    private String parentId;
+    private String rootId;
+    private ArrayList<String> left;
+    private ArrayList<String> right;
+    private int depth;
+    private int index;
+
+    public Node(String id,String text,Node parent,String rootId, int index){
+        this._id = id;
+        this.name = text;
+        this.left = new ArrayList<String>();
+        this.right = new ArrayList<String>();
+        this.childSubTree = new ArrayList<String>();
+        this.parentId = (parent != null) ? parent.getId() : null;
+        this.rootId = rootId;
+        this.depth = (parent != null) ? parent.getDepth()+1 : 0;
+        this.index = index;
+    }
+
+    private boolean isChildAlreadyExists(Node node, ArrayList<String> siblings) {
+        return siblings.contains(node.getId());
+    }
+
+    private void setId(String id) {
+        this._id = id;
+    }
+
+    private void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
 
     public ArrayList<String> getLeft() {
         return left;
@@ -18,52 +49,26 @@ public class Node implements Serializable {
         return right;
     }
 
-    private ArrayList<String> left;
-    private ArrayList<String> right;
-
     public void setChildSubTree(ArrayList<String> childSubTree) {
         this.childSubTree = childSubTree;
     }
-
-    private ArrayList<String> childSubTree;
-    private String parentId;
-    private String rootId;
 
     public void setDepth(int depth) {
         this.depth = depth;
     }
 
-    private int depth;
-
     public int getIndex() {
         return index;
     }
-
-    private int index;
 
     public void set_id(String _id) {
         this._id = _id;
     }
 
-    public Node(String id,String text,Node parent,String rootId, int index){
-        this._id=id;
-        this.name =text;
-        this.left = new ArrayList<String>();
-        this.right = new ArrayList<String>();
-        this.childSubTree = new ArrayList<String>();
-        this.parentId = (parent != null) ? parent.getId() : null;
-        this.rootId = rootId;
-        this.depth=(parent != null) ? parent.getDepth()+1 : 0;
-        this.index=index;
-    }
-
-    private boolean isChildAlreadyExists(Node node, ArrayList<String> siblings) {
-        return siblings.contains(node.getId());
-    }
-
     public boolean isNotARoot() {
         return this.getParentId() != null;
     }
+
     public boolean isARoot() {
         return this.getParentId() == null;
     }
@@ -75,6 +80,14 @@ public class Node implements Serializable {
         }
         siblings.add(index, node.getId());
         node.setParentId(this.getId());
+
+        //if node is root add new node in left subtree also
+        if(this.isARoot()) {
+            ArrayList<String> rightSubTree = this.getRight();
+            //already exists check should be here
+            rightSubTree.add(rightSubTree.size(), node.getId());
+        }
+        System.out.println("in child addition "  + this.getLeft() + " " + this.getRight());
         return this;
     }
 
@@ -97,10 +110,6 @@ public class Node implements Serializable {
         return _id;
     }
 
-    private void setId(String id) {
-        this._id = id;
-    }
-
     public String getName() {
         return name;
     }
@@ -115,10 +124,6 @@ public class Node implements Serializable {
 
     public String getParentId() {
         return parentId;
-    }
-
-    private void setParentId(String parentId) {
-        this.parentId = parentId;
     }
 
     public String getRootId() {
