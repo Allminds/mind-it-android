@@ -89,7 +89,7 @@ public class HomeActivity extends AppCompatActivity
             return true;
         }
         if (id == R.id.imports){
-
+                new WaitForTree().execute();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -126,7 +126,7 @@ public class HomeActivity extends AppCompatActivity
         }
         @Override
         protected Integer doInBackground(Void... params) {
-            rootId = "Wu5y9Bh9syrD5cd94";
+            rootId = "TnP6Pt9JWL3rqvq7A";
             tracker = Tracker.getInstance(getApplicationContext(), rootId);
             while (tracker.getTree() == null)
                 try {
@@ -139,7 +139,7 @@ public class HomeActivity extends AppCompatActivity
         }
         @Override
         protected void onPostExecute(Integer result) {
-            rootId = "Wu5y9Bh9syrD5cd94";
+            rootId = "TnP6Pt9JWL3rqvq7A";
             progressBar.setVisibility(View.GONE);
             Intent intent = new Intent(getApplicationContext(), MindmapActivity.class);
             startActivity(intent);

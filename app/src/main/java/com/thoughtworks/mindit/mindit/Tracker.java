@@ -39,7 +39,7 @@ public class Tracker implements MeteorCallback{
     private Tracker(Context context, String rootId) {
         this.rootId = rootId;
         Meteor.setLoggingEnabled(true);
-        meteor = new Meteor(context, "ws://10.12.23.153:3000/websocket");
+        meteor = new Meteor(context, "ws://10.12.23.178:3000/websocket");
         meteor.setCallback(this);
     }
 
