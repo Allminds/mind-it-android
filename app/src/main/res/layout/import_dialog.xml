@@ -2,40 +2,99 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_marginLeft="30dp"
+        style="@android:style/TextAppearance"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:textColor="@color/colorAccent"
+        android:id="@+id/title"
+        android:text="Import Url"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:layout_marginLeft="4dip"
+        android:layout_marginRight="4dip"
+        android:layout_below="@+id/title"
+        android:background="#18252F"
+        android:layout_alignParentTop="true"
+        android:id="@+id/horizontalSeparator1" />
     <EditText
+        android:layout_width="365dp"
+        android:layout_marginLeft="20dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:id="@+id/editUrl"
+        android:background="@android:color/transparent"
+        android:singleLine="true"
+        android:inputType="text|textNoSuggestions"
+        style="@style/myTheme"
+        android:textSize="20dp"
+        android:hint="url here"/>
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:hint="url"
-        android:id="@+id/editbox"/>
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_marginTop="3dp"
+            android:layout_marginLeft="4dip"
+            android:layout_marginRight="4dip"
+            android:layout_below="@+id/editUrl"
+            android:background="#18252F"
+            android:layout_alignParentTop="true"
+            android:id="@+id/horizontalSeparator" />
+        <View
+            android:id="@+id/verticalSeparator1"
+            android:layout_marginLeft="15dp"
+            android:layout_width="1dip"
+            android:layout_height="wrap_content"
+            android:background="#18252F"
+            android:layout_below="@+id/horizontalSeparator"
+            android:layout_marginTop="4dp"
+            android:layout_toRightOf="@+id/cancel"
+            android:layout_toEndOf="@+id/cancel" />
+        <View
+            android:id="@+id/verticalSeparator2"
+            android:layout_width="1dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:background="#18252F"
+            android:layout_alignBottom="@+id/verticalSeparator1"
+            android:layout_below="@+id/horizontalSeparator"
+            android:layout_toRightOf="@+id/paste"
+            android:layout_marginTop="4dp"
+            android:layout_toEndOf="@+id/paste" />
+        <Button
+            android:id="@+id/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="@android:string/cancel"
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+            android:layout_alignParentBottom="true"/>
+        <Button
+            android:id="@+id/imports"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="import"
+            android:layout_alignParentBottom="true" />
 
-    <Button
-    android:id="@+id/positive"
-    style="?android:attr/buttonBarButtonStyle"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:layout_weight="0.5"
-    android:drawablePadding="8dp"
-    android:gravity="start|center_vertical"
-    android:padding="4dp"
-        android:text="cancel"
-    android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <Button
-        android:id="@+id/imports"
-        style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="0.5"
-
-        android:drawablePadding="8dp"
-        android:gravity="start|center_vertical"
-        android:padding="4dp"
-        android:text="import"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-    </LinearLayout>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="paste"
+            android:id="@+id/paste"
+            android:background="?android:attr/selectableItemBackground"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
 </LinearLayout>

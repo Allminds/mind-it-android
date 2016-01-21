@@ -1,6 +1,9 @@
 package com.thoughtworks.mindit.mindit;
 
+import android.app.Dialog;
 import android.app.FragmentManager;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,6 +19,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -89,7 +94,41 @@ public class HomeActivity extends AppCompatActivity
             return true;
         }
         if (id == R.id.imports){
-                new WaitForTree().execute();
+            final Dialog importDialog = new Dialog(this);
+            importDialog.setTitle("Enter Url");
+            importDialog.setContentView(R.layout.import_dialog);
+            importDialog.show();
+            Button imports = (Button)importDialog.findViewById(R.id.imports);
+            imports.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    EditText editUrl = (EditText)importDialog.findViewById(R.id.editUrl);
+                    String url = editUrl.getText().toString();
+                    new WaitForTree().execute(url);
+                    importDialog.dismiss();
+                }
+            });
+            Button cancel = (Button)importDialog.findViewById(R.id.cancel);
+            cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    importDialog.dismiss();
+                }
+            });
+            Button paste = (Button)importDialog.findViewById(R.id.paste);
+            paste.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ClipboardManager myClipboard;
+                    myClipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+                    ClipData abc = myClipboard.getPrimaryClip();
+                    ClipData.Item item = abc.getItemAt(0);
+                    String text = item.getText().toString();
+                    EditText editUrl = (EditText)importDialog.findViewById(R.id.editUrl);
+                    editUrl.setText(text);
+                    editUrl.setSelection(editUrl.getText().length());
+                }
+            });
         }
         return super.onOptionsItemSelected(item);
     }
@@ -118,15 +157,15 @@ public class HomeActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-    private class WaitForTree extends AsyncTask<Void,Void,Integer>
+    private class WaitForTree extends AsyncTask<String,Void,String>
     {
         @Override
         protected void onPreExecute(){
             progressBar.setVisibility(View.VISIBLE);
         }
         @Override
-        protected Integer doInBackground(Void... params) {
-            rootId = "TnP6Pt9JWL3rqvq7A";
+        protected String doInBackground(String... params) {
+            rootId = params[0];
             tracker = Tracker.getInstance(getApplicationContext(), rootId);
             while (tracker.getTree() == null)
                 try {
@@ -135,16 +174,14 @@ public class HomeActivity extends AppCompatActivity
                     e.printStackTrace();
                 }
             System.out.println("after wait : " + tracker.getTree());
-            return 1;
+            return rootId;
         }
         @Override
-        protected void onPostExecute(Integer result) {
-            rootId = "TnP6Pt9JWL3rqvq7A";
+        protected void onPostExecute(String result) {
+            rootId = result;
             progressBar.setVisibility(View.GONE);
             Intent intent = new Intent(getApplicationContext(), MindmapActivity.class);
             startActivity(intent);
         }
-
-
     }
 }
