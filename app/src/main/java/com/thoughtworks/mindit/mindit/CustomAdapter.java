@@ -214,7 +214,7 @@ public class CustomAdapter extends BaseAdapter {
 
     }
 
-    private void expand(int position, UINode currentNode) {
+    public void expand(int position, UINode currentNode) {
         int j = position + 1;
         ArrayList<UINode> nodes = currentNode.getChildSubTree();
         for (int i = 0; i < nodes.size(); i++) {

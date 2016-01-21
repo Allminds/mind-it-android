@@ -19,9 +19,10 @@ public class Presenter implements IObserver{
     private Tracker tracker;
 
     private ArrayList<UINode> nodeList;
-
+    int updatePosition;
     public void setCustomAdapter(CustomAdapter customAdapter) {
         this.customAdapter = customAdapter;
+        updatePosition=-1;
     }
 
     private CustomAdapter customAdapter;
@@ -55,6 +56,10 @@ public class Presenter implements IObserver{
 
     public ArrayList<UINode> buildNodeListFromTree() {
         UINode uiNode = convertModelNodeToUINode(this.tree.getRoot());
+        System.out.println("building tree : " + nodeList);
+        if(nodeList.size()!=0)
+        nodeList.clear();
+      //  uiNode.setStatus("expand");
         nodeList.add(0, uiNode);
         return nodeList;
     }
@@ -82,14 +87,18 @@ public class Presenter implements IObserver{
 
     @Override
     public void update() {
-        this.nodeList = this.buildNodeListFromTree();
+        nodeList.get(updatePosition).setId(tree.getLastUpdatedNode().getId());
         System.out.println("presenter is calling update");
-        if (customAdapter != null)
+        if (customAdapter != null) {
+          //  customAdapter.expand(0, nodeList.get(0));
             customAdapter.notifyDataSetChanged();
+        }
     }
 
     public void addChild(int position) {
-        UINode uiNode=nodeList.get(position);
+        UINode uiNode = nodeList.get(position);
+        updatePosition=position;
+        System.out.println(uiNode.getId() + " ** " + uiNode.getParentId()+"**"+uiNode.getName());
         Node parent = tree.getNode(uiNode.getParentId());
         tracker.addChild(this.convertUINodeToModelNode(uiNode, parent));
     }

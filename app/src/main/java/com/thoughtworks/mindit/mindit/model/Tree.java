@@ -18,8 +18,17 @@ public class Tree implements Serializable, ISubject{
     private HashMap<String, Node> nodes;
     private Node root;
     private List<IObserver> observers;
-    private boolean changed;
+    private boolean changed = true;
 
+    public Node getLastUpdatedNode() {
+        return lastUpdatedNode;
+    }
+
+    public void setLastUpdatedNode(Node lastUpdatedNode) {
+        this.lastUpdatedNode = lastUpdatedNode;
+    }
+
+    private Node lastUpdatedNode;
     private void setRoot() {
         for (String nodeId : this.nodes.keySet()) {
             Node node = this.getNode(nodeId);
@@ -41,6 +50,7 @@ public class Tree implements Serializable, ISubject{
     private Tree(HashMap<String, Node> nodes) {
         this.nodes = nodes;
         this.setRoot();
+        lastUpdatedNode=null;
         observers = new ArrayList<IObserver>();
     }
 
@@ -62,6 +72,7 @@ public class Tree implements Serializable, ISubject{
     public Tree addNode(Node node) {
         Node parent = this.getNode(node.getParentId());
         int index = parent.getChildSubTree().size();
+        lastUpdatedNode=node;
         parent.addThisChild(node, index);
         nodes.put(node.getId(), node);
         this.notifyObservers();
@@ -131,6 +142,7 @@ public class Tree implements Serializable, ISubject{
             this.changed=false;
         }
         for (IObserver obj : observersLocal) {
+            this.changed = true;
             obj.update();
         }
     }
