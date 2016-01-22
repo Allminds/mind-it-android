@@ -47,6 +47,7 @@ public class Presenter implements IObserver{
         if(parent.isARoot())
             rootId = parent.getId();
         node = new Node(uiNode.getId(), uiNode.getName(), parent, rootId, parent.getChildSubTree().size());
+        System.out.println("converting ui to model " + node);
         return node;
     }
 

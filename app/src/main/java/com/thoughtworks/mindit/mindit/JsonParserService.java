@@ -22,7 +22,7 @@ public class JsonParserService {
         tree = convertToTree(nodes);
         tree.fillRootChildSubtree();
         tree.updateDepthOfAllNodes(tree.getRoot(), -1);
-        System.out.println("updated depth " + tree);
+        tree.updatePositionOfAllNodes(tree.getRoot(), null);
         return tree;
     }
 

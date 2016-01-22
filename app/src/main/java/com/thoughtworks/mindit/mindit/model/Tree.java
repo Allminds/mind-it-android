@@ -72,7 +72,7 @@ public class Tree implements Serializable, ISubject{
     public Tree addNode(Node node) {
         Node parent = this.getNode(node.getParentId());
         int index = parent.getChildSubTree().size();
-        lastUpdatedNode=node;
+        lastUpdatedNode = node;
         parent.addThisChild(node, index);
         nodes.put(node.getId(), node);
         this.notifyObservers();
@@ -108,12 +108,27 @@ public class Tree implements Serializable, ISubject{
     }
 
     public void updateDepthOfAllNodes (Node node, int parentDepth) {
+        node.setDepth(parentDepth + 1);
+        for (String nodeId : node.getChildSubTree()) {
+            updateDepthOfAllNodes(this.getNode(nodeId), node.getDepth());
+        }
+    }
 
-            node.setDepth(parentDepth + 1);
-            for (String nodeId : node.getChildSubTree()) {
-                updateDepthOfAllNodes(this.getNode(nodeId), node.getDepth());
+    public void updatePositionOfAllNodes (Node node, String position) {
+        node.setPosition(position);
+        if (node.getParentId() == null) {
+            for (String leftChild : node.getLeft()) {
+                updatePositionOfAllNodes(this.getNode(leftChild), "left");
             }
-
+            for (String rightChild : node.getRight()) {
+                updatePositionOfAllNodes(this.getNode(rightChild), "right");
+            }
+        }
+        else {
+            for (String child : node.getChildSubTree()) {
+                updatePositionOfAllNodes(this.getNode(child), node.getPosition());
+            }
+        }
     }
 
     @Override

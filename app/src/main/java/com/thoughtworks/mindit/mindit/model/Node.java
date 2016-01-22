@@ -16,8 +16,30 @@ public class Node implements Serializable {
     private ArrayList<String> right;
     private int depth;
     private int index;
+    private String position;
 
-    public Node(String id,String text,Node parent,String rootId, int index){
+    private static boolean directionToggler = true;
+
+    private String getFirstLevelChildPosition () {
+        if(directionToggler) {
+            directionToggler = false;
+            return "right";
+        }
+        else {
+            directionToggler = true;
+            return "left";
+        }
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public Node(String id, String text, Node parent, String rootId, int index){
         this._id = id;
         this.name = text;
         this.left = new ArrayList<String>();
@@ -27,6 +49,7 @@ public class Node implements Serializable {
         this.rootId = rootId;
         this.depth = (parent != null) ? parent.getDepth()+1 : 0;
         this.index = index;
+        this.position = (parent != null) ? ((this.rootId == this.parentId ) ? this.getFirstLevelChildPosition() : parent.getPosition()) : null;
     }
 
     private boolean isChildAlreadyExists(Node node, ArrayList<String> siblings) {
@@ -74,6 +97,7 @@ public class Node implements Serializable {
     }
 
     public Node addThisChild(Node node, int index) {
+        System.out.println("alo re " +node.getPosition() + " ** " + node.getName());
         ArrayList<String> siblings = this.getChildSubTree();
         if (this.isChildAlreadyExists(node, siblings)) {
             siblings.remove(node.getId());
@@ -81,11 +105,15 @@ public class Node implements Serializable {
         siblings.add(index, node.getId());
         node.setParentId(this.getId());
 
-        //if node is root add new node in left subtree also
         if(this.isARoot()) {
-            ArrayList<String> rightSubTree = this.getRight();
-            //already exists check should be here
-            rightSubTree.add(rightSubTree.size(), node.getId());
+            if (node.getPosition() == "right") {
+                ArrayList<String> rightSubTree = this.getRight();
+                rightSubTree.add(rightSubTree.size(), node.getId());
+            }
+            if (node.getPosition() == "left") {
+                ArrayList<String> leftSubTree = this.getLeft();
+                leftSubTree.add(leftSubTree.size(), node.getId());
+            }
         }
         System.out.println("in child addition "  + this.getLeft() + " " + this.getRight());
         return this;
@@ -146,6 +174,7 @@ public class Node implements Serializable {
                 ", rootId='" + rootId + '\'' +
                 ", depth=" + depth +
                 ", index=" + index +
+                ", position=" + position +
                 '}';
     }
 

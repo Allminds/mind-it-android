@@ -55,8 +55,6 @@ public class Tracker implements MeteorCallback{
         meteor.call("findTree", new String[]{rootId}, new ResultListener() {
             @Override
             public void onSuccess(String jsonResponse) {
-                // This is where tree will be initialized
-                System.out.println(jsonResponse);
                 tree = JsonParserService.parse(jsonResponse);
             }
 
@@ -109,7 +107,7 @@ public class Tracker implements MeteorCallback{
     }
 
     public void addChild(final Node node) {
-        Map<String, Object> addValues =getValueMap(node);
+        Map<String, Object> addValues = getValueMap(node);
         meteor.insert("Mindmaps", addValues, new ResultListener() {
             @Override
             public void onSuccess(String s) {
@@ -152,13 +150,12 @@ public class Tracker implements MeteorCallback{
         addValues.put("name", node.getName());
         addValues.put("left", node.getLeft());
         addValues.put("right", node.getRight());
+        addValues.put("position", node.getPosition());
         if (node.isNotARoot()){
             addValues.put("childSubTree", node.getChildSubTree());
-//            addValues.put("position", "right");
         }
         else {
             addValues.put("childSubTree", new ArrayList<String>());
-//            addValues.put("position", "");
         }
         addValues.put("parentId", node.getParentId());
         addValues.put("rootId", node.getRootId());
