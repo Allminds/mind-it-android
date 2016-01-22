@@ -80,5 +80,12 @@ public class UINode
         return status.equalsIgnoreCase("expand");
     }
 
-
+    public void removeChild(UINode uiNode) {
+        ArrayList<UINode> childSubTree = this.getChildSubTree();
+        childSubTree.remove(uiNode);
+        if(childSubTree.size()==0){
+            this.setStatus("collapse");
+        }else
+            this.setStatus("expand");
+    }
 }

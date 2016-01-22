@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Tree implements Serializable, ISubject{
+public class Tree implements Serializable, ISubject {
     private static final Object MUTEX = new Object();
     private static Tree instance;
     private HashMap<String, Node> nodes;
@@ -27,10 +27,11 @@ public class Tree implements Serializable, ISubject{
     }
 
     private Node lastUpdatedNode;
+
     private void setRoot() {
         for (String nodeId : this.nodes.keySet()) {
             Node node = this.getNode(nodeId);
-            if(node.isARoot()) {
+            if (node.isARoot()) {
                 this.root = node;
                 break;
             }
@@ -48,12 +49,12 @@ public class Tree implements Serializable, ISubject{
     private Tree(HashMap<String, Node> nodes) {
         this.nodes = nodes;
         this.setRoot();
-        lastUpdatedNode=null;
+        lastUpdatedNode = null;
         observers = new ArrayList<IObserver>();
     }
 
     public static Tree getInstance(HashMap<String, Node> nodes) {
-        if(instance == null){
+        if (instance == null) {
             instance = new Tree(nodes);
         }
         return instance;
@@ -73,14 +74,14 @@ public class Tree implements Serializable, ISubject{
         lastUpdatedNode = node;
         parent.addThisChild(node, index);
         nodes.put(node.getId(), node);
-        updateOption =1;
+        updateOption = 1;
         this.notifyObservers();
         return this;
     }
 
     public Tree deleteNode(Node node) throws Exception {
         String nodeId = node.getId();
-        if(isNodeAlreadyDeleted(nodeId)) {
+        if (isNodeAlreadyDeleted(nodeId)) {
             throw new NodeAlreadyDeletedException();
         }
         Node parent = this.getNode(node.getParentId());
@@ -88,16 +89,16 @@ public class Tree implements Serializable, ISubject{
             parent.removeThisChild(node);
             nodes.remove(nodeId);
         }
-        updateOption =3;
+        updateOption = 3;
         this.notifyObservers();
         return this;
     }
 
-    public Tree updateNode(Node node){
-        Node temp=this.getNode(node.getId());
+    public Tree updateNode(Node node) {
+        Node temp = this.getNode(node.getId());
         temp.setName(node.getName());
-        lastUpdatedNode=temp;
-        updateOption=2;
+        lastUpdatedNode = temp;
+        updateOption = 2;
         this.notifyObservers();
         return this;
     }
@@ -109,21 +110,21 @@ public class Tree implements Serializable, ISubject{
                 '}';
     }
 
-    public void fillRootChildSubtree () {
+    public void fillRootChildSubtree() {
         Node root = this.getRoot();
         ArrayList<String> temp = (ArrayList<String>) root.getLeft().clone();
         temp.addAll(root.getRight());
         root.setChildSubTree(temp);
     }
 
-    public void updateDepthOfAllNodes (Node node, int parentDepth) {
+    public void updateDepthOfAllNodes(Node node, int parentDepth) {
         node.setDepth(parentDepth + 1);
         for (String nodeId : node.getChildSubTree()) {
             updateDepthOfAllNodes(this.getNode(nodeId), node.getDepth());
         }
     }
 
-    public void updatePositionOfAllNodes (Node node, String position) {
+    public void updatePositionOfAllNodes(Node node, String position) {
         node.setPosition(position);
         if (node.getParentId() == null) {
             for (String leftChild : node.getLeft()) {
@@ -132,8 +133,7 @@ public class Tree implements Serializable, ISubject{
             for (String rightChild : node.getRight()) {
                 updatePositionOfAllNodes(this.getNode(rightChild), "right");
             }
-        }
-        else {
+        } else {
             for (String child : node.getChildSubTree()) {
                 updatePositionOfAllNodes(this.getNode(child), node.getPosition());
             }
@@ -142,9 +142,9 @@ public class Tree implements Serializable, ISubject{
 
     @Override
     public void register(IObserver obj) {
-        if(obj == null) throw new NullPointerException("Null Observer");
+        if (obj == null) throw new NullPointerException("Null Observer");
         synchronized (MUTEX) {
-            if(!observers.contains(obj)) observers.add(obj);
+            if (!observers.contains(obj)) observers.add(obj);
         }
     }
 
@@ -163,7 +163,7 @@ public class Tree implements Serializable, ISubject{
             if (!changed)
                 return;
             observersLocal = new ArrayList<IObserver>(this.observers);
-            this.changed=false;
+            this.changed = false;
         }
         for (IObserver obj : observersLocal) {
             this.changed = true;

@@ -39,7 +39,7 @@ public class Tracker implements MeteorCallback{
     private Tracker(Context context, String rootId) {
         this.rootId = rootId;
         Meteor.setLoggingEnabled(true);
-        meteor = new Meteor(context, "ws://10.12.20.36:3000/websocket");
+        meteor = new Meteor(context, "ws://10.12.23.178:3000/websocket");
         meteor.setCallback(this);
     }
 
@@ -99,7 +99,7 @@ public class Tracker implements MeteorCallback{
 
     @Override
     public void onDataRemoved(String collectionName, String documentID) {
-        System.out.println("Data removed to <"+collectionName+"> in document <"+documentID+">");
+        //System.out.println("Data removed to <"+collectionName+"> in document <"+documentID+">");
     }
 
     @Override
@@ -126,6 +126,15 @@ public class Tracker implements MeteorCallback{
 
     }
 
+    public void deleteNode (String nodeID){
+        Node node = tree.getNode(nodeID);
+        try {
+            tree.deleteNode(node);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        updateParentInDB(node);
+    }
     private void updateParentInDB(Node node) {
         Node parent = tree.getNode(node.getParentId());
         Map<String, Object> updateQuery = new HashMap<String, Object>();
@@ -169,7 +178,6 @@ public class Tracker implements MeteorCallback{
         meteor.update("Mindmaps", updateQuery, updateValues, null, new ResultListener() {
             @Override
             public void onSuccess(String s) {
-                System.out.println("update ::: " + s);
                 tree.updateNode(node);
             }
 

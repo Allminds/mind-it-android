@@ -60,8 +60,6 @@ public class Presenter implements IObserver{
                 node.getChildSubTree().add(i,uiNode.getChildSubTree().get(i).getId());
             }
         }
-
-        System.out.println("converting ui to model " + node);
         return node;
     }
 
@@ -71,10 +69,9 @@ public class Presenter implements IObserver{
 
     public ArrayList<UINode> buildNodeListFromTree() {
         UINode uiNode = convertModelNodeToUINode(this.tree.getRoot());
-        System.out.println("building tree : " + nodeList);
         if(nodeList.size()!=0)
         nodeList.clear();
-      //  uiNode.setStatus("expand");
+        uiNode.setStatus("expand");
         nodeList.add(0, uiNode);
         return nodeList;
     }
@@ -109,28 +106,32 @@ public class Presenter implements IObserver{
             case 2:
                 nodeList.get(updatePosition).setName(tree.getLastUpdatedNode().getName());
                 break;
-
-
+            case 3:
+                System.out.println("coming here : " + nodeList + " ** " + updatePosition);
+                //nodeList.remove(updatePosition);
+                break;
         }
-        System.out.println("presenter is calling update");
         if (customAdapter != null) {
-            //  customAdapter.expand(0, nodeList.get(0));
             customAdapter.notifyDataSetChanged();
         }
     }
 
     public void addChild(int position) {
         UINode uiNode = nodeList.get(position);
-        updatePosition=position;
-        System.out.println(uiNode.getId() + " ** " + uiNode.getParentId()+"**"+uiNode.getName());
+        updatePosition = position;
         Node parent = tree.getNode(uiNode.getParentId());
         tracker.addChild(this.convertUINodeToModelNode(uiNode, parent));
     }
-    public void updateChild(UINode uiNode,int position){
-        Node node=tree.getNode(uiNode.getId());
+    
+    public void updateChild(UINode uiNode,int position) {
+        Node node = tree.getNode(uiNode.getId());
         node.setName(uiNode.getName());
+        updatePosition = position;
         tracker.updateNode(node);
-        updatePosition=position;
+    }
 
+    public void deleteNode(UINode uiNode, int position) {
+        updatePosition = position;
+        tracker.deleteNode(uiNode.getId());
     }
 }

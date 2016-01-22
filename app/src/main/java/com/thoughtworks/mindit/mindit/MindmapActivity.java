@@ -19,6 +19,7 @@ public class MindmapActivity extends AppCompatActivity {
 
     ListView listView;
     CustomAdapter adapter;
+    Presenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,12 +28,10 @@ public class MindmapActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-
         listView=(ListView)findViewById(R.id.listView);
         registerForContextMenu(listView);
 
-        Presenter presenter = new Presenter();
+        presenter = new Presenter();
 
         adapter = new CustomAdapter(this, presenter);
         listView.setAdapter(adapter);
@@ -66,16 +65,26 @@ public class MindmapActivity extends AppCompatActivity {
         int position = info.position;
         View view = info.targetView;
         ArrayList<UINode> nodeArrayList = adapter.getNodeArrayList();
+        UINode uiNode = nodeArrayList.get(position);
         for (int i = position + 1; i < nodeArrayList.size(); ) {
             if (nodeArrayList.get(i).getDepth() > nodeArrayList.get(position).getDepth()) {
                 nodeArrayList.remove(i);
             } else {
-
                 break;
             }
         }
-        
+        presenter.deleteNode(uiNode, position);
         nodeArrayList.remove(position);
+        //remove from parent childsubtree
+        UINode parent = null;
+        for (UINode node : nodeArrayList) {
+            if (node.getId().equals(uiNode.getParentId())){
+                parent = node;
+                break;
+            }
+        }
+        parent.removeChild(uiNode);
+        System.out.println("ct:- "+parent.getChildSubTree());
         adapter.notifyDataSetChanged();
     }
 
@@ -86,9 +95,6 @@ public class MindmapActivity extends AppCompatActivity {
         int childPosition=position;
 //        while (++childPosition < nodeArrayList.size() && nodeArrayList.get(childPosition).getDepth() > nodeArrayList.get(position).getDepth()) ;
 //        adapter.showInputDialog(position,childPosition);
-
-
-
     }
 
 }

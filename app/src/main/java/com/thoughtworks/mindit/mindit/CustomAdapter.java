@@ -37,6 +37,7 @@ public class CustomAdapter extends BaseAdapter {
         this.context = context;
         this.presenter = presenter;
         this.nodeArrayList = presenter.buildNodeListFromTree();
+        this.expand(0,nodeArrayList.get(0));
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         Display display = ((Activity)context).getWindowManager().getDefaultDisplay();
 
@@ -187,6 +188,7 @@ public class CustomAdapter extends BaseAdapter {
     private void addChild(int position, UINode currentNode) {
         int i = position;
         while (++i < nodeArrayList.size() && nodeArrayList.get(i).getDepth() > currentNode.getDepth()) ;
+        if(currentNode.getChildSubTree().size()==0)
         currentNode.toggleStatus();
         this.setNewNodePosition(i);
         UINode parentNode = nodeArrayList.get(position);

@@ -97,7 +97,6 @@ public class Node implements Serializable {
     }
 
     public Node addThisChild(Node node, int index) {
-        System.out.println("alo re " +node.getPosition() + " ** " + node.getName());
         ArrayList<String> siblings = this.getChildSubTree();
         if (this.isChildAlreadyExists(node, siblings)) {
             siblings.remove(node.getId());
@@ -115,11 +114,20 @@ public class Node implements Serializable {
                 leftSubTree.add(leftSubTree.size(), node.getId());
             }
         }
-        System.out.println("in child addition "  + this.getLeft() + " " + this.getRight());
         return this;
     }
 
     public Node removeThisChild(Node node) throws NodeDoesNotExistException {
+        if (this.isARoot()) {
+            if (node.getPosition() == "left" && this.isChildAlreadyExists(node, this.getLeft())) {
+                this.getLeft().remove(node.getId());
+            }
+            else if (node.getPosition() == "right" && this.isChildAlreadyExists(node, this.getRight())) {
+                this.getRight().remove(node.getId());
+            }
+            else
+                throw new NodeDoesNotExistException();
+        }
         if (this.isChildAlreadyExists(node,this.childSubTree))
             this.getChildSubTree().remove(node.getId());
         else

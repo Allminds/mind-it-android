@@ -173,7 +173,6 @@ public class HomeActivity extends AppCompatActivity
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            System.out.println("after wait : " + tracker.getTree());
             return rootId;
         }
         @Override
