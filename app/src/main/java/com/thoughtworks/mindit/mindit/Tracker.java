@@ -39,7 +39,7 @@ public class Tracker implements MeteorCallback{
     private Tracker(Context context, String rootId) {
         this.rootId = rootId;
         Meteor.setLoggingEnabled(true);
-        meteor = new Meteor(context, "ws://10.12.23.178:3000/websocket");
+        meteor = new Meteor(context, "ws://10.12.20.36:3000/websocket");
         meteor.setCallback(this);
     }
 
@@ -161,5 +161,23 @@ public class Tracker implements MeteorCallback{
         addValues.put("rootId", node.getRootId());
         addValues.put("index", node.getIndex());
         return addValues;
+    }
+    public void updateNode(final Node node){
+        Map<String, Object> updateQuery = new HashMap<String, Object>();
+        updateQuery.put("_id", node.getId());
+        Map<String, Object> updateValues = getValueMap(node);
+        meteor.update("Mindmaps", updateQuery, updateValues, null, new ResultListener() {
+            @Override
+            public void onSuccess(String s) {
+                System.out.println("update ::: " + s);
+                tree.updateNode(node);
+            }
+
+            @Override
+            public void onError(String s, String s1, String s2) {
+
+            }
+        });
+
     }
 }

@@ -7,10 +7,7 @@ import com.thoughtworks.mindit.mindit.exceptions.NodeAlreadyDeletedException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Observer;
 
 public class Tree implements Serializable, ISubject{
     private static final Object MUTEX = new Object();
@@ -19,6 +16,7 @@ public class Tree implements Serializable, ISubject{
     private Node root;
     private List<IObserver> observers;
     private boolean changed = true;
+    private int updateOption;
 
     public Node getLastUpdatedNode() {
         return lastUpdatedNode;
@@ -75,6 +73,7 @@ public class Tree implements Serializable, ISubject{
         lastUpdatedNode = node;
         parent.addThisChild(node, index);
         nodes.put(node.getId(), node);
+        updateOption =1;
         this.notifyObservers();
         return this;
     }
@@ -89,6 +88,16 @@ public class Tree implements Serializable, ISubject{
             parent.removeThisChild(node);
             nodes.remove(nodeId);
         }
+        updateOption =3;
+        this.notifyObservers();
+        return this;
+    }
+
+    public Tree updateNode(Node node){
+        Node temp=this.getNode(node.getId());
+        temp.setName(node.getName());
+        lastUpdatedNode=temp;
+        updateOption=2;
         this.notifyObservers();
         return this;
     }
@@ -158,7 +167,7 @@ public class Tree implements Serializable, ISubject{
         }
         for (IObserver obj : observersLocal) {
             this.changed = true;
-            obj.update();
+            obj.update(updateOption);
         }
     }
 }

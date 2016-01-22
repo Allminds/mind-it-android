@@ -144,6 +144,8 @@ public class CustomAdapter extends BaseAdapter {
                             if (inputMethodManager != null) {
                                 inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                             }
+                            int position=nodeArrayList.indexOf(currentNode);
+                            presenter.updateChild(currentNode,position);
                             return true;
                         }
                         return false;

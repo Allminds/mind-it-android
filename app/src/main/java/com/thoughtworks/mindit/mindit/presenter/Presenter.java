@@ -43,10 +43,24 @@ public class Presenter implements IObserver{
 
     public Node convertUINodeToModelNode(UINode uiNode, Node parent) {
         Node node;
-        String rootId = parent.getRootId();
-        if(parent.isARoot())
-            rootId = parent.getId();
-        node = new Node(uiNode.getId(), uiNode.getName(), parent, rootId, parent.getChildSubTree().size());
+        String rootId="";
+        if(parent!=null){
+            rootId = parent.getRootId();
+            if(parent.isARoot())
+                rootId = parent.getId();
+            node = new Node(uiNode.getId(), uiNode.getName(), parent, rootId, parent.getChildSubTree().size());
+            for (int i = 0; i <uiNode.getChildSubTree().size() ; i++) {
+                node.getChildSubTree().add(i,uiNode.getChildSubTree().get(i).getId());
+            }
+
+        }
+        else {
+            node = new Node(uiNode.getId(), uiNode.getName(), parent, null, 0);
+            for (int i = 0; i <uiNode.getChildSubTree().size() ; i++) {
+                node.getChildSubTree().add(i,uiNode.getChildSubTree().get(i).getId());
+            }
+        }
+
         System.out.println("converting ui to model " + node);
         return node;
     }
@@ -87,11 +101,20 @@ public class Presenter implements IObserver{
     }
 
     @Override
-    public void update() {
-        nodeList.get(updatePosition).setId(tree.getLastUpdatedNode().getId());
+    public  void update(int updateOption) {
+        switch (updateOption){
+            case 1:
+                nodeList.get(updatePosition).setId(tree.getLastUpdatedNode().getId());
+                break;
+            case 2:
+                nodeList.get(updatePosition).setName(tree.getLastUpdatedNode().getName());
+                break;
+
+
+        }
         System.out.println("presenter is calling update");
         if (customAdapter != null) {
-          //  customAdapter.expand(0, nodeList.get(0));
+            //  customAdapter.expand(0, nodeList.get(0));
             customAdapter.notifyDataSetChanged();
         }
     }
@@ -102,5 +125,12 @@ public class Presenter implements IObserver{
         System.out.println(uiNode.getId() + " ** " + uiNode.getParentId()+"**"+uiNode.getName());
         Node parent = tree.getNode(uiNode.getParentId());
         tracker.addChild(this.convertUINodeToModelNode(uiNode, parent));
+    }
+    public void updateChild(UINode uiNode,int position){
+        Node node=tree.getNode(uiNode.getId());
+        node.setName(uiNode.getName());
+        tracker.updateNode(node);
+        updatePosition=position;
+
     }
 }
