@@ -22,7 +22,15 @@
             <action android:name="android.intent.action.MAIN" />
 
             <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter></activity>
+        </intent-filter>
+        <intent-filter>
+            <data android:scheme="http" android:host="www.mindit.xyz"/>
+            <action android:name="android.intent.action.VIEW"/>
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <category android:name="android.intent.category.DEFAULT"/>
+        </intent-filter>
+
+        </activity>
     </application>
 
 </manifest>

@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -41,7 +42,19 @@ public class HomeActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+        Intent intent = getIntent();
+        String action;
+        Uri data;
+
+        action = intent.getAction();
+        data = intent.getData();
         progressBar = (ProgressBar)findViewById(R.id.progressBar);
+        if(data!=null) {
+            String [] uri=data.toString().split("/");
+            new WaitForTree().execute(uri[uri.length-1]);
+        }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -115,12 +128,12 @@ public class HomeActivity extends AppCompatActivity
                     importDialog.dismiss();
                 }
             });
-            Button paste = (Button)importDialog.findViewById(R.id.paste);
+            Button paste = (Button) importDialog.findViewById(R.id.paste);
             paste.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ClipboardManager myClipboard;
-                    myClipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+                    myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                     ClipData abc = myClipboard.getPrimaryClip();
                     ClipData.Item item = abc.getItemAt(0);
                     String text = item.getText().toString();
