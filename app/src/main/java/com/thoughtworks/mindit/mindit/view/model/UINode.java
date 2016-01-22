@@ -1,4 +1,4 @@
-package com.thoughtworks.mindit.mindit;
+package com.thoughtworks.mindit.mindit.view.model;
 
 import java.util.ArrayList;
 

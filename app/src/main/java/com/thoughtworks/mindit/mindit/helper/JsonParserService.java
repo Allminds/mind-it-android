@@ -1,4 +1,4 @@
-package com.thoughtworks.mindit.mindit;
+package com.thoughtworks.mindit.mindit.helper;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;

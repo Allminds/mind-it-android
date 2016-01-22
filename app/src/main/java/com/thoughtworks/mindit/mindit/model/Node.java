@@ -1,6 +1,6 @@
 package com.thoughtworks.mindit.mindit.model;
 
-import com.thoughtworks.mindit.mindit.exceptions.NodeDoesNotExistException;
+import com.thoughtworks.mindit.mindit.exception.NodeDoesNotExistException;
 
 import java.io.Serializable;
 import java.util.ArrayList;

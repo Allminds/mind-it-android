@@ -1,12 +1,10 @@
 package com.thoughtworks.mindit.mindit.presenter;
 
 import com.thoughtworks.mindit.mindit.Constants;
-import com.thoughtworks.mindit.mindit.CustomAdapter;
-import com.thoughtworks.mindit.mindit.JsonParserService;
-import com.thoughtworks.mindit.mindit.MockDB;
+import com.thoughtworks.mindit.mindit.view.adapter.CustomAdapter;
 import com.thoughtworks.mindit.mindit.PublishSubscribe.IObserver;
 import com.thoughtworks.mindit.mindit.Tracker;
-import com.thoughtworks.mindit.mindit.UINode;
+import com.thoughtworks.mindit.mindit.view.model.UINode;
 import com.thoughtworks.mindit.mindit.model.Tree;
 import com.thoughtworks.mindit.mindit.model.Node;
 

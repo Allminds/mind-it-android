@@ -2,7 +2,7 @@ package com.thoughtworks.mindit.mindit.model;
 
 import com.thoughtworks.mindit.mindit.PublishSubscribe.IObserver;
 import com.thoughtworks.mindit.mindit.PublishSubscribe.ISubject;
-import com.thoughtworks.mindit.mindit.exceptions.NodeAlreadyDeletedException;
+import com.thoughtworks.mindit.mindit.exception.NodeAlreadyDeletedException;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.thoughtworks.mindit.mindit;
+package com.thoughtworks.mindit.mindit.view.adapter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,6 +15,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.thoughtworks.mindit.mindit.Constants;
+import com.thoughtworks.mindit.mindit.R;
+import com.thoughtworks.mindit.mindit.view.model.UINode;
 import com.thoughtworks.mindit.mindit.presenter.Presenter;
 
 import java.util.ArrayList;
@@ -245,5 +248,12 @@ public class CustomAdapter extends BaseAdapter {
 
     public void setNewNodePosition(int newNodePosition) {
         this.newNodePosition = newNodePosition;
+    }
+
+    private class NodeHolder{
+        ImageView expandCollapseButton;
+        TextView textViewForName;
+        ImageView addNodeButton;
+        EditText editText;
     }
 }

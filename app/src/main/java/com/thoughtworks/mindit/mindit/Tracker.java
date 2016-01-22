@@ -3,6 +3,8 @@ package com.thoughtworks.mindit.mindit;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.thoughtworks.mindit.mindit.helper.JsonParserService;
+import com.thoughtworks.mindit.mindit.helper.Meteor;
 import com.thoughtworks.mindit.mindit.model.Node;
 import com.thoughtworks.mindit.mindit.model.Tree;
 
@@ -10,7 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import im.delight.android.ddp.Meteor;
 import im.delight.android.ddp.MeteorCallback;
 import im.delight.android.ddp.ResultListener;
 
@@ -73,7 +74,7 @@ public class Tracker implements MeteorCallback{
     public void onConnect(boolean b) {
         System.out.println("Connected");
         this.findTree(rootId);
-
+        meteor.subscribe("mindmap", new String []{rootId});
     }
 
     @Override

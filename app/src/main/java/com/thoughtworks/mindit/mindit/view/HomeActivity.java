@@ -1,15 +1,12 @@
-package com.thoughtworks.mindit.mindit;
+package com.thoughtworks.mindit.mindit.view;
 
 import android.app.Dialog;
-import android.app.FragmentManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -26,6 +23,9 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.thoughtworks.mindit.mindit.view.adapter.ImageAdapter;
+import com.thoughtworks.mindit.mindit.R;
+import com.thoughtworks.mindit.mindit.Tracker;
 import com.thoughtworks.mindit.mindit.model.Tree;
 
 public class HomeActivity extends AppCompatActivity
