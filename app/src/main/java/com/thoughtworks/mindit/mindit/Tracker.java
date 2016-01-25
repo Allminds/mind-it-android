@@ -3,19 +3,25 @@ package com.thoughtworks.mindit.mindit;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.thoughtworks.mindit.mindit.helper.ITracker;
 import com.thoughtworks.mindit.mindit.helper.JsonParserService;
 import com.thoughtworks.mindit.mindit.helper.Meteor;
 import com.thoughtworks.mindit.mindit.model.Node;
 import com.thoughtworks.mindit.mindit.model.Tree;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import im.delight.android.ddp.MeteorCallback;
 import im.delight.android.ddp.ResultListener;
 
-public class Tracker implements MeteorCallback{
+public class Tracker implements MeteorCallback, ITracker{
     private Meteor meteor;
     private String rootId;
     private Tree tree;
@@ -24,7 +30,7 @@ public class Tracker implements MeteorCallback{
     private Tracker(Context context, String rootId) {
         this.rootId = rootId;
         Meteor.setLoggingEnabled(true);
-        meteor = new Meteor(context, "ws://10.12.20.188:3000/websocket");
+        meteor = new Meteor(context, "ws://10.12.21.15:3000/websocket", this);
         meteor.setCallback(this);
     }
 
@@ -54,7 +60,6 @@ public class Tracker implements MeteorCallback{
         meteor.call("findTree", new String[]{rootId}, new ResultListener() {
             @Override
             public void onSuccess(String jsonResponse) {
-                System.out.println(jsonResponse);
                 tree = JsonParserService.parse(jsonResponse);
             }
 
@@ -83,7 +88,6 @@ public class Tracker implements MeteorCallback{
             public void onError(String s, String s1, String s2) {
             }
         });
-
     }
 
     public void deleteNode (String nodeID){
@@ -103,7 +107,7 @@ public class Tracker implements MeteorCallback{
         meteor.update("Mindmaps", updateQuery, updateValues, null, new ResultListener() {
             @Override
             public void onSuccess(String s) {
-                tree.updateNode(node);
+                tree.updateNode(node, "name", node.getName());
             }
 
             @Override
@@ -152,7 +156,7 @@ public class Tracker implements MeteorCallback{
     public void onConnect(boolean b) {
         System.out.println("Connected");
         this.findTree(rootId);
-        //meteor.subscribe("mindmap", new String[]{rootId});
+        meteor.subscribe("mindmap", new String[]{rootId});
     }
 
     @Override
@@ -178,5 +182,43 @@ public class Tracker implements MeteorCallback{
     @Override
     public void onException(Exception e) {
 
+    }
+
+    @Override
+    public void onAdded(String collectionName, String documentID, String fieldsJson) {
+        Node node = JsonParserService.parseNode(fieldsJson);
+        node.set_id(documentID);
+//        if (tree != null && !tree.isAlreadyExists(node))
+//            tree.addNode(node);
+    }
+
+    @Override
+    public void onChanged(String collectionName, String documentID, String updatedValuesJson, String removedValuesJson) {
+        Node node = tree.getNode(documentID);
+
+        try {
+            JSONObject fields = JsonParserService.rawParse(updatedValuesJson);
+            if (fields.has("name")) {
+                String name = fields.getString("name");
+                tree.updateNode(node, "name", name);
+            }
+            if (fields.has("childSubTree")) {
+
+                JSONArray jsonChildSubTree = (JSONArray)fields.get("childSubTree");
+                ArrayList<String> childSubTree = new ArrayList<String>();
+                for (int i = 0; i < jsonChildSubTree.length(); i++) {
+                    childSubTree.add(jsonChildSubTree.getString(i));
+                }
+                System.out.println("childsubtree " + childSubTree);
+                tree.updateNode(node, "childSubTree", childSubTree);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onRemoved(String collectionName, String documentID) {
+        System.out.println("removed : " + documentID);
     }
 }

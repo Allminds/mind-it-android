@@ -76,6 +76,8 @@ public class Meteor {
     private boolean mConnected;
     private String mLoggedInUserId;
 
+    private ITracker iTracker;
+
     /**
      * Returns a new instance for a client connecting to a server via DDP over websocket
      *
@@ -86,6 +88,11 @@ public class Meteor {
      */
     public Meteor(final Context context, final String serverUri) {
         this(context, serverUri, SUPPORTED_DDP_VERSIONS[0]);
+    }
+
+    public Meteor(final Context context, final String serverUri, ITracker iTracker) {
+        this(context, serverUri, SUPPORTED_DDP_VERSIONS[0]);
+        this.iTracker = iTracker;
     }
 
     /**
@@ -412,8 +419,8 @@ public class Meteor {
                     else {
                         newValuesJson = null;
                     }
-
-                    mCallbackProxy.onDataAdded(collectionName, documentID, newValuesJson);
+                    iTracker.onAdded(collectionName, documentID, newValuesJson);
+                    //mCallbackProxy.onDataAdded(collectionName, documentID, newValuesJson);
                 }
                 else if (message.equals(Protocol.Message.CHANGED)) {
                     final String documentID;
@@ -447,8 +454,8 @@ public class Meteor {
                     else {
                         removedValuesJson = null;
                     }
-                    System.out.println("Chinmay presenting u : " + collectionName + " * " + documentID + " * " + updatedValuesJson + " * " + removedValuesJson);
-                    mCallbackProxy.onDataChanged(collectionName, documentID, updatedValuesJson, removedValuesJson);
+                    iTracker.onChanged(collectionName, documentID, updatedValuesJson, removedValuesJson);
+                    //mCallbackProxy.onDataChanged(collectionName, documentID, updatedValuesJson, removedValuesJson);
                 }
                 else if (message.equals(Protocol.Message.REMOVED)) {
                     final String documentID;
@@ -466,8 +473,8 @@ public class Meteor {
                     else {
                         collectionName = null;
                     }
-
-                    mCallbackProxy.onDataRemoved(collectionName, documentID);
+                    iTracker.onRemoved(collectionName, documentID);
+//                    mCallbackProxy.onDataRemoved(collectionName, documentID);
                 }
                 else if (message.equals(Protocol.Message.RESULT)) {
                     // check if we have to process any result data internally

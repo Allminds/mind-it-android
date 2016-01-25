@@ -6,6 +6,9 @@ import com.google.gson.reflect.TypeToken;
 import com.thoughtworks.mindit.mindit.model.Node;
 import com.thoughtworks.mindit.mindit.model.Tree;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +22,6 @@ public class JsonParserService {
         Tree tree = null;
         List<Node> nodes = gson.fromJson(json, type);
 
-        System.out.println("nodes " + nodes);
         if (nodes != null && nodes.size() != 0)
             tree = convertToTree(nodes);
         if (tree != null) {
@@ -43,5 +45,11 @@ public class JsonParserService {
             nodeMap.put(node.getId(), node);
         }
         return Tree.getInstance(nodeMap);
+    }
+
+    public static JSONObject rawParse(String json) throws JSONException {
+        JSONObject jsonObject = new JSONObject(json);
+        System.out.println("jsonobject: " + jsonObject);
+        return jsonObject;
     }
 }

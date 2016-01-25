@@ -9,15 +9,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class Tree implements Serializable, ISubject {
-    private static final Object MUTEX = new Object();
     private HashMap<String, Node> nodes;
     private Node root;
+
     private List<IObserver> observers;
+    private static final Object MUTEX = new Object();
     private boolean changed = true;
+
     private int updateOption;
     private Node lastUpdatedNode;
+
     private static Tree instance;
 
     private Tree(HashMap<String, Node> nodes) {
@@ -58,6 +62,10 @@ public class Tree implements Serializable, ISubject {
 
     private boolean isNodeAlreadyDeleted(String nodeId) {
         return (this.getNode(nodeId) == null);
+    }
+
+    public boolean isAlreadyExists(Node node) {
+        return (this.getNode(node.getId()) != null);
     }
 
     public void fillRootChildSubtree() {
@@ -104,14 +112,18 @@ public class Tree implements Serializable, ISubject {
         return this;
     }
 
-    public Tree updateNode(Node newNode) {
+    public Tree updateNode(Node node, String attribute, Object data) {
         updateOption = Constants.TREE_UPDATE_OPTIONS.UPDATE.getValue();
 
-        Node node = this.getNode(newNode.getId());
-        node.setName(newNode.getName());
-        lastUpdatedNode = node;
+        switch (attribute){
+            case "name":
+                node.setName((String)data);
+                break;
+        }
 
-        this.notifyObservers();
+        lastUpdatedNode = node;
+        System.out.println("updated node " + node);
+        //this.notifyObservers();
         return this;
     }
 
