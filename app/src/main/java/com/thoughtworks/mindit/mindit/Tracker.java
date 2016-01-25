@@ -42,17 +42,6 @@ public class Tracker implements MeteorCallback{
         return tree;
     }
 
-<<<<<<< 4c1e5b4a31369cde72180e05b7451a164da56530
-=======
-    private Tree tree;
-
-    private Tracker(Context context, String rootId) {
-        this.rootId = rootId;
-        Meteor.setLoggingEnabled(true);
-        meteor = new Meteor(context, "ws://10.12.20.188:3000/websocket");
-        meteor.setCallback(this);
-    }
-
     public void subscribe(String rootId) {
         meteor.subscribe("mindmap", new String[]{rootId});
     }
@@ -61,7 +50,6 @@ public class Tracker implements MeteorCallback{
         return meteor.isConnected();
     }
 
->>>>>>> [Prajakta/Shilkumar]cut/copy/paste of node
     public void findTree(String rootId) {
         meteor.call("findTree", new String[]{rootId}, new ResultListener() {
             @Override
