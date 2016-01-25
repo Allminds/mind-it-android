@@ -1,5 +1,6 @@
 package com.thoughtworks.mindit.mindit.view;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -9,10 +10,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.thoughtworks.mindit.mindit.view.adapter.CustomAdapter;
 import com.thoughtworks.mindit.mindit.R;
-import com.thoughtworks.mindit.mindit.view.model.UINode;
 import com.thoughtworks.mindit.mindit.presenter.Presenter;
+import com.thoughtworks.mindit.mindit.view.adapter.CustomAdapter;
+import com.thoughtworks.mindit.mindit.view.model.UINode;
 
 import java.util.ArrayList;
 
@@ -21,6 +22,7 @@ public class MindmapActivity extends AppCompatActivity {
     ListView listView;
     CustomAdapter adapter;
     Presenter presenter;
+    UINode clipboard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,21 +46,110 @@ public class MindmapActivity extends AppCompatActivity {
     {
         super.onCreateContextMenu(menu, v, menuInfo);
         menu.setHeaderTitle("Select The Action");
-        menu.add(0, v.getId(), 0, "Add");
-        menu.add(0, v.getId(), 0, "Delete");
+        menu.add(0, 1, 0, "Add");
+        menu.add(0, 2, 0, "Delete");
+        menu.add(0, 3, 0, "Copy");
+        menu.add(0, 4, 0, "Cut");
+        if(clipboard!=null)
+            menu.add(0, 5, 0, "Paste");
+
+
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item){
-        if(item.getTitle()=="Add"){
-            addNewNode(item);
-        }
-        else if(item.getTitle()=="Delete"){
-            deleteNode(item);
-        }else{
-            return false;
+        switch (item.getItemId()){
+            case 1:
+                addNewNode(item);
+                break;
+            case 2:
+                deleteNode(item);
+                break;
+            case 3:
+                copyNode(item);
+                break;
+            case 4:
+                cutNode(item);
+                break;
+            case 5:
+                pasteNode(item);
+                break;
+            default:
+                return false;
         }
         return true;
+    }
+
+
+    private void cutNode(MenuItem item) {
+        int position=getPosition(item);
+        UINode node=adapter.getNodeArrayList().get(position);
+        clipboard=node;
+        deleteNode(item);
+        clipboard.setId("");
+        clipboard.setStatus("collapse");
+    }
+
+    private void pasteNode(MenuItem item) {
+        int position = getPosition(item);
+        int childPosition=position;
+        UINode parent=adapter.getNodeArrayList().get(position);
+        while (++childPosition < adapter.getNodeArrayList().size() && adapter.getNodeArrayList().get(childPosition).getDepth() > adapter.getNodeArrayList().get(position).getDepth()) ;
+        clipboard.setDepth(adapter.getNodeArrayList().get(position).getDepth() + 20);
+
+        clipboard.setParentId(adapter.getNodeArrayList().get(position).getId());
+
+        parent.getChildSubTree().add(clipboard);
+
+
+        new WaitForTree().execute(clipboard);
+
+        updateChildSubTree(clipboard);
+        if(parent.getStatus().equals("collapse"))
+        {
+            parent.setStatus("expand");
+            adapter.expand(position, parent);
+
+
+        }
+        else
+            adapter.getNodeArrayList().add(childPosition,clipboard);
+        UINode tmp=clipboard;
+
+        adapter.notifyDataSetChanged();
+        clipboard=new UINode(clipboard.getName(),0,"");
+        copyChildSubTree(tmp, clipboard);
+    }
+
+    private void updateChildSubTree(UINode nodeInBuffer) {
+        for(UINode node:nodeInBuffer.getChildSubTree())
+        {
+            node.setDepth(nodeInBuffer.getDepth()+20);
+            node.setParentId(nodeInBuffer.getId());
+            new WaitForTree().execute(node);
+            updateChildSubTree(node);
+        }
+    }
+
+    private void copyNode(MenuItem item) {
+        int position = getPosition(item);
+        UINode node = adapter.getNodeArrayList().get(position);
+        clipboard=new UINode(node.getName(),0,"");
+        copyChildSubTree(node, clipboard);
+
+    }
+
+    private int getPosition(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        return info.position;
+    }
+
+    private void copyChildSubTree(UINode node, UINode nodeInBuffer) {
+        for (UINode node1 : node.getChildSubTree()) {
+            UINode child = new UINode(node1.getName(), 0, node.getId());
+            nodeInBuffer.getChildSubTree().add(child);
+            copyChildSubTree(node1, child);
+        }
     }
 
     private void deleteNode(MenuItem item) {
@@ -96,6 +187,24 @@ public class MindmapActivity extends AppCompatActivity {
         int childPosition=position;
 //        while (++childPosition < nodeArrayList.size() && nodeArrayList.get(childPosition).getDepth() > nodeArrayList.get(position).getDepth()) ;
 //        adapter.showInputDialog(position,childPosition);
+    }
+    private class WaitForTree extends AsyncTask<UINode,Void,UINode>
+    {
+        @Override
+        protected void onPreExecute(){
+
+        }
+        @Override
+        protected UINode doInBackground(UINode... params) {
+            UINode clipboard = params[0];
+            presenter.addChild(clipboard);
+            while (clipboard.getId().equals(""));
+            return clipboard;
+        }
+        @Override
+        protected void onPostExecute(UINode result) {
+            updateChildSubTree(result);
+        }
     }
 
 }

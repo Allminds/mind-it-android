@@ -18,8 +18,15 @@ import im.delight.android.ddp.ResultListener;
 public class Tracker implements MeteorCallback{
     private Meteor meteor;
     private String rootId;
-
+    private Tree tree;
     private static Tracker instance;
+
+    private Tracker(Context context, String rootId) {
+        this.rootId = rootId;
+        Meteor.setLoggingEnabled(true);
+        meteor = new Meteor(context, "ws://10.12.21.15:3000/websocket");
+        meteor.setCallback(this);
+    }
 
     public static Tracker getInstance(Context context, String rootId) {
         if(instance == null)
@@ -35,12 +42,14 @@ public class Tracker implements MeteorCallback{
         return tree;
     }
 
+<<<<<<< 4c1e5b4a31369cde72180e05b7451a164da56530
+=======
     private Tree tree;
 
     private Tracker(Context context, String rootId) {
         this.rootId = rootId;
         Meteor.setLoggingEnabled(true);
-        meteor = new Meteor(context, "ws://10.12.23.178:3000/websocket");
+        meteor = new Meteor(context, "ws://10.12.20.188:3000/websocket");
         meteor.setCallback(this);
     }
 
@@ -52,6 +61,7 @@ public class Tracker implements MeteorCallback{
         return meteor.isConnected();
     }
 
+>>>>>>> [Prajakta/Shilkumar]cut/copy/paste of node
     public void findTree(String rootId) {
         meteor.call("findTree", new String[]{rootId}, new ResultListener() {
             @Override
@@ -66,60 +76,20 @@ public class Tracker implements MeteorCallback{
         });
     }
 
-    public boolean isNull(){
-        return tree==null;
-    }
-
-    @Override
-    public void onConnect(boolean b) {
-        System.out.println("Connected");
-        this.findTree(rootId);
-        meteor.subscribe("mindmap", new String []{rootId});
-    }
-
-    @Override
-    public void onDisconnect() {
-
-    }
-
-    @Override
-    public void onDataAdded(String collectionName, String documentID, String fieldsJson) {
-//        System.out.println("Data added to <" + collectionName + "> in document <" + documentID + ">");
-//        System.out.println("    Added: " + fieldsJson);
-//        Node node = JsonParserService.parseNode(fieldsJson);
-//        node.set_id(documentID);
-    }
-
-    @Override
-    public void onDataChanged(String collectionName, String documentID, String updatedValuesJson, String removedValuesJson) {
-//        System.out.println("Data Changed to <"+collectionName+"> in document <"+documentID+">");
-//        System.out.println("    Chnaged: " + updatedValuesJson);
-//        System.out.println("s3: " + removedValuesJson);
-//        Node node = tree.getNode(documentID);
-    }
-
-    @Override
-    public void onDataRemoved(String collectionName, String documentID) {
-        //System.out.println("Data removed to <"+collectionName+"> in document <"+documentID+">");
-    }
-
-    @Override
-    public void onException(Exception e) {
-    }
-
     public void addChild(final Node node) {
         Map<String, Object> addValues = getValueMap(node);
         meteor.insert("Mindmaps", addValues, new ResultListener() {
             @Override
             public void onSuccess(String s) {
                 //ignore first([) and last character(])
-                s = s.substring(1,s.length()-1);
+                s = s.substring(1, s.length() - 1);
                 Node tempNode = JsonParserService.parseNode(s);
                 node.set_id(tempNode.getId());
                 tree.addNode(node);
 
                 updateParentInDB(node);
             }
+
             @Override
             public void onError(String s, String s1, String s2) {
             }
@@ -136,6 +106,24 @@ public class Tracker implements MeteorCallback{
         }
         updateParentInDB(node);
     }
+
+    public void updateNode(final Node node){
+        Map<String, Object> updateQuery = new HashMap<String, Object>();
+        updateQuery.put("_id", node.getId());
+        Map<String, Object> updateValues = getValueMap(node);
+        meteor.update("Mindmaps", updateQuery, updateValues, null, new ResultListener() {
+            @Override
+            public void onSuccess(String s) {
+                tree.updateNode(node);
+            }
+
+            @Override
+            public void onError(String s, String s1, String s2) {
+
+            }
+        });
+    }
+
     private void updateParentInDB(Node node) {
         Node parent = tree.getNode(node.getParentId());
         Map<String, Object> updateQuery = new HashMap<String, Object>();
@@ -172,21 +160,36 @@ public class Tracker implements MeteorCallback{
         addValues.put("index", node.getIndex());
         return addValues;
     }
-    public void updateNode(final Node node){
-        Map<String, Object> updateQuery = new HashMap<String, Object>();
-        updateQuery.put("_id", node.getId());
-        Map<String, Object> updateValues = getValueMap(node);
-        meteor.update("Mindmaps", updateQuery, updateValues, null, new ResultListener() {
-            @Override
-            public void onSuccess(String s) {
-                tree.updateNode(node);
-            }
 
-            @Override
-            public void onError(String s, String s1, String s2) {
+    @Override
+    public void onConnect(boolean b) {
+        System.out.println("Connected");
+        this.findTree(rootId);
+        meteor.subscribe("mindmap", new String[]{rootId});
+    }
 
-            }
-        });
+    @Override
+    public void onDisconnect() {
+
+    }
+
+    @Override
+    public void onDataAdded(String s, String s1, String s2) {
+
+    }
+
+    @Override
+    public void onDataChanged(String s, String s1, String s2, String s3) {
+
+    }
+
+    @Override
+    public void onDataRemoved(String s, String s1) {
+
+    }
+
+    @Override
+    public void onException(Exception e) {
 
     }
 }

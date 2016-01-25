@@ -27,7 +27,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:id="@+id/editUrl"
-        android:text="7Qq42SLBiwNBi3Fto"
+<<<<<<< 4c1e5b4a31369cde72180e05b7451a164da56530
+        android:text="DpQShfTGb4pS55Euv"
+=======
+        android:text="LxuQiqMhFmBN6fuF6"
+>>>>>>> [Prajakta/Shilkumar]cut/copy/paste of node
         android:background="@android:color/transparent"
         android:singleLine="true"
         android:inputType="text|textNoSuggestions"

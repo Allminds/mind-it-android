@@ -18,6 +18,8 @@ public class Presenter implements IObserver{
 
     private ArrayList<UINode> nodeList;
     int updatePosition;
+
+    UINode uiNode;
     public void setCustomAdapter(CustomAdapter customAdapter) {
         this.customAdapter = customAdapter;
         updatePosition=-1;
@@ -30,6 +32,7 @@ public class Presenter implements IObserver{
         tracker = Tracker.getInstance();
         tree = tracker.getTree();
         tree.register(this);
+        uiNode=null;
     }
 
     public UINode convertModelNodeToUINode(Node node) {
@@ -99,7 +102,8 @@ public class Presenter implements IObserver{
     public  void update(int updateOption) {
         switch (updateOption){
             case 1:
-                nodeList.get(updatePosition).setId(tree.getLastUpdatedNode().getId());
+                //nodeList.get(updatePosition).setId(tree.getLastUpdatedNode().getId());
+                this.uiNode.setId(tree.getLastUpdatedNode().getId());
                 break;
             case 2:
                 nodeList.get(updatePosition).setName(tree.getLastUpdatedNode().getName());
@@ -116,9 +120,23 @@ public class Presenter implements IObserver{
 
     public void addChild(int position) {
         UINode uiNode = nodeList.get(position);
+        this.uiNode=uiNode;
         updatePosition = position;
         Node parent = tree.getNode(uiNode.getParentId());
         tracker.addChild(this.convertUINodeToModelNode(uiNode, parent));
+    }
+
+    public void addChild(UINode uiNode)
+    {
+        Node parent=tree.getNode(uiNode.getParentId());
+        String rootId=parent.getRootId();
+        if(parent.isARoot())
+            rootId=parent.getId();
+
+        Node node=new Node("",uiNode.getName(),parent,rootId,0);
+        this.uiNode=uiNode;
+        tracker.addChild(node);
+
     }
     
     public void updateChild(UINode uiNode,int position) {
