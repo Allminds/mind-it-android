@@ -1,10 +1,9 @@
 package com.thoughtworks.mindit.mindit.model;
 
+import com.thoughtworks.mindit.mindit.Constants;
 import com.thoughtworks.mindit.mindit.exception.NodeDoesNotExistException;
-
 import java.io.Serializable;
 import java.util.ArrayList;
-
 
 public class Node implements Serializable {
     private String _id;
@@ -17,27 +16,7 @@ public class Node implements Serializable {
     private int depth;
     private int index;
     private String position;
-
     private static boolean directionToggler = true;
-
-    private String getFirstLevelChildPosition () {
-        if(directionToggler) {
-            directionToggler = false;
-            return "right";
-        }
-        else {
-            directionToggler = true;
-            return "left";
-        }
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
 
     public Node(String id, String text, Node parent, String rootId, int index){
         this._id = id;
@@ -52,12 +31,13 @@ public class Node implements Serializable {
         this.position = (parent != null) ? ((this.rootId == this.parentId ) ? this.getFirstLevelChildPosition() : parent.getPosition()) : null;
     }
 
-    private boolean isChildAlreadyExists(Node node, ArrayList<String> siblings) {
-        return siblings.contains(node.getId());
+    //Getters-setters start
+    public String getPosition() {
+        return position;
     }
 
-    private void setId(String id) {
-        this._id = id;
+    public void setPosition(String position) {
+        this.position = position;
     }
 
     private void setParentId(String parentId) {
@@ -88,60 +68,6 @@ public class Node implements Serializable {
         this._id = _id;
     }
 
-    public boolean isNotARoot() {
-        return this.getParentId() != null;
-    }
-
-    public boolean isARoot() {
-        return this.getParentId() == null;
-    }
-
-    public Node addThisChild(Node node, int index) {
-        ArrayList<String> siblings = this.getChildSubTree();
-        if (this.isChildAlreadyExists(node, siblings)) {
-            siblings.remove(node.getId());
-        }
-        siblings.add(index, node.getId());
-        node.setParentId(this.getId());
-
-        if(this.isARoot()) {
-            if (node.getPosition() == "right") {
-                ArrayList<String> rightSubTree = this.getRight();
-                rightSubTree.add(rightSubTree.size(), node.getId());
-            }
-            if (node.getPosition() == "left") {
-                ArrayList<String> leftSubTree = this.getLeft();
-                leftSubTree.add(leftSubTree.size(), node.getId());
-            }
-        }
-        return this;
-    }
-
-    public Node removeThisChild(Node node) throws NodeDoesNotExistException {
-        if (this.isARoot()) {
-            if (node.getPosition() == "left" && this.isChildAlreadyExists(node, this.getLeft())) {
-                this.getLeft().remove(node.getId());
-            }
-            else if (node.getPosition() == "right" && this.isChildAlreadyExists(node, this.getRight())) {
-                this.getRight().remove(node.getId());
-            }
-            else
-                throw new NodeDoesNotExistException();
-        }
-        if (this.isChildAlreadyExists(node,this.childSubTree))
-            this.getChildSubTree().remove(node.getId());
-        else
-            throw new NodeDoesNotExistException();
-        return node;
-    }
-
-    public Node updateParent(Node newParent, Node oldParent, int index) throws Exception {
-        oldParent.removeThisChild(this);
-        newParent.addThisChild(this, index);
-        this.setParentId(newParent.getId());
-        return this;
-    }
-
     public String getId() {
         return _id;
     }
@@ -168,6 +94,89 @@ public class Node implements Serializable {
 
     public int getDepth() {
         return depth;
+    }
+    //Getters-setters end
+
+    public Node updateParent(Node newParent, Node oldParent, int index) throws Exception {
+        oldParent.removeThisChild(this);
+        newParent.addThisChild(this, index);
+        this.setParentId(newParent.getId());
+        return this;
+    }
+
+    private String getFirstLevelChildPosition () {
+        if(directionToggler) {
+            directionToggler = false;
+            return "right";
+        }
+        else {
+            directionToggler = true;
+            return "left";
+        }
+    }
+
+    private boolean isChildAlreadyExists(Node node, ArrayList<String> siblings) {
+        return siblings.contains(node.getId());
+    }
+
+    public boolean isNotARoot() {
+        return this.getParentId() != null;
+    }
+
+    public boolean isARoot() {
+        return this.getParentId() == null;
+    }
+
+    public Node addThisChild(Node node, int index) {
+        ArrayList<String> siblings = this.getChildSubTree();
+        if (this.isChildAlreadyExists(node, siblings)) {
+            siblings.remove(node.getId());
+        }
+        siblings.add(index, node.getId());
+        node.setParentId(this.getId());
+
+        if(this.isARoot()) {
+            this.addThisFirstLevelChildToSubTree(node);
+        }
+        return this;
+    }
+
+    private void addThisFirstLevelChildToSubTree(Node node) {
+        if (node.getPosition().equals(Constants.POSITION.RIGHT)) {
+            ArrayList<String> rightSubTree = this.getRight();
+            if (this.isChildAlreadyExists(node, rightSubTree))
+                rightSubTree.remove(node.getId());
+            rightSubTree.add(rightSubTree.size(), node.getId());
+        }
+        if (node.getPosition().equals(Constants.POSITION.LEFT)) {
+            ArrayList<String> leftSubTree = this.getLeft();
+            if (this.isChildAlreadyExists(node, leftSubTree))
+                leftSubTree.remove(node.getId());
+            leftSubTree.add(leftSubTree.size(), node.getId());
+        }
+    }
+
+    public Node removeThisChild(Node node) throws NodeDoesNotExistException {
+        if (this.isARoot()) {
+            System.out.println("remove parent : " + this);
+            this.removeThisFirstLevelChildFromSubtree(node);
+        }
+        if (this.isChildAlreadyExists(node,this.childSubTree))
+            this.getChildSubTree().remove(node.getId());
+        else
+            throw new NodeDoesNotExistException();
+        return node;
+    }
+
+    private void removeThisFirstLevelChildFromSubtree(Node node) throws NodeDoesNotExistException {
+        if (node.getPosition().equals(Constants.POSITION.RIGHT.toString()) && this.isChildAlreadyExists(node, this.getRight())) {
+            this.getRight().remove(node.getId());
+        }
+        else if (node.getPosition().equals(Constants.POSITION.LEFT.toString()) && this.isChildAlreadyExists(node, this.getLeft())) {
+            this.getLeft().remove(node.getId());
+        }
+        else
+            throw new NodeDoesNotExistException();
     }
 
     @Override
