@@ -97,11 +97,7 @@ public class CustomAdapter extends BaseAdapter {
                 @Override
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
                     if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                        nodeHolder.textViewForName.setText(nodeHolder.editText.getText());
-                        currentNode.setName("" + nodeHolder.editText.getText());
-                        nodeHolder.editText.setVisibility(View.GONE);
-                        nodeHolder.textViewForName.setVisibility(View.VISIBLE);
-                        newNodePosition=-1;
+                        updateText(nodeHolder, currentNode);
                         presenter.addChild(position);
                         return true;
                     }
@@ -111,6 +107,14 @@ public class CustomAdapter extends BaseAdapter {
 
         }
         return rowView;
+    }
+
+    private void updateText(NodeHolder nodeHolder, UINode currentNode) {
+        nodeHolder.textViewForName.setText(nodeHolder.editText.getText());
+        currentNode.setName("" + nodeHolder.editText.getText());
+        nodeHolder.editText.setVisibility(View.GONE);
+        nodeHolder.textViewForName.setVisibility(View.VISIBLE);
+        newNodePosition=-1;
     }
 
     private void setText(final NodeHolder nodeHolder, View rowView, final UINode currentNode) {

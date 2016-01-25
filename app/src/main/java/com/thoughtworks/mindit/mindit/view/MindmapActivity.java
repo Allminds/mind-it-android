@@ -104,12 +104,10 @@ public class MindmapActivity extends AppCompatActivity {
 
         new WaitForTree().execute(clipboard);
 
-        updateChildSubTree(clipboard);
         if(parent.getStatus().equals("collapse"))
         {
             parent.setStatus("expand");
             adapter.expand(position, parent);
-
 
         }
         else
@@ -127,7 +125,6 @@ public class MindmapActivity extends AppCompatActivity {
             node.setDepth(nodeInBuffer.getDepth()+20);
             node.setParentId(nodeInBuffer.getId());
             new WaitForTree().execute(node);
-            updateChildSubTree(node);
         }
     }
 
@@ -196,10 +193,11 @@ public class MindmapActivity extends AppCompatActivity {
         }
         @Override
         protected UINode doInBackground(UINode... params) {
-            UINode clipboard = params[0];
-            presenter.addChild(clipboard);
-            while (clipboard.getId().equals(""));
-            return clipboard;
+            UINode node = params[0];
+            node.setId("");
+            presenter.addChild(node);
+            while (node.getId().equals(""));
+            return node;
         }
         @Override
         protected void onPostExecute(UINode result) {
