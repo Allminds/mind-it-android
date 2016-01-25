@@ -4,15 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.view.Display;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.thoughtworks.mindit.mindit.R;
 import com.thoughtworks.mindit.mindit.view.model.UINode;
@@ -23,7 +19,7 @@ import java.util.ArrayList;
 public class CustomAdapter extends BaseAdapter {
     private final int deviceWidth;
     private final int deviceHeight;
-    private final CustomAdapterHelper customAdapterHelper = new CustomAdapterHelper(this);
+    private final CustomAdapterHelper customAdapterHelper;
     private Context context;
     private ArrayList<UINode> nodeArrayList;
     private LayoutInflater layoutInflater;
@@ -35,6 +31,7 @@ public class CustomAdapter extends BaseAdapter {
         this.context = context;
         this.presenter = presenter;
         this.nodeArrayList = presenter.buildNodeListFromTree();
+        customAdapterHelper = new CustomAdapterHelper(this);
         customAdapterHelper.expand(0, nodeArrayList.get(0));
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         Display display = ((Activity)context).getWindowManager().getDefaultDisplay();
@@ -93,11 +90,11 @@ public class CustomAdapter extends BaseAdapter {
         nodeHolder.editText=(EditText)rowView.findViewById(R.id.editText);
         nodeHolder.editText.setVisibility(View.GONE);
 
-        customAdapterHelper.setText(nodeHolder, rowView, currentNode);
+        customAdapterHelper.initializeTextView(nodeHolder, rowView, currentNode);
         customAdapterHelper.addPadding(position, rowView);
         customAdapterHelper.setImageForExpandCollapse(nodeHolder, rowView, currentNode);
-        customAdapterHelper.setEventToExpandCollpse(position, nodeHolder, currentNode);
-        customAdapterHelper.setEventToAddNode(position, nodeHolder, rowView, currentNode);
+        customAdapterHelper.setEventToExpandCollapse(position, nodeHolder, currentNode);
+        customAdapterHelper.setEventToAddNodeButton(position, nodeHolder, rowView, currentNode);
         if(position == newNodePosition)
             customAdapterHelper.addNewNode(position, nodeHolder, currentNode);
 
