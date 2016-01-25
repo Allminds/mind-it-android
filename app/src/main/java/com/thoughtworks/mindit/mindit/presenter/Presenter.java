@@ -1,30 +1,21 @@
 package com.thoughtworks.mindit.mindit.presenter;
 
 import com.thoughtworks.mindit.mindit.Constants;
-import com.thoughtworks.mindit.mindit.view.adapter.CustomAdapter;
 import com.thoughtworks.mindit.mindit.PublishSubscribe.IObserver;
 import com.thoughtworks.mindit.mindit.Tracker;
-import com.thoughtworks.mindit.mindit.view.model.UINode;
-import com.thoughtworks.mindit.mindit.model.Tree;
 import com.thoughtworks.mindit.mindit.model.Node;
-
+import com.thoughtworks.mindit.mindit.model.Tree;
+import com.thoughtworks.mindit.mindit.view.adapter.CustomAdapter;
+import com.thoughtworks.mindit.mindit.view.model.UINode;
 
 import java.util.ArrayList;
 
 
-public class Presenter implements IObserver{
+public class Presenter implements IObserver {
     private Tree tree;
     private Tracker tracker;
-
     private ArrayList<UINode> nodeList;
-    int updatePosition;
-
-    UINode uiNode;
-    public void setCustomAdapter(CustomAdapter customAdapter) {
-        this.customAdapter = customAdapter;
-        updatePosition=-1;
-    }
-
+    private UINode uiNode;
     private CustomAdapter customAdapter;
 
     public Presenter() {
@@ -32,11 +23,16 @@ public class Presenter implements IObserver{
         tracker = Tracker.getInstance();
         tree = tracker.getTree();
         tree.register(this);
-        uiNode=null;
+        uiNode = null;
+    }
+
+    public void setCustomAdapter(CustomAdapter customAdapter) {
+        this.customAdapter = customAdapter;
     }
 
     public UINode convertModelNodeToUINode(Node node) {
-        UINode uiNode = new UINode(node.getName(), node.getDepth() * Constants.PADDING_FOR_DEPTH,node.getParentId());
+        int depth = node.getDepth()*Constants.PADDING_FOR_DEPTH;
+        UINode uiNode = new UINode(node.getName(), depth, node.getParentId());
         uiNode.setId(node.getId());
         updateUIChildSubtree(node, uiNode);
         return uiNode;
@@ -44,110 +40,92 @@ public class Presenter implements IObserver{
 
     public Node convertUINodeToModelNode(UINode uiNode, Node parent) {
         Node node;
-        String rootId="";
-        if(parent!=null){
+        String rootId = "";
+        if (parent != null) {
             rootId = parent.getRootId();
-            if(parent.isARoot())
+            if (parent.isARoot())
                 rootId = parent.getId();
-            node = new Node(uiNode.getId(), uiNode.getName(), parent, rootId, parent.getChildSubTree().size());
-            for (int i = 0; i <uiNode.getChildSubTree().size() ; i++) {
-                node.getChildSubTree().add(i,uiNode.getChildSubTree().get(i).getId());
-            }
-
+                node = new Node(uiNode.getId(), uiNode.getName(), parent, rootId, parent.getChildSubTree().size());
         }
-        else {
+        else
             node = new Node(uiNode.getId(), uiNode.getName(), parent, null, 0);
-            for (int i = 0; i <uiNode.getChildSubTree().size() ; i++) {
-                node.getChildSubTree().add(i,uiNode.getChildSubTree().get(i).getId());
-            }
+
+        //----update child subtree---//
+        for (int i = 0; i < uiNode.getChildSubTree().size(); i++) {
+            node.getChildSubTree().add(i, uiNode.getChildSubTree().get(i).getId());
         }
         return node;
     }
 
-    public Tree getTree() {
-        return tree;
-    }
-
     public ArrayList<UINode> buildNodeListFromTree() {
-        UINode uiNode = convertModelNodeToUINode(this.tree.getRoot());
-        if(nodeList.size()!=0)
-        nodeList.clear();
-        uiNode.setStatus("expand");
-        nodeList.add(0, uiNode);
+        UINode rootNode = convertModelNodeToUINode(this.tree.getRoot());
+        if (nodeList.size() != 0)
+            nodeList.clear();
+        //---get expanded tree for the first time---//
+        rootNode.setStatus("expand");
+        nodeList.add(0, rootNode);
         return nodeList;
     }
-
 
     public void updateUIChildSubtree(Node node, UINode uiNode) {
         ArrayList<String> keys = node.getChildSubTree();
-
         ArrayList<UINode> childSubTree = new ArrayList<>();
+
         for (int i = 0; i < keys.size(); i++) {
+
             Node node1 = tree.getNode(keys.get(i));
-            UINode uiNode1 = new UINode(node1.getName(), node1.getDepth() * Constants.PADDING_FOR_DEPTH,node.getId());
+            int depth=node1.getDepth() * Constants.PADDING_FOR_DEPTH;
+            UINode uiNode1 = new UINode(node1.getName(), depth , node.getId());
             uiNode1.setId(node1.getId());
+
             for (int j = 0; j < node1.getChildSubTree().size(); j++) {
                 updateUIChildSubtree(node1, uiNode1);
             }
+
             childSubTree.add(i, uiNode1);
         }
+
         uiNode.setChildSubTree(childSubTree);
     }
 
-    public ArrayList<UINode> getArrayList() {
-        return nodeList;
+    public void addChild(UINode uiNode) {
+        Node parent = tree.getNode(uiNode.getParentId());
+
+        String rootId = parent.getRootId();
+        if (parent.isARoot())
+            rootId = parent.getId();
+
+        Node node = new Node("", uiNode.getName(), parent, rootId, 0);
+        this.uiNode = uiNode;
+        tracker.addChild(node);
+    }
+
+    public void updateChild(UINode uiNode) {
+        Node node = tree.getNode(uiNode.getId());
+        node.setName(uiNode.getName());
+        tracker.updateNode(node);
+    }
+
+    public void deleteNode(UINode uiNode) {
+        tracker.deleteNode(uiNode.getId());
     }
 
     @Override
-    public  void update(int updateOption) {
-        switch (updateOption){
+    public void update(int updateOption) {
+        switch (updateOption)
+        {
             case 1:
-                //nodeList.get(updatePosition).setId(tree.getLastUpdatedNode().getId());
                 this.uiNode.setId(tree.getLastUpdatedNode().getId());
+                this.uiNode=null;
                 break;
             case 2:
-                nodeList.get(updatePosition).setName(tree.getLastUpdatedNode().getName());
                 break;
             case 3:
-                System.out.println("coming here : " + nodeList + " ** " + updatePosition);
-                //nodeList.remove(updatePosition);
                 break;
+
         }
         if (customAdapter != null) {
             customAdapter.notifyDataSetChanged();
         }
-    }
-
-    public void addChild(int position) {
-        UINode uiNode = nodeList.get(position);
-        this.uiNode=uiNode;
-        updatePosition = position;
-        Node parent = tree.getNode(uiNode.getParentId());
-        tracker.addChild(this.convertUINodeToModelNode(uiNode, parent));
-    }
-
-    public void addChild(UINode uiNode)
-    {
-        Node parent=tree.getNode(uiNode.getParentId());
-        String rootId=parent.getRootId();
-        if(parent.isARoot())
-            rootId=parent.getId();
-
-        Node node=new Node("",uiNode.getName(),parent,rootId,0);
-        this.uiNode=uiNode;
-        tracker.addChild(node);
-
-    }
-    
-    public void updateChild(UINode uiNode,int position) {
-        Node node = tree.getNode(uiNode.getId());
-        node.setName(uiNode.getName());
-        updatePosition = position;
-        tracker.updateNode(node);
-    }
-
-    public void deleteNode(UINode uiNode, int position) {
-        updatePosition = position;
-        tracker.deleteNode(uiNode.getId());
     }
 }

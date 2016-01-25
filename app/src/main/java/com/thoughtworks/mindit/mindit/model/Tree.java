@@ -90,7 +90,7 @@ public class Tree implements Serializable, ISubject {
             nodes.remove(nodeId);
         }
         updateOption = 3;
-        this.notifyObservers();
+       this.notifyObservers();
         return this;
     }
 

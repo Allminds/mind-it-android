@@ -98,7 +98,7 @@ public class CustomAdapter extends BaseAdapter {
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
                     if (keyCode == KeyEvent.KEYCODE_ENTER) {
                         updateText(nodeHolder, currentNode);
-                        presenter.addChild(position);
+                        presenter.addChild(currentNode);
                         return true;
                     }
                     return false;
@@ -153,7 +153,7 @@ public class CustomAdapter extends BaseAdapter {
                                 inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                             }
                             int position=nodeArrayList.indexOf(currentNode);
-                            presenter.updateChild(currentNode,position);
+                            presenter.updateChild(currentNode);
                             return true;
                         }
                         return false;
