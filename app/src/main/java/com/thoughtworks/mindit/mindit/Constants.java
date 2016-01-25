@@ -10,12 +10,28 @@ public class Constants {
 
         private final String name;
 
-        private POSITION(String s) {
-            name = s;
+        private POSITION(String name) {
+            this.name = name;
         }
 
         public String toString() {
             return this.name;
+        }
+    }
+
+    public enum TREE_UPDATE_OPTIONS {
+        ADD(1),
+        UPDATE(2),
+        DELETE(3);
+
+        private final int value;
+
+        private TREE_UPDATE_OPTIONS(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return this.value;
         }
     }
 }

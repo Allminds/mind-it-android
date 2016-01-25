@@ -166,7 +166,7 @@ public class MindmapActivity extends AppCompatActivity {
             }
         }
         parent.removeChild(uiNode);
-
+        
         adapter.notifyDataSetChanged();
     }
 
