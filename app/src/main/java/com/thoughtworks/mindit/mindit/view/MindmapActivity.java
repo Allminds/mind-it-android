@@ -173,7 +173,6 @@ public class MindmapActivity extends AppCompatActivity {
             }
         }
         parent.removeChild(uiNode);
-        System.out.println("ct:- "+parent.getChildSubTree());
         adapter.notifyDataSetChanged();
     }
 

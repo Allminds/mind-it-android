@@ -109,7 +109,6 @@ public class Presenter implements IObserver{
                 nodeList.get(updatePosition).setName(tree.getLastUpdatedNode().getName());
                 break;
             case 3:
-                System.out.println("coming here : " + nodeList + " ** " + updatePosition);
                 //nodeList.remove(updatePosition);
                 break;
         }

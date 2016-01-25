@@ -19,10 +19,14 @@ public class JsonParserService {
         Tree tree = null;
         List<Node> nodes = gson.fromJson(json, type);
 
-        tree = convertToTree(nodes);
-        tree.fillRootChildSubtree();
-        tree.updateDepthOfAllNodes(tree.getRoot(), -1);
-        tree.updatePositionOfAllNodes(tree.getRoot(), null);
+        System.out.println("nodes " + nodes);
+        if (nodes != null && nodes.size() != 0)
+            tree = convertToTree(nodes);
+        if (tree != null) {
+            tree.fillRootChildSubtree();
+            tree.updateDepthOfAllNodes(tree.getRoot(), -1);
+            tree.updatePositionOfAllNodes(tree.getRoot(), null);
+        }
         return tree;
     }
 

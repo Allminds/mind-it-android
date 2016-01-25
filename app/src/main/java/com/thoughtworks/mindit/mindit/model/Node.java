@@ -158,10 +158,9 @@ public class Node implements Serializable {
 
     public Node removeThisChild(Node node) throws NodeDoesNotExistException {
         if (this.isARoot()) {
-            System.out.println("remove parent : " + this);
             this.removeThisFirstLevelChildFromSubtree(node);
         }
-        if (this.isChildAlreadyExists(node,this.childSubTree))
+        if (this.isChildAlreadyExists(node, this.childSubTree))
             this.getChildSubTree().remove(node.getId());
         else
             throw new NodeDoesNotExistException();

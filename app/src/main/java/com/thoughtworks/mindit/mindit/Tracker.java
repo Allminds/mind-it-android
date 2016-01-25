@@ -54,6 +54,7 @@ public class Tracker implements MeteorCallback{
         meteor.call("findTree", new String[]{rootId}, new ResultListener() {
             @Override
             public void onSuccess(String jsonResponse) {
+                System.out.println(jsonResponse);
                 tree = JsonParserService.parse(jsonResponse);
             }
 
@@ -120,12 +121,10 @@ public class Tracker implements MeteorCallback{
         meteor.update("Mindmaps", updateQuery, updateValues, null, new ResultListener() {
             @Override
             public void onSuccess(String s) {
-                System.out.println("update ::: " + s);
             }
 
             @Override
             public void onError(String s, String s1, String s2) {
-
             }
         });
     }
@@ -153,7 +152,7 @@ public class Tracker implements MeteorCallback{
     public void onConnect(boolean b) {
         System.out.println("Connected");
         this.findTree(rootId);
-        meteor.subscribe("mindmap", new String[]{rootId});
+        //meteor.subscribe("mindmap", new String[]{rootId});
     }
 
     @Override

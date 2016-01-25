@@ -1,5 +1,6 @@
 package com.thoughtworks.mindit.mindit.model;
 
+import com.thoughtworks.mindit.mindit.Constants;
 import com.thoughtworks.mindit.mindit.PublishSubscribe.IObserver;
 import com.thoughtworks.mindit.mindit.PublishSubscribe.ISubject;
 import com.thoughtworks.mindit.mindit.exception.NodeAlreadyDeletedException;
@@ -11,40 +12,13 @@ import java.util.List;
 
 public class Tree implements Serializable, ISubject {
     private static final Object MUTEX = new Object();
-    private static Tree instance;
     private HashMap<String, Node> nodes;
     private Node root;
     private List<IObserver> observers;
     private boolean changed = true;
     private int updateOption;
-
-    public Node getLastUpdatedNode() {
-        return lastUpdatedNode;
-    }
-
-    public void setLastUpdatedNode(Node lastUpdatedNode) {
-        this.lastUpdatedNode = lastUpdatedNode;
-    }
-
     private Node lastUpdatedNode;
-
-    private void setRoot() {
-        for (String nodeId : this.nodes.keySet()) {
-            Node node = this.getNode(nodeId);
-            if (node.isARoot()) {
-                this.root = node;
-                break;
-            }
-        }
-    }
-
-    private boolean isNodeAlreadyDeleted(String nodeId) {
-        return (this.getNode(nodeId) == null);
-    }
-
-    public boolean isNodeExists(Node node) {
-        return this.nodes.containsKey(node.getId());
-    }
+    private static Tree instance;
 
     private Tree(HashMap<String, Node> nodes) {
         this.nodes = nodes;
@@ -60,6 +34,20 @@ public class Tree implements Serializable, ISubject {
         return instance;
     }
 
+    public Node getLastUpdatedNode() {
+        return lastUpdatedNode;
+    }
+
+    private void setRoot() {
+        for (String nodeId : this.nodes.keySet()) {
+            Node node = this.getNode(nodeId);
+            if (node.isARoot()) {
+                this.root = node;
+                break;
+            }
+        }
+    }
+
     public Node getRoot() {
         return this.root;
     }
@@ -68,46 +56,8 @@ public class Tree implements Serializable, ISubject {
         return nodes.get(id);
     }
 
-    public Tree addNode(Node node) {
-        Node parent = this.getNode(node.getParentId());
-        int index = parent.getChildSubTree().size();
-        lastUpdatedNode = node;
-        parent.addThisChild(node, index);
-        nodes.put(node.getId(), node);
-        updateOption = 1;
-        this.notifyObservers();
-        return this;
-    }
-
-    public Tree deleteNode(Node node) throws Exception {
-        String nodeId = node.getId();
-        if (isNodeAlreadyDeleted(nodeId)) {
-            throw new NodeAlreadyDeletedException();
-        }
-        Node parent = this.getNode(node.getParentId());
-        if (node.isNotARoot()) {
-            parent.removeThisChild(node);
-            nodes.remove(nodeId);
-        }
-        updateOption = 3;
-        this.notifyObservers();
-        return this;
-    }
-
-    public Tree updateNode(Node node) {
-        Node temp = this.getNode(node.getId());
-        temp.setName(node.getName());
-        lastUpdatedNode = temp;
-        updateOption = 2;
-        this.notifyObservers();
-        return this;
-    }
-
-    @Override
-    public String toString() {
-        return "Tree{" +
-                "nodes=" + nodes +
-                '}';
+    private boolean isNodeAlreadyDeleted(String nodeId) {
+        return (this.getNode(nodeId) == null);
     }
 
     public void fillRootChildSubtree() {
@@ -126,7 +76,7 @@ public class Tree implements Serializable, ISubject {
 
     public void updatePositionOfAllNodes(Node node, String position) {
         node.setPosition(position);
-        if (node.getParentId() == null) {
+        if (node.isARoot()) {
             for (String leftChild : node.getLeft()) {
                 updatePositionOfAllNodes(this.getNode(leftChild), "left");
             }
@@ -138,6 +88,56 @@ public class Tree implements Serializable, ISubject {
                 updatePositionOfAllNodes(this.getNode(child), node.getPosition());
             }
         }
+    }
+
+    public Tree addNode(Node node) {
+        lastUpdatedNode = node;
+        updateOption = Constants.TREE_UPDATE_OPTIONS.ADD.getValue();
+
+        Node parent = this.getNode(node.getParentId());
+        int index = parent.getChildSubTree().size();
+        parent.addThisChild(node, index);
+
+        nodes.put(node.getId(), node);
+
+        this.notifyObservers();
+        return this;
+    }
+
+    public Tree updateNode(Node newNode) {
+        updateOption = Constants.TREE_UPDATE_OPTIONS.UPDATE.getValue();
+
+        Node node = this.getNode(newNode.getId());
+        node.setName(newNode.getName());
+        lastUpdatedNode = node;
+
+        this.notifyObservers();
+        return this;
+    }
+
+    public Tree deleteNode(Node node) throws Exception {
+        updateOption = Constants.TREE_UPDATE_OPTIONS.DELETE.getValue();
+
+        String nodeId = node.getId();
+        if (isNodeAlreadyDeleted(nodeId)) {
+            throw new NodeAlreadyDeletedException();
+        }
+
+        Node parent = this.getNode(node.getParentId());
+        if (node.isNotARoot()) {
+            parent.removeThisChild(node);
+            nodes.remove(nodeId);
+        }
+
+        this.notifyObservers();
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "Tree{" +
+                "nodes=" + nodes +
+                '}';
     }
 
     @Override
