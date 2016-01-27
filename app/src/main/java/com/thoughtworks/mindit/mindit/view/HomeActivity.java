@@ -42,7 +42,6 @@ public class HomeActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         Intent intent = getIntent();
         String action;
         Uri data;
@@ -51,10 +50,9 @@ public class HomeActivity extends AppCompatActivity
         data = intent.getData();
         progressBar = (ProgressBar)findViewById(R.id.progressBar);
         if(data!=null) {
-            String [] uri=data.toString().split("/");
+            String [] uri = data.toString().split("/");
             new WaitForTree().execute(uri[uri.length-1]);
         }
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

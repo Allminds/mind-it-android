@@ -95,8 +95,9 @@ public class CustomAdapter extends BaseAdapter {
         customAdapterHelper.setImageForExpandCollapse(nodeHolder, rowView, currentNode);
         customAdapterHelper.setEventToExpandCollapse(position, nodeHolder, currentNode);
         customAdapterHelper.setEventToAddNodeButton(position, nodeHolder, rowView, currentNode);
+
         if(position == newNodePosition)
-            customAdapterHelper.addNewNode(position, nodeHolder, currentNode);
+            customAdapterHelper.addNode(nodeHolder, currentNode);
 
         return rowView;
     }
@@ -106,8 +107,9 @@ public class CustomAdapter extends BaseAdapter {
     }
 
     public void setNewNodePosition(int newNodePosition) {
-        this.newNodePosition=newNodePosition;
+        this.newNodePosition = newNodePosition;
     }
-
-
+    public void resetNewNodePosition() {
+        this.newNodePosition = -1;
+    }
 }

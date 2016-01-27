@@ -16,10 +16,11 @@ import java.util.ArrayList;
 
 public class CustomAdapterHelper {
     private final CustomAdapter customAdapter;
-    private ArrayList<UINode>nodeList;
+    private ArrayList<UINode> nodeList;
+
     public CustomAdapterHelper(CustomAdapter customAdapter) {
         this.customAdapter = customAdapter;
-        this.nodeList=customAdapter.getNodeArrayList();
+        this.nodeList = customAdapter.getNodeArrayList();
     }
 
     void updateText(NodeHolder nodeHolder, UINode currentNode) {
@@ -41,31 +42,31 @@ public class CustomAdapterHelper {
         nodeHolder.textViewForName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            nodeHolder.textViewForName.setVisibility(View.GONE);
-            nodeHolder.editText.setVisibility(View.VISIBLE);
-            nodeHolder.editText.requestFocus();
-            nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
-            nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
+                nodeHolder.textViewForName.setVisibility(View.GONE);
+                nodeHolder.editText.setVisibility(View.VISIBLE);
+                nodeHolder.editText.requestFocus();
+                nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
+                nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
 
-            final InputMethodManager inputMethodManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (inputMethodManager != null) {
-                inputMethodManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_FORCED);
-            }
-
-            nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                        updateText(nodeHolder, currentNode);
-                        if (inputMethodManager != null) {
-                            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                        }
-                        customAdapter.getPresenter().updateNode(currentNode);
-                        return true;
-                    }
-                    return false;
+                final InputMethodManager inputMethodManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (inputMethodManager != null) {
+                    inputMethodManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_FORCED);
                 }
-            });
+
+                nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
+                    @Override
+                    public boolean onKey(View v, int keyCode, KeyEvent event) {
+                        if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                            updateText(nodeHolder, currentNode);
+                            if (inputMethodManager != null) {
+                                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                            }
+                            customAdapter.getPresenter().updateNode(currentNode);
+                            return true;
+                        }
+                        return false;
+                    }
+                });
             }
         });
     }
@@ -74,17 +75,15 @@ public class CustomAdapterHelper {
         nodeHolder.expandCollapseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentNode.getChildSubTree().size() == 0)
-                    return;
-                if (currentNode.isExpanded()) {
-
-                    collapse(position, currentNode);
-                } else {
-                    expand(position, currentNode);
-                }
-                currentNode.toggleStatus();
-
-                customAdapter.notifyDataSetChanged();
+            if (currentNode.getChildSubTree().size() == 0)
+                return;
+            if (currentNode.isExpanded()) {
+                collapse(position, currentNode);
+            } else {
+                expand(position, currentNode);
+            }
+            currentNode.toggleStatus();
+            customAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -94,25 +93,25 @@ public class CustomAdapterHelper {
         nodeHolder.addNodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 addChild(position, currentNode);
             }
         });
     }
 
     void addChild(int position, UINode parentNode) {
-        if(parentNode.getStatus().equals("collapse"))
-        {
-            parentNode.setStatus("expand");
-            expand(position,parentNode);
+        if (parentNode.getStatus().equals(Constants.STATUS.COLLAPSE.toString())) {
+            parentNode.setStatus(Constants.STATUS.EXPAND.toString());
+            this.expand(position, parentNode);
         }
-        int i=position;
-        while (++i < nodeList.size() && nodeList.get(i).getDepth() > parentNode.getDepth())
-            ;
-        customAdapter.setNewNodePosition(i);
+        int childCount = 1;
+        for (int index = position + 1; index < nodeList.size() && nodeList.get(index).getDepth() > parentNode.getDepth(); index ++){
+            childCount ++;
+        }
+        int newNodePosition = position + childCount;
+        customAdapter.setNewNodePosition(newNodePosition);
 
         UINode node = new UINode("Enter Text", parentNode.getDepth() + 20, parentNode.getId());
-        nodeList.add(i, node);
+        nodeList.add(newNodePosition, node);
 
         parentNode.getChildSubTree().add(parentNode.getChildSubTree().size(), node);
         customAdapter.notifyDataSetChanged();
@@ -138,28 +137,27 @@ public class CustomAdapterHelper {
     }
 
     public void expand(int position, UINode currentNode) {
-        int j = position + 1;
-        ArrayList<UINode> nodes = currentNode.getChildSubTree();
-        for (int i = 0; i < nodes.size(); i++) {
-            nodeList.add(j++, nodes.get(i));
+        int childPosition = position + 1;
+        ArrayList<UINode> childSubTree = currentNode.getChildSubTree();
+        for (int nodeIndex = 0; nodeIndex < childSubTree.size(); nodeIndex++) {
+            nodeList.add(childPosition++, childSubTree.get(nodeIndex));
         }
     }
 
     void collapse(int position, UINode currentNode) {
-        for (int i = position + 1; i < nodeList.size(); ) {
-            if (nodeList.get(i).getDepth() > currentNode.getDepth()) {
-                if (nodeList.get(i).getStatus().equals("expand"))
-                    nodeList.get(i).toggleStatus();
-                    nodeList.remove(i);
+        int nodeIndex = position + 1;
+        while (nodeIndex < nodeList.size()) {
+            if (nodeList.get(nodeIndex).getDepth() > currentNode.getDepth()) {
+                if (nodeList.get(nodeIndex).getStatus().equals(Constants.STATUS.EXPAND.toString()))
+                    nodeList.get(nodeIndex).toggleStatus();
+                nodeList.remove(nodeIndex);
             } else {
-
                 break;
             }
         }
     }
 
-    public void addNewNode(int position, final NodeHolder nodeHolder, final UINode currentNode) {
-
+    public void addNode(final NodeHolder nodeHolder, final UINode currentNode) {
         nodeHolder.textViewForName.setVisibility(View.GONE);
         nodeHolder.editText.setVisibility(View.VISIBLE);
         nodeHolder.editText.requestFocus();
@@ -170,7 +168,7 @@ public class CustomAdapterHelper {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_ENTER) {
                     updateText(nodeHolder, currentNode);
-                    customAdapter.setNewNodePosition(-1);
+                    customAdapter.resetNewNodePosition();
                     customAdapter.getPresenter().addChild(currentNode);
                     return true;
                 }

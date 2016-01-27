@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:id="@+id/editUrl"
-        android:text="SAZLWgjZzNp42kYvs"
+        android:text="dcgWQuMaDWQzyqjpG"
         android:background="@android:color/transparent"
         android:singleLine="true"
         android:inputType="text|textNoSuggestions"
