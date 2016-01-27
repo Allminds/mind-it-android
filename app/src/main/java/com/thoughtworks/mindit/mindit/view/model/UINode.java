@@ -28,7 +28,6 @@ public class UINode {
         this.status = Constants.STATUS.COLLAPSE.toString();
         this.parentId = parentId;
         childSubTree = new ArrayList<UINode>();
-
     }
 
     public String getStatus() {

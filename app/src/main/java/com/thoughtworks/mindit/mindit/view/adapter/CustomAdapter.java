@@ -106,6 +106,10 @@ public class CustomAdapter extends BaseAdapter {
         customAdapterHelper.expand(position, currentNode);
     }
 
+    public void collapse(int position, UINode currentNode) {
+        customAdapterHelper.collapse(position, currentNode);
+    }
+
     public void setNewNodePosition(int newNodePosition) {
         this.newNodePosition = newNodePosition;
     }

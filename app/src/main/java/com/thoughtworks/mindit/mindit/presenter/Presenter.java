@@ -133,7 +133,10 @@ public class Presenter implements IObserver {
                     uiNode = convertModelNodeToUINode(tree.getLastUpdatedNode());
                     UINode uiParent = this.getUiNode(uiNode.getParentId());
                     uiParent.getChildSubTree().add(tree.getLastUpdatedNode().getIndex(), uiNode);
+
+                    customAdapter.collapse(nodeList.indexOf(uiParent), uiParent);
                     customAdapter.expand(nodeList.indexOf(uiParent), uiParent);
+                    uiParent.setStatus(Constants.STATUS.EXPAND.toString());
                 }
                 else
                     this.uiNode.setId(tree.getLastUpdatedNode().getId());

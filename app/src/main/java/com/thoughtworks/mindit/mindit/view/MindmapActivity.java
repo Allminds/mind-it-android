@@ -40,7 +40,7 @@ public class MindmapActivity extends AppCompatActivity {
         adapter = new CustomAdapter(this, presenter);
         listView.setAdapter(adapter);
         presenter.setCustomAdapter(adapter);
-        nodeList=adapter.getNodeArrayList();
+        nodeList = adapter.getNodeArrayList();
     }
 
     @Override
@@ -53,8 +53,6 @@ public class MindmapActivity extends AppCompatActivity {
         menu.add(0, 4, 0, "Cut");
         if (clipboard != null)
             menu.add(0, 5, 0, "Paste");
-
-
     }
 
     @Override
