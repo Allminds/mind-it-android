@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -35,40 +34,38 @@ public class CustomAdapterHelper {
         nodeHolder.textViewForName = (TextView) rowView.findViewById(R.id.name);
         nodeHolder.textViewForName.setText(currentNode.getName());
         nodeHolder.textViewForName.setHeight(customAdapter.getDeviceHeight() / Constants.HEIGHT_DIVIDER);
-        editText(nodeHolder, currentNode);
+        this.editText(nodeHolder, currentNode);
     }
 
     void editText(final NodeHolder nodeHolder, final UINode currentNode) {
         nodeHolder.textViewForName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+            nodeHolder.textViewForName.setVisibility(View.GONE);
+            nodeHolder.editText.setVisibility(View.VISIBLE);
+            nodeHolder.editText.requestFocus();
+            nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
+            nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
 
-                nodeHolder.textViewForName.setVisibility(View.GONE);
-                nodeHolder.editText.setVisibility(View.VISIBLE);
-                nodeHolder.editText.requestFocus();
-                nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
-                nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
+            final InputMethodManager inputMethodManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (inputMethodManager != null) {
+                inputMethodManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_FORCED);
+            }
 
-                final InputMethodManager inputMethodManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (inputMethodManager != null) {
-                    inputMethodManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_FORCED);
-                }
-
-                nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
-                    @Override
-                    public boolean onKey(View v, int keyCode, KeyEvent event) {
-                        if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                            updateText(nodeHolder,currentNode);
-                            if (inputMethodManager != null) {
-                                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                            }
-                            int position = nodeList.indexOf(currentNode);
-                            customAdapter.getPresenter().updateChild(currentNode);
-                            return true;
+            nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                        updateText(nodeHolder, currentNode);
+                        if (inputMethodManager != null) {
+                            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                         }
-                        return false;
+                        customAdapter.getPresenter().updateNode(currentNode);
+                        return true;
                     }
-                });
+                    return false;
+                }
+            });
             }
         });
     }
@@ -123,12 +120,12 @@ public class CustomAdapterHelper {
 
     void addPadding(int position, View rowView) {
         RelativeLayout relativeLayout = (RelativeLayout) rowView.findViewById(R.id.layout);
-        setPaddingForeNode(position, relativeLayout);
+        relativeLayout.setPadding(nodeList.get(position).getDepth(), 0, 0, 0);
     }
 
     void setImageForExpandCollapse(NodeHolder nodeHolder, View rowView, UINode currentNode) {
         nodeHolder.expandCollapseButton = (ImageView) rowView.findViewById(R.id.expandCollapse);
-        if (currentNode.getStatus().equalsIgnoreCase("expand")) {
+        if (currentNode.getStatus().equalsIgnoreCase(Constants.STATUS.EXPAND.toString())) {
             nodeHolder.expandCollapseButton.setImageResource(R.drawable.expand);
         } else {
             if (currentNode.getChildSubTree().size() == 0) {
@@ -159,10 +156,6 @@ public class CustomAdapterHelper {
                 break;
             }
         }
-    }
-
-    void setPaddingForeNode(int position, RelativeLayout relativeLayout) {
-        relativeLayout.setPadding(nodeList.get(position).getDepth(), 0, 0, 0);
     }
 
     public void addNewNode(int position, final NodeHolder nodeHolder, final UINode currentNode) {

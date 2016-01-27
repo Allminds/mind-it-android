@@ -100,7 +100,7 @@ public class Presenter implements IObserver {
         tracker.addChild(node);
     }
 
-    public void updateChild(UINode uiNode) {
+    public void updateNode(UINode uiNode) {
         Node node = tree.getNode(uiNode.getId());
         node.setName(uiNode.getName());
         tracker.updateNode(node);

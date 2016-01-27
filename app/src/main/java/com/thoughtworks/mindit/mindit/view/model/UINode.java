@@ -1,14 +1,15 @@
 package com.thoughtworks.mindit.mindit.view.model;
 
+import com.thoughtworks.mindit.mindit.Constants;
+
 import java.util.ArrayList;
 
-public class UINode
-{
+public class UINode {
     private String id;
     private String name;
     private int depth;
     private String status;
-    private ArrayList<UINode>childSubTree;
+    private ArrayList<UINode> childSubTree;
 
     public String getParentId() {
         return parentId;
@@ -19,16 +20,17 @@ public class UINode
     }
 
     private String parentId;
-    public UINode(String name, int depth,String parentId)
-    {
-        this.id="";
-        this.name=name;
-        this.depth=depth;
-        this.status="collapse";
-        this.parentId=parentId;
-        childSubTree=new ArrayList<UINode>();
+
+    public UINode(String name, int depth, String parentId) {
+        this.id = "";
+        this.name = name;
+        this.depth = depth;
+        this.status = Constants.STATUS.COLLAPSE.toString();
+        this.parentId = parentId;
+        childSubTree = new ArrayList<UINode>();
 
     }
+
     public String getStatus() {
         return status;
     }
@@ -36,6 +38,7 @@ public class UINode
     public void setStatus(String status) {
         this.status = status;
     }
+
     public String getName() {
         return name;
     }
@@ -43,6 +46,7 @@ public class UINode
     public void setName(String name) {
         this.name = name;
     }
+
     public String getId() {
         return id;
     }
@@ -63,29 +67,28 @@ public class UINode
         this.childSubTree = childSubTree;
     }
 
-    public ArrayList<UINode> getChildSubTree(){
+    public ArrayList<UINode> getChildSubTree() {
         return this.childSubTree;
     }
 
     public void toggleStatus() {
-        if(status.equalsIgnoreCase("expand")){
-            status="collapse";
-        }
-        else {
-            status="expand";
+        if (status.equalsIgnoreCase(Constants.STATUS.EXPAND.toString())) {
+            status = Constants.STATUS.COLLAPSE.toString();
+        } else {
+            status = Constants.STATUS.EXPAND.toString();
         }
     }
 
     public boolean isExpanded() {
-        return status.equalsIgnoreCase("expand");
+        return status.equalsIgnoreCase(Constants.STATUS.EXPAND.toString());
     }
 
     public void removeChild(UINode uiNode) {
         ArrayList<UINode> childSubTree = this.getChildSubTree();
         childSubTree.remove(uiNode);
-        if(childSubTree.size()==0){
-            this.setStatus("collapse");
-        }else
-            this.setStatus("expand");
+        if (childSubTree.size() == 0) {
+            this.setStatus(Constants.STATUS.COLLAPSE.toString());
+        } else
+            this.setStatus(Constants.STATUS.EXPAND.toString());
     }
 }

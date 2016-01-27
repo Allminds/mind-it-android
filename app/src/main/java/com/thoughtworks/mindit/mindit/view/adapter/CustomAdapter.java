@@ -87,7 +87,7 @@ public class CustomAdapter extends BaseAdapter {
         final UINode currentNode = nodeArrayList.get(position);
         final View rowView = layoutInflater.inflate(R.layout.layout_node, null);
 
-        nodeHolder.editText=(EditText)rowView.findViewById(R.id.editText);
+        nodeHolder.editText = (EditText)rowView.findViewById(R.id.editText);
         nodeHolder.editText.setVisibility(View.GONE);
 
         customAdapterHelper.initializeTextView(nodeHolder, rowView, currentNode);
