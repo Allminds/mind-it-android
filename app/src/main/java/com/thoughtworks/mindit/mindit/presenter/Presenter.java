@@ -69,7 +69,7 @@ public class Presenter implements IObserver {
 
     public void updateUIChildSubtree(Node node, UINode uiNode) {
         ArrayList<String> keys = node.getChildSubTree();
-        ArrayList<UINode> childSubTree = new ArrayList<>();
+        ArrayList<UINode> childSubTree = new ArrayList<UINode>();
 
         for (int i = 0; i < keys.size(); i++) {
 
@@ -110,13 +110,28 @@ public class Presenter implements IObserver {
         tracker.deleteNode(uiNode.getId());
     }
 
+    public UINode getUiNode (String id) {
+        for (UINode uiNode : nodeList) {
+            if(uiNode.getId().equals(id))
+                return uiNode;
+        }
+        return null;
+    }
+
     @Override
     public void update(int updateOption) {
         switch (updateOption)
         {
             case 1:
-                this.uiNode.setId(tree.getLastUpdatedNode().getId());
-                this.uiNode=null;
+                if(uiNode == null) {
+                    uiNode = convertModelNodeToUINode(tree.getLastUpdatedNode());
+                    UINode uiParent = this.getUiNode(uiNode.getParentId());
+                    uiParent.getChildSubTree().add(tree.getLastUpdatedNode().getIndex(), uiNode);
+                    customAdapter.expand(nodeList.indexOf(uiParent), uiParent);
+                }
+                else
+                    this.uiNode.setId(tree.getLastUpdatedNode().getId());
+                this.uiNode = null;
                 break;
             case 2:
                 break;

@@ -30,7 +30,7 @@ public class Tracker implements MeteorCallback, ITracker{
     private Tracker(Context context, String rootId) {
         this.rootId = rootId;
         Meteor.setLoggingEnabled(true);
-        meteor = new Meteor(context, "ws://10.12.21.15:3000/websocket", this);
+        meteor = new Meteor(context, "ws://www.mindit.xyz/websocket", this);
         meteor.setCallback(this);
     }
 
@@ -186,35 +186,36 @@ public class Tracker implements MeteorCallback, ITracker{
 
     @Override
     public void onAdded(String collectionName, String documentID, String fieldsJson) {
-        Node node = JsonParserService.parseNode(fieldsJson);
-        node.set_id(documentID);
-//        if (tree != null && !tree.isAlreadyExists(node))
+//        Node node = JsonParserService.parseNode(fieldsJson);
+//        node.set_id(documentID);
+//        if (tree != null && !tree.isAlreadyExists(node)) {
 //            tree.addNode(node);
+//        }
     }
 
     @Override
     public void onChanged(String collectionName, String documentID, String updatedValuesJson, String removedValuesJson) {
-        Node node = tree.getNode(documentID);
-
-        try {
-            JSONObject fields = JsonParserService.rawParse(updatedValuesJson);
-            if (fields.has("name")) {
-                String name = fields.getString("name");
-                tree.updateNode(node, "name", name);
-            }
-            if (fields.has("childSubTree")) {
-
-                JSONArray jsonChildSubTree = (JSONArray)fields.get("childSubTree");
-                ArrayList<String> childSubTree = new ArrayList<String>();
-                for (int i = 0; i < jsonChildSubTree.length(); i++) {
-                    childSubTree.add(jsonChildSubTree.getString(i));
-                }
-                System.out.println("childsubtree " + childSubTree);
-                tree.updateNode(node, "childSubTree", childSubTree);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        Node node = tree.getNode(documentID);
+//
+//        try {
+//            JSONObject fields = JsonParserService.rawParse(updatedValuesJson);
+//            if (fields.has("name")) {
+//                String name = fields.getString("name");
+//                tree.updateNode(node, "name", name);
+//            }
+//            if (fields.has("childSubTree")) {
+//
+//                JSONArray jsonChildSubTree = (JSONArray)fields.get("childSubTree");
+//                ArrayList<String> childSubTree = new ArrayList<String>();
+//                for (int i = 0; i < jsonChildSubTree.length(); i++) {
+//                    childSubTree.add(jsonChildSubTree.getString(i));
+//                }
+//                System.out.println("childsubtree " + childSubTree);
+//                //tree.updateNode(node, "childSubTree", childSubTree);
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Override

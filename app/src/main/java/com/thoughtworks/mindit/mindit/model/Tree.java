@@ -123,7 +123,7 @@ public class Tree implements Serializable, ISubject {
 
         lastUpdatedNode = node;
         System.out.println("updated node " + node);
-        //this.notifyObservers();
+        this.notifyObservers();
         return this;
     }
 
