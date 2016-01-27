@@ -10,17 +10,20 @@ import com.thoughtworks.mindit.mindit.view.adapter.CustomAdapter;
 import com.thoughtworks.mindit.mindit.view.model.UINode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class Presenter implements IObserver {
     private Tree tree;
     private Tracker tracker;
     private ArrayList<UINode> nodeList;
+    private HashMap<String, UINode> nodeTree;
     private UINode uiNode;
     private CustomAdapter customAdapter;
 
     public Presenter() {
-        nodeList = new ArrayList<>();
+        nodeList = new ArrayList<UINode>();
+        nodeTree = new HashMap<String, UINode>();
         tracker = Tracker.getInstance();
         tree = tracker.getTree();
         tree.register(this);
@@ -65,6 +68,7 @@ public class Presenter implements IObserver {
         //---get expanded tree for the first time---//
         rootNode.setStatus("expand");
         nodeList.add(0, rootNode);
+        nodeTree.put(rootNode.getId(), rootNode);
         return nodeList;
     }
 
@@ -84,6 +88,7 @@ public class Presenter implements IObserver {
             }
 
             childSubTree.add(i, uiNode1);
+            nodeTree.put(uiNode1.getId(), uiNode1);
         }
 
         uiNode.setChildSubTree(childSubTree);
@@ -135,6 +140,11 @@ public class Presenter implements IObserver {
                 this.uiNode = null;
                 break;
             case 2:
+                UINode temp = convertModelNodeToUINode(tree.getLastUpdatedNode());
+                uiNode = nodeTree.get(temp.getId());
+                uiNode.setName(temp.getName());
+                uiNode.setChildSubTree(temp.getChildSubTree());
+                uiNode.setParentId(temp.getParentId());
                 break;
             case 3:
                 break;

@@ -104,7 +104,7 @@ public class Tree implements Serializable, ISubject {
 
         nodes.put(node.getId(), node);
 
-        //this.notifyObservers();
+        this.notifyObservers();
         return this;
     }
 
@@ -132,7 +132,7 @@ public class Tree implements Serializable, ISubject {
         }
 
         lastUpdatedNode = node;
-        //this.notifyObservers();
+        this.notifyObservers();
         return this;
     }
 
