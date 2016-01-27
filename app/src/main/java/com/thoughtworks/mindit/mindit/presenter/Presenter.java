@@ -5,6 +5,7 @@ import com.thoughtworks.mindit.mindit.PublishSubscribe.IObserver;
 import com.thoughtworks.mindit.mindit.Tracker;
 import com.thoughtworks.mindit.mindit.model.Node;
 import com.thoughtworks.mindit.mindit.model.Tree;
+import com.thoughtworks.mindit.mindit.view.MindmapActivity;
 import com.thoughtworks.mindit.mindit.view.adapter.CustomAdapter;
 import com.thoughtworks.mindit.mindit.view.model.UINode;
 
@@ -140,7 +141,18 @@ public class Presenter implements IObserver {
 
         }
         if (customAdapter != null) {
-            customAdapter.notifyDataSetChanged();
+            MindmapActivity mindmapActivity = (MindmapActivity) customAdapter.getContext();
+            try {
+                mindmapActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        customAdapter.notifyDataSetChanged();
+                    }
+                });
+                Thread.sleep(300);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

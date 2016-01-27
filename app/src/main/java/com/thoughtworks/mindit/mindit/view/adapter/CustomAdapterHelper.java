@@ -28,7 +28,6 @@ public class CustomAdapterHelper {
         currentNode.setName("" + nodeHolder.editText.getText());
         nodeHolder.editText.setVisibility(View.GONE);
         nodeHolder.textViewForName.setVisibility(View.VISIBLE);
-
     }
 
     void initializeTextView(final NodeHolder nodeHolder, View rowView, final UINode currentNode) {
@@ -42,31 +41,31 @@ public class CustomAdapterHelper {
         nodeHolder.textViewForName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nodeHolder.textViewForName.setVisibility(View.GONE);
-                nodeHolder.editText.setVisibility(View.VISIBLE);
-                nodeHolder.editText.requestFocus();
-                nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
-                nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
+            nodeHolder.textViewForName.setVisibility(View.GONE);
+            nodeHolder.editText.setVisibility(View.VISIBLE);
+            nodeHolder.editText.requestFocus();
+            nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
+            nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
 
-                final InputMethodManager inputMethodManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (inputMethodManager != null) {
-                    inputMethodManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_FORCED);
-                }
+            final InputMethodManager inputMethodManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (inputMethodManager != null) {
+                inputMethodManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_FORCED);
+            }
 
-                nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
-                    @Override
-                    public boolean onKey(View v, int keyCode, KeyEvent event) {
-                        if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                            updateText(nodeHolder, currentNode);
-                            if (inputMethodManager != null) {
-                                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                            }
-                            customAdapter.getPresenter().updateNode(currentNode);
-                            return true;
-                        }
-                        return false;
+            nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    updateText(nodeHolder, currentNode);
+                    if (inputMethodManager != null) {
+                        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                     }
-                });
+                    customAdapter.getPresenter().updateNode(currentNode);
+                    return true;
+                }
+                return false;
+                }
+            });
             }
         });
     }
@@ -133,7 +132,6 @@ public class CustomAdapterHelper {
                 nodeHolder.expandCollapseButton.setImageResource(R.drawable.collapse);
             }
         }
-
     }
 
     public void expand(int position, UINode currentNode) {
