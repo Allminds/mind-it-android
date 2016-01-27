@@ -40,7 +40,7 @@ public class Node implements Serializable {
         this.position = position;
     }
 
-    private void setParentId(String parentId) {
+    public void setParentId(String parentId) {
         this.parentId = parentId;
     }
 
@@ -129,10 +129,9 @@ public class Node implements Serializable {
 
     public Node addThisChild(Node node, int index) {
         ArrayList<String> siblings = this.getChildSubTree();
-        if (this.isChildAlreadyExists(node, siblings)) {
-            siblings.remove(node.getId());
+        if (!this.isChildAlreadyExists(node, siblings)) {
+            siblings.add(index, node.getId());
         }
-        siblings.add(index, node.getId());
         node.setParentId(this.getId());
 
         if(this.isARoot()) {
@@ -210,4 +209,11 @@ public class Node implements Serializable {
         return getId().hashCode();
     }
 
+    public void setRight(ArrayList<String> right) {
+        this.right = right;
+    }
+
+    public void setLeft(ArrayList<String> left) {
+        this.left = left;
+    }
 }

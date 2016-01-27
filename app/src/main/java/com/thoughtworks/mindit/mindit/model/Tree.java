@@ -9,20 +9,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 public class Tree implements Serializable, ISubject {
+    private static final Object MUTEX = new Object();
+    private static Tree instance;
     private HashMap<String, Node> nodes;
     private Node root;
-
     private List<IObserver> observers;
-    private static final Object MUTEX = new Object();
     private boolean changed = true;
-
     private int updateOption;
     private Node lastUpdatedNode;
-
-    private static Tree instance;
 
     private Tree(HashMap<String, Node> nodes) {
         this.nodes = nodes;
@@ -108,22 +104,35 @@ public class Tree implements Serializable, ISubject {
 
         nodes.put(node.getId(), node);
 
-        this.notifyObservers();
+        //this.notifyObservers();
         return this;
     }
 
     public Tree updateNode(Node node, String attribute, Object data) {
         updateOption = Constants.TREE_UPDATE_OPTIONS.UPDATE.getValue();
 
-        switch (attribute){
+        switch (attribute) {
             case "name":
-                node.setName((String)data);
+                node.setName((String) data);
+                break;
+            case "childSubTree":
+                node.setChildSubTree((ArrayList<String>) data);
+                break;
+            case "left":
+                node.setLeft((ArrayList<String>) data);
+                this.fillRootChildSubtree();
+                break;
+            case "right":
+                node.setRight((ArrayList<String>) data);
+                this.fillRootChildSubtree();
+                break;
+            case "parentId":
+                node.setParentId((String) data);
                 break;
         }
 
         lastUpdatedNode = node;
-        System.out.println("updated node " + node);
-        this.notifyObservers();
+        //this.notifyObservers();
         return this;
     }
 
