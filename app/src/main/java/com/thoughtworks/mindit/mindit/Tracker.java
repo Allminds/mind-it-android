@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +29,7 @@ public class Tracker implements MeteorCallback, ITracker {
 
     private Tracker(Context context, String rootId) {
         this.rootId = rootId;
-        Meteor.setLoggingEnabled(true);
+        //Meteor.setLoggingEnabled(true);
         meteor = new Meteor(context, "ws://www.mindit.xyz/websocket", this);
         meteor.setCallback(this);
     }
@@ -187,7 +188,7 @@ public class Tracker implements MeteorCallback, ITracker {
         Node node = JsonParserService.parseNode(fieldsJson);
         node.set_id(documentID);
         if (tree != null && !tree.isAlreadyExists(node)) {
-            tree.addNode(node);
+            tree.addNodeFromWeb(node);
         }
     }
 
@@ -200,16 +201,32 @@ public class Tracker implements MeteorCallback, ITracker {
                 String name = fields.getString("name");
                 tree.updateNode(node, "name", name);
             }
-            if (fields.has("childSubTree")) {
+            else if (fields.has("childSubTree")) {
+                Node parent = node;
+                ArrayList<String> oldChildSubTree = parent.getChildSubTree();
 
                 JSONArray jsonChildSubTree = (JSONArray) fields.get("childSubTree");
-                ArrayList<String> childSubTree = new ArrayList<String>();
+                ArrayList<String> newChildSubTree = new ArrayList<String>();
                 for (int i = 0; i < jsonChildSubTree.length(); i++) {
-                    childSubTree.add(jsonChildSubTree.getString(i));
+                    newChildSubTree.add(jsonChildSubTree.getString(i));
                 }
-                tree.updateNode(node, "childSubTree", childSubTree);
+
+                if(newChildSubTree.size() - oldChildSubTree.size() == 1) {
+                    ArrayList<String> clonedChildSubTree = (ArrayList<String>)newChildSubTree.clone();
+                    clonedChildSubTree.removeAll(oldChildSubTree);
+                    String newNodeId = clonedChildSubTree.get(0);
+                    if(tree.getNode(newNodeId) == null) {
+                        Node newNode = new Node(newNodeId, "", parent, parent.getRootId(), newChildSubTree.indexOf(newNodeId));
+                        tree.addNodeFromWeb(newNode);
+                    }
+                }
+                if(newChildSubTree.equals(oldChildSubTree)) {
+                    return;
+                }
+                //separate condition in case of repositioning of nodes
+                tree.updateNode(node, "childSubTree", newChildSubTree);
             }
-            if (fields.has("left")) {
+            else if (fields.has("left")) {
                 JSONArray jsonLeftTree=(JSONArray)fields.get("left");
                 ArrayList<String> leftTree=new ArrayList<String>();
                 for(int i=0;i<jsonLeftTree.length();i++){
@@ -217,7 +234,7 @@ public class Tracker implements MeteorCallback, ITracker {
                 }
                 tree.updateNode(node,"left",leftTree);
             }
-            if (fields.has("right")) {
+            else if (fields.has("right")) {
                 JSONArray jsonRightTree=(JSONArray)fields.get("right");
                 ArrayList<String> rightTree=new ArrayList<String>();
                 for(int i=0;i<jsonRightTree.length();i++){
@@ -225,7 +242,7 @@ public class Tracker implements MeteorCallback, ITracker {
                 }
                 tree.updateNode(node,"right",rightTree);
             }
-            if(fields.has("parentId")){
+            else if(fields.has("parentId")){
                 String parentId = fields.getString("parentId");
                 tree.updateNode(node, "parentId", parentId);
             }

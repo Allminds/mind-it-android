@@ -35,9 +35,10 @@ public class Presenter implements IObserver {
     }
 
     public UINode convertModelNodeToUINode(Node node) {
-        int depth = node.getDepth()*Constants.PADDING_FOR_DEPTH;
+        int depth = node.getDepth() * Constants.PADDING_FOR_DEPTH;
         UINode uiNode = new UINode(node.getName(), depth, node.getParentId());
         uiNode.setId(node.getId());
+        nodeTree.put(node.getId(), uiNode);
         updateUIChildSubtree(node, uiNode);
         return uiNode;
     }
@@ -49,9 +50,8 @@ public class Presenter implements IObserver {
             rootId = parent.getRootId();
             if (parent.isARoot())
                 rootId = parent.getId();
-                node = new Node(uiNode.getId(), uiNode.getName(), parent, rootId, parent.getChildSubTree().size());
-        }
-        else
+            node = new Node(uiNode.getId(), uiNode.getName(), parent, rootId, parent.getChildSubTree().size());
+        } else
             node = new Node(uiNode.getId(), uiNode.getName(), parent, null, 0);
 
         //----update child subtree---//
@@ -71,7 +71,6 @@ public class Presenter implements IObserver {
         else
             rootNode.setStatus(Constants.STATUS.COLLAPSE.toString());
         nodeList.add(0, rootNode);
-        nodeTree.put(rootNode.getId(), rootNode);
         return nodeList;
     }
 
@@ -80,10 +79,9 @@ public class Presenter implements IObserver {
         ArrayList<UINode> childSubTree = new ArrayList<UINode>();
 
         for (int i = 0; i < keys.size(); i++) {
-
             Node node1 = tree.getNode(keys.get(i));
-            int depth=node1.getDepth() * Constants.PADDING_FOR_DEPTH;
-            UINode uiNode1 = new UINode(node1.getName(), depth , node.getId());
+            int depth = node1.getDepth() * Constants.PADDING_FOR_DEPTH;
+            UINode uiNode1 = new UINode(node1.getName(), depth, node.getId());
             uiNode1.setId(node1.getId());
 
             for (int j = 0; j < node1.getChildSubTree().size(); j++) {
@@ -119,38 +117,45 @@ public class Presenter implements IObserver {
         tracker.deleteNode(uiNode.getId());
     }
 
-    public UINode getUiNode (String id) {
+    public UINode getUiNode(String id) {
         for (UINode uiNode : nodeList) {
-            if(uiNode.getId().equals(id))
+            if (uiNode.getId().equals(id))
                 return uiNode;
         }
         return null;
     }
 
     @Override
-    public void update(int updateOption) {
-        switch (updateOption)
-        {
+    public void update(int updateOption, String updateParameter) {
+        switch (updateOption) {
             case 1:
-                if(uiNode == null) {
+                if (uiNode == null) {
                     uiNode = convertModelNodeToUINode(tree.getLastUpdatedNode());
-                    UINode uiParent = this.getUiNode(uiNode.getParentId());
-                    uiParent.getChildSubTree().add(tree.getLastUpdatedNode().getIndex(), uiNode);
-
-                    customAdapter.collapse(nodeList.indexOf(uiParent), uiParent);
-                    customAdapter.expand(nodeList.indexOf(uiParent), uiParent);
-                    uiParent.setStatus(Constants.STATUS.EXPAND.toString());
-                }
-                else
+                } else
                     this.uiNode.setId(tree.getLastUpdatedNode().getId());
                 this.uiNode = null;
                 break;
             case 2:
-                UINode temp = convertModelNodeToUINode(tree.getLastUpdatedNode());
-                uiNode = nodeTree.get(temp.getId());
-                uiNode.setName(temp.getName());
-                uiNode.setChildSubTree(temp.getChildSubTree());
-                uiNode.setParentId(temp.getParentId());
+                switch (updateParameter) {
+                    case "name":
+                        UINode tempUINode = nodeTree.get(tree.getLastUpdatedNode().getId());
+                        tempUINode.setName(tree.getLastUpdatedNode().getName());
+                        break;
+                    case "childSubTree":
+                        UINode existingParent = nodeTree.get(tree.getLastUpdatedNode().getId());
+                        existingParent.setChildSubTree(this.addNewNodeFromWebToParent(tree.getLastUpdatedNode(), existingParent.getChildSubTree()));
+                        customAdapter.collapse(nodeList.indexOf(existingParent), existingParent);
+                        customAdapter.expand(nodeList.indexOf(existingParent), existingParent);
+                        existingParent.setStatus(Constants.STATUS.EXPAND.toString());
+                        System.out.println("updated childsubtree " + existingParent.getChildSubTree());
+                        break;
+                    case "left":
+                        break;
+                    case "right":
+                        break;
+                    case "parentId":
+                        break;
+                }
                 break;
             case 3:
                 break;
@@ -170,5 +175,19 @@ public class Presenter implements IObserver {
                 e.printStackTrace();
             }
         }
+    }
+
+    private ArrayList<UINode> addNewNodeFromWebToParent(Node parent, ArrayList<UINode> childSubTree) {
+        ArrayList<String> temp = parent.getChildSubTree();
+
+        for (int i = 0; i < temp.size(); i++) {
+            UINode uiNode = nodeTree.get(temp.get(i));
+            if (!childSubTree.contains(uiNode)) {
+                childSubTree.add(i, uiNode);
+                break;
+            }
+        }
+
+        return childSubTree;
     }
 }

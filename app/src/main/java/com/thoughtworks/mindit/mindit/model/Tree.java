@@ -3,6 +3,7 @@ package com.thoughtworks.mindit.mindit.model;
 import com.thoughtworks.mindit.mindit.Constants;
 import com.thoughtworks.mindit.mindit.PublishSubscribe.IObserver;
 import com.thoughtworks.mindit.mindit.PublishSubscribe.ISubject;
+import com.thoughtworks.mindit.mindit.Tracker;
 import com.thoughtworks.mindit.mindit.exception.NodeAlreadyDeletedException;
 
 import java.io.Serializable;
@@ -11,20 +12,19 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Tree implements Serializable, ISubject {
-    private static final Object MUTEX = new Object();
     private static Tree instance;
     private HashMap<String, Node> nodes;
     private Node root;
     private List<IObserver> observers;
-    private boolean changed = true;
     private int updateOption;
     private Node lastUpdatedNode;
-
+    private String updateParameter;
     private Tree(HashMap<String, Node> nodes) {
         this.nodes = nodes;
         this.setRoot();
         lastUpdatedNode = null;
         observers = new ArrayList<IObserver>();
+        updateParameter = "childSubTree";
     }
 
     public static Tree getInstance(HashMap<String, Node> nodes) {
@@ -99,6 +99,7 @@ public class Tree implements Serializable, ISubject {
         updateOption = Constants.TREE_UPDATE_OPTIONS.ADD.getValue();
 
         Node parent = this.getNode(node.getParentId());
+        node.setDepth(parent.getDepth() + 1);
         int index = parent.getChildSubTree().size();
         parent.addThisChild(node, index);
 
@@ -108,9 +109,21 @@ public class Tree implements Serializable, ISubject {
         return this;
     }
 
+    public Tree addNodeFromWeb(Node node) {
+        lastUpdatedNode = node;
+        updateOption = Constants.TREE_UPDATE_OPTIONS.ADD.getValue();
+        nodes.put(node.getId(), node);
+
+        Node parent = this.getNode(node.getParentId());
+        node.setDepth(parent.getDepth() + 1);
+
+        this.notifyObservers();
+        return this;
+    }
+
     public Tree updateNode(Node node, String attribute, Object data) {
         updateOption = Constants.TREE_UPDATE_OPTIONS.UPDATE.getValue();
-
+        updateParameter=attribute;
         switch (attribute) {
             case "name":
                 node.setName((String) data);
@@ -164,31 +177,20 @@ public class Tree implements Serializable, ISubject {
     @Override
     public void register(IObserver obj) {
         if (obj == null) throw new NullPointerException("Null Observer");
-        synchronized (MUTEX) {
-            if (!observers.contains(obj)) observers.add(obj);
-        }
+        if (!observers.contains(obj)) observers.add(obj);
     }
 
     @Override
     public void unregister(IObserver obj) {
-        synchronized (MUTEX) {
-            observers.remove(obj);
-        }
+        observers.remove(obj);
     }
 
     @Override
     public void notifyObservers() {
         List<IObserver> observersLocal = null;
-        //synchronization is used to make sure any observer registered after message is received is not notified
-        synchronized (MUTEX) {
-            if (!changed)
-                return;
-            observersLocal = new ArrayList<IObserver>(this.observers);
-            this.changed = false;
-        }
+        observersLocal = new ArrayList<IObserver>(this.observers);
         for (IObserver obj : observersLocal) {
-            this.changed = true;
-            obj.update(updateOption);
+            obj.update(updateOption,updateParameter);
         }
     }
 }

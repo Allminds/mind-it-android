@@ -82,6 +82,15 @@ public class UINode {
         return status.equalsIgnoreCase(Constants.STATUS.EXPAND.toString());
     }
 
+    @Override
+    public String toString() {
+        return "UINode{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", parentId='" + parentId + '\'' +
+                '}';
+    }
+
     public void removeChild(UINode uiNode) {
         ArrayList<UINode> childSubTree = this.getChildSubTree();
         childSubTree.remove(uiNode);

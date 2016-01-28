@@ -113,6 +113,9 @@ public class CustomAdapterHelper {
         nodeList.add(newNodePosition, node);
 
         parentNode.getChildSubTree().add(parentNode.getChildSubTree().size(), node);
+        System.out.println("node:" + node);
+        System.out.println("parent:" + parentNode);
+        System.out.println("nodelist:" + nodeList);
         customAdapter.notifyDataSetChanged();
     }
 
@@ -164,13 +167,13 @@ public class CustomAdapterHelper {
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                    updateText(nodeHolder, currentNode);
-                    customAdapter.resetNewNodePosition();
-                    customAdapter.getPresenter().addChild(currentNode);
-                    return true;
-                }
-                return false;
+            if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                updateText(nodeHolder, currentNode);
+                customAdapter.resetNewNodePosition();
+                customAdapter.getPresenter().addChild(currentNode);
+                return true;
+            }
+            return false;
             }
         });
 
