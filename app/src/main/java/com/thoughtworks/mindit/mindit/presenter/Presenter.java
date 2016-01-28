@@ -66,7 +66,10 @@ public class Presenter implements IObserver {
         if (nodeList.size() != 0)
             nodeList.clear();
         //---get expanded tree for the first time---//
-        rootNode.setStatus("expand");
+        if(rootNode.getChildSubTree().size()!=0)
+            rootNode.setStatus(Constants.STATUS.EXPAND.toString());
+        else
+            rootNode.setStatus(Constants.STATUS.COLLAPSE.toString());
         nodeList.add(0, rootNode);
         nodeTree.put(rootNode.getId(), rootNode);
         return nodeList;

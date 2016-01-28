@@ -9,7 +9,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.thoughtworks.mindit.mindit.Constants;
 import com.thoughtworks.mindit.mindit.R;
 import com.thoughtworks.mindit.mindit.presenter.Presenter;
 import com.thoughtworks.mindit.mindit.view.adapter.CustomAdapter;
@@ -143,15 +145,19 @@ public class MindmapActivity extends AppCompatActivity {
 
     private void deleteNode(MenuItem item) {
         int position = getPosition(item);
+        if(position==0){
+            Toast.makeText(getApplicationContext(),"Can not delete root node...",Toast.LENGTH_SHORT).show();
+            return;
+        }
         UINode uiNode = nodeList.get(position);
         for (int i = position + 1; i < nodeList.size(); ) {
             if (nodeList.get(i).getDepth() > uiNode.getDepth()) {
                 nodeList.remove(i);
             } else {
-                nodeList.remove(position);
                 break;
             }
         }
+        System.out.println("*******" + uiNode.getName() + "*********" + nodeList.get(position).getName());
         presenter.deleteNode(uiNode);
 
         //remove from parent childsubtree
@@ -164,6 +170,10 @@ public class MindmapActivity extends AppCompatActivity {
             }
         }
         parent.removeChild(uiNode);
+        if(parent.getChildSubTree().size()==0){
+           parent.setStatus(Constants.STATUS.COLLAPSE.toString());
+        }
+        nodeList.remove(position);
 
         adapter.notifyDataSetChanged();
     }
