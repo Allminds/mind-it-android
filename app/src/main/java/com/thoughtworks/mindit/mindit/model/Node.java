@@ -141,13 +141,13 @@ public class Node implements Serializable {
     }
 
     private void addThisFirstLevelChildToSubTree(Node node) {
-        if (node.getPosition().equals(Constants.POSITION.RIGHT)) {
+        if (node.getPosition().equals(Constants.POSITION.RIGHT.toString())) {
             ArrayList<String> rightSubTree = this.getRight();
             if (this.isChildAlreadyExists(node, rightSubTree))
                 rightSubTree.remove(node.getId());
             rightSubTree.add(rightSubTree.size(), node.getId());
         }
-        if (node.getPosition().equals(Constants.POSITION.LEFT)) {
+        if (node.getPosition().equals(Constants.POSITION.LEFT.toString())) {
             ArrayList<String> leftSubTree = this.getLeft();
             if (this.isChildAlreadyExists(node, leftSubTree))
                 leftSubTree.remove(node.getId());
