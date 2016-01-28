@@ -3,6 +3,7 @@ package com.thoughtworks.mindit.mindit;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.thoughtworks.mindit.mindit.exception.NodeAlreadyDeletedException;
 import com.thoughtworks.mindit.mindit.helper.ITracker;
 import com.thoughtworks.mindit.mindit.helper.JsonParserService;
 import com.thoughtworks.mindit.mindit.helper.Meteor;
@@ -227,18 +228,35 @@ public class Tracker implements MeteorCallback, ITracker {
                 tree.updateNode(node, "childSubTree", newChildSubTree);
             }
             else if (fields.has("left")) {
+                Node root=tree.getRoot();
                 JSONArray jsonLeftTree=(JSONArray)fields.get("left");
                 ArrayList<String> leftTree=new ArrayList<String>();
                 for(int i=0;i<jsonLeftTree.length();i++){
                     leftTree.add(jsonLeftTree.getString(i));
+                    String newNodeId=jsonLeftTree.getString(i);
+
+                    if(tree.getNode(newNodeId) == null)
+                    {
+                        Node newNode = new Node(newNodeId, "", root, root.getId(), i);
+                        tree.addNodeFromWeb(newNode);
+                    }
                 }
+                System.out.println(leftTree);
                 tree.updateNode(node,"left",leftTree);
             }
             else if (fields.has("right")) {
                 JSONArray jsonRightTree=(JSONArray)fields.get("right");
                 ArrayList<String> rightTree=new ArrayList<String>();
+                Node root =tree.getRoot();
                 for(int i=0;i<jsonRightTree.length();i++){
                     rightTree.add(jsonRightTree.getString(i));
+                    String newNodeId=jsonRightTree.getString(i);
+
+                    if(tree.getNode(newNodeId) == null)
+                    {
+                        Node newNode = new Node(newNodeId, "", root, root.getId(), i);
+                        tree.addNodeFromWeb(newNode);
+                    }
                 }
                 tree.updateNode(node,"right",rightTree);
             }

@@ -85,8 +85,9 @@ public class UINode {
     @Override
     public String toString() {
         return "UINode{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
+                "name='" + name + '\'' +
+                ", id='" + id + '\'' +
+                ", childSubTree=" + childSubTree +
                 ", parentId='" + parentId + '\'' +
                 '}';
     }
