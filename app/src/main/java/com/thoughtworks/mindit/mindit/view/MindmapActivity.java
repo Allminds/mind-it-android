@@ -61,7 +61,6 @@ public class MindmapActivity extends AppCompatActivity {
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case 1:
-                addNewNode(item);
                 break;
             case 2:
                 deleteNode(item);
@@ -169,21 +168,15 @@ public class MindmapActivity extends AppCompatActivity {
                 break;
             }
         }
-        parent.removeChild(uiNode);
-        if(parent.getChildSubTree().size()==0){
-           parent.setStatus(Constants.STATUS.COLLAPSE.toString());
+        boolean result = parent != null ? parent.removeChild(uiNode) : false;
+        if (result) {
+            if (parent.getChildSubTree().size() == 0) {
+                parent.setStatus(Constants.STATUS.COLLAPSE.toString());
+            }
+            nodeList.remove(position);
+
+            adapter.notifyDataSetChanged();
         }
-        nodeList.remove(position);
-
-        adapter.notifyDataSetChanged();
-    }
-
-    private void addNewNode(MenuItem item) {
-        int position = getPosition(item);
-        int childPosition = position;
-        ///not used yet...
-
-
     }
 
     private class WaitForTree extends AsyncTask<UINode, Void, UINode> {

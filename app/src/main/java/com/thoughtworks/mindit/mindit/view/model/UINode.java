@@ -10,15 +10,6 @@ public class UINode {
     private int depth;
     private String status;
     private ArrayList<UINode> childSubTree;
-
-    public String getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
-
     private String parentId;
 
     public UINode(String name, int depth, String parentId) {
@@ -28,6 +19,14 @@ public class UINode {
         this.status = Constants.STATUS.COLLAPSE.toString();
         this.parentId = parentId;
         childSubTree = new ArrayList<UINode>();
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
     }
 
     public String getStatus() {
@@ -62,24 +61,35 @@ public class UINode {
         this.depth = depth;
     }
 
-    public void setChildSubTree(ArrayList<UINode> childSubTree) {
-        this.childSubTree = childSubTree;
-    }
-
     public ArrayList<UINode> getChildSubTree() {
         return this.childSubTree;
     }
 
-    public void toggleStatus() {
+    public void setChildSubTree(ArrayList<UINode> childSubTree) {
+        this.childSubTree = childSubTree;
+    }
+
+    public String toggleStatus() {
         if (status.equalsIgnoreCase(Constants.STATUS.EXPAND.toString())) {
             status = Constants.STATUS.COLLAPSE.toString();
         } else {
             status = Constants.STATUS.EXPAND.toString();
         }
+        return status;
     }
 
     public boolean isExpanded() {
         return status.equalsIgnoreCase(Constants.STATUS.EXPAND.toString());
+    }
+
+    public boolean removeChild(UINode uiNode) {
+        ArrayList<UINode> childSubTree = this.getChildSubTree();
+        boolean result = childSubTree.remove(uiNode);
+        if (childSubTree.size() == 0) {
+            this.setStatus(Constants.STATUS.COLLAPSE.toString());
+        } else
+            this.setStatus(Constants.STATUS.EXPAND.toString());
+        return result;
     }
 
     @Override
@@ -90,14 +100,5 @@ public class UINode {
                 ", childSubTree=" + childSubTree +
                 ", parentId='" + parentId + '\'' +
                 '}';
-    }
-
-    public void removeChild(UINode uiNode) {
-        ArrayList<UINode> childSubTree = this.getChildSubTree();
-        childSubTree.remove(uiNode);
-        if (childSubTree.size() == 0) {
-            this.setStatus(Constants.STATUS.COLLAPSE.toString());
-        } else
-            this.setStatus(Constants.STATUS.EXPAND.toString());
     }
 }
