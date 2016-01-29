@@ -3,7 +3,6 @@ package com.thoughtworks.mindit.mindit.model;
 import com.thoughtworks.mindit.mindit.Constants;
 import com.thoughtworks.mindit.mindit.PublishSubscribe.IObserver;
 import com.thoughtworks.mindit.mindit.PublishSubscribe.ISubject;
-import com.thoughtworks.mindit.mindit.Tracker;
 import com.thoughtworks.mindit.mindit.exception.NodeAlreadyDeletedException;
 
 import java.io.Serializable;
@@ -19,6 +18,7 @@ public class Tree implements Serializable, ISubject {
     private int updateOption;
     private Node lastUpdatedNode;
     private String updateParameter;
+
     private Tree(HashMap<String, Node> nodes) {
         this.nodes = nodes;
         this.setRoot();
@@ -112,7 +112,8 @@ public class Tree implements Serializable, ISubject {
     public Tree addNodeFromWeb(Node node) {
         lastUpdatedNode = node;
         updateOption = Constants.TREE_UPDATE_OPTIONS.ADD.getValue();
-        nodes.put(node.getId(), node);
+        //if(!nodes.containsKey(node.getId()))
+             nodes.put(node.getId(), node);
 
         Node parent = this.getNode(node.getParentId());
         node.setDepth(parent.getDepth() + 1);
@@ -123,7 +124,7 @@ public class Tree implements Serializable, ISubject {
 
     public Tree updateNode(Node node, String attribute, Object data) {
         updateOption = Constants.TREE_UPDATE_OPTIONS.UPDATE.getValue();
-        updateParameter=attribute;
+        updateParameter = attribute;
         switch (attribute) {
             case "name":
                 node.setName((String) data);
@@ -190,7 +191,7 @@ public class Tree implements Serializable, ISubject {
         List<IObserver> observersLocal = null;
         observersLocal = new ArrayList<IObserver>(this.observers);
         for (IObserver obj : observersLocal) {
-            obj.update(updateOption,updateParameter);
+            obj.update(updateOption, updateParameter);
         }
     }
 }

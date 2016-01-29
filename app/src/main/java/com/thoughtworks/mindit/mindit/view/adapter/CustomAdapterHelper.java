@@ -41,31 +41,31 @@ public class CustomAdapterHelper {
         nodeHolder.textViewForName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            nodeHolder.textViewForName.setVisibility(View.GONE);
-            nodeHolder.editText.setVisibility(View.VISIBLE);
-            nodeHolder.editText.requestFocus();
-            nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
-            nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
+                nodeHolder.textViewForName.setVisibility(View.GONE);
+                nodeHolder.editText.setVisibility(View.VISIBLE);
+                nodeHolder.editText.requestFocus();
+                nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
+                nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
 
-            final InputMethodManager inputMethodManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (inputMethodManager != null) {
-                inputMethodManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_FORCED);
-            }
+                final InputMethodManager inputMethodManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (inputMethodManager != null) {
+                    inputMethodManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_FORCED);
+                }
 
-            nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                    updateText(nodeHolder, currentNode);
-                    if (inputMethodManager != null) {
-                        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
+                    @Override
+                    public boolean onKey(View v, int keyCode, KeyEvent event) {
+                        if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                            updateText(nodeHolder, currentNode);
+                            if (inputMethodManager != null) {
+                                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                            }
+                            customAdapter.getPresenter().updateNode(currentNode);
+                            return true;
+                        }
+                        return false;
                     }
-                    customAdapter.getPresenter().updateNode(currentNode);
-                    return true;
-                }
-                return false;
-                }
-            });
+                });
             }
         });
     }
@@ -74,15 +74,15 @@ public class CustomAdapterHelper {
         nodeHolder.expandCollapseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            if (currentNode.getChildSubTree().size() == 0)
-                return;
-            if (currentNode.isExpanded()) {
-                collapse(position, currentNode);
-            } else {
-                expand(position, currentNode);
-            }
-            currentNode.toggleStatus();
-            customAdapter.notifyDataSetChanged();
+                if (currentNode.getChildSubTree().size() == 0)
+                    return;
+                if (currentNode.isExpanded()) {
+                    collapse(position, currentNode);
+                } else {
+                    expand(position, currentNode);
+                }
+                currentNode.toggleStatus();
+                customAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -103,8 +103,8 @@ public class CustomAdapterHelper {
             this.expand(position, parentNode);
         }
         int childCount = 1;
-        for (int index = position + 1; index < nodeList.size() && nodeList.get(index).getDepth() > parentNode.getDepth(); index ++){
-            childCount ++;
+        for (int index = position + 1; index < nodeList.size() && nodeList.get(index).getDepth() > parentNode.getDepth(); index++) {
+            childCount++;
         }
         int newNodePosition = position + childCount;
         customAdapter.setNewNodePosition(newNodePosition);
@@ -126,14 +126,12 @@ public class CustomAdapterHelper {
 
     void setImageForExpandCollapse(NodeHolder nodeHolder, View rowView, UINode currentNode) {
         nodeHolder.expandCollapseButton = (ImageView) rowView.findViewById(R.id.expandCollapse);
-        if (currentNode.getStatus().equalsIgnoreCase(Constants.STATUS.EXPAND.toString())) {
+        if (currentNode.getChildSubTree().size() == 0) {
+            nodeHolder.expandCollapseButton.setImageResource(R.drawable.leaf);
+        } else if (currentNode.getStatus().equalsIgnoreCase(Constants.STATUS.EXPAND.toString())) {
             nodeHolder.expandCollapseButton.setImageResource(R.drawable.expand);
         } else {
-            if (currentNode.getChildSubTree().size() == 0) {
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.leaf);
-            } else {
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.collapse);
-            }
+            nodeHolder.expandCollapseButton.setImageResource(R.drawable.collapse);
         }
     }
 
@@ -167,13 +165,13 @@ public class CustomAdapterHelper {
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-            if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                updateText(nodeHolder, currentNode);
-                customAdapter.resetNewNodePosition();
-                customAdapter.getPresenter().addChild(currentNode);
-                return true;
-            }
-            return false;
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    updateText(nodeHolder, currentNode);
+                    customAdapter.resetNewNodePosition();
+                    customAdapter.getPresenter().addChild(currentNode);
+                    return true;
+                }
+                return false;
             }
         });
 

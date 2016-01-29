@@ -131,8 +131,10 @@ public class Presenter implements IObserver {
             case 1:
                 if (uiNode == null) {
                     uiNode = convertModelNodeToUINode(tree.getLastUpdatedNode());
-                } else
+                } else {
                     this.uiNode.setId(tree.getLastUpdatedNode().getId());
+                    nodeTree.put(uiNode.getId(), uiNode);
+                }
                 this.uiNode = null;
                 break;
             case 2:
@@ -143,7 +145,7 @@ public class Presenter implements IObserver {
                         break;
                     case "childSubTree":
                         UINode existingParent = nodeTree.get(tree.getLastUpdatedNode().getId());
-                        existingParent.setChildSubTree(this.addNewNodeFromWebToParent(tree.getLastUpdatedNode(), existingParent.getChildSubTree()));
+                        existingParent.setChildSubTree(this.addNewNodeFromWebToParent(tree.getLastUpdatedNode()));
                         customAdapter.collapse(nodeList.indexOf(existingParent), existingParent);
                         customAdapter.expand(nodeList.indexOf(existingParent), existingParent);
                         existingParent.setStatus(Constants.STATUS.EXPAND.toString());
@@ -152,7 +154,7 @@ public class Presenter implements IObserver {
                     case "left":
                     case "right":
                         UINode root = nodeTree.get(tree.getLastUpdatedNode().getId());
-                        root.setChildSubTree(this.addNewNodeFromWebToParent(tree.getLastUpdatedNode(), root.getChildSubTree()));
+                        root.setChildSubTree(this.addNewNodeFromWebToParent(tree.getLastUpdatedNode()));
                         customAdapter.collapse(nodeList.indexOf(root), root);
                         customAdapter.expand(nodeList.indexOf(root), root);
                         root.setStatus(Constants.STATUS.EXPAND.toString());
@@ -181,15 +183,12 @@ public class Presenter implements IObserver {
         }
     }
 
-    private ArrayList<UINode> addNewNodeFromWebToParent(Node parent, ArrayList<UINode> childSubTree) {
+    private ArrayList<UINode> addNewNodeFromWebToParent(Node parent) {
         ArrayList<String> temp = parent.getChildSubTree();
-
+        ArrayList<UINode>childSubTree = new ArrayList<UINode>();
         for (int i = 0; i < temp.size(); i++) {
             UINode uiNode = nodeTree.get(temp.get(i));
-            if (!childSubTree.contains(uiNode)) {
-                childSubTree.add(i, uiNode);
-                break;
-            }
+            childSubTree.add(uiNode);
         }
 
         return childSubTree;

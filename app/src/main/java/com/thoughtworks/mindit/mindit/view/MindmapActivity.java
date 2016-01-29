@@ -49,12 +49,12 @@ public class MindmapActivity extends AppCompatActivity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         menu.setHeaderTitle("Select The Action");
-        menu.add(0, 1, 0, "Add");
-        menu.add(0, 2, 0, "Delete");
-        menu.add(0, 3, 0, "Copy");
-        menu.add(0, 4, 0, "Cut");
-        if (clipboard != null)
-            menu.add(0, 5, 0, "Paste");
+     //   menu.add(0, 1, 0, "Add");
+            menu.add(0, 2, 0, "Delete");
+//        menu.add(0, 3, 0, "Copy");
+//        menu.add(0, 4, 0, "Cut");
+//        if (clipboard != null)
+//            menu.add(0, 5, 0, "Paste");
     }
 
     @Override
@@ -182,6 +182,7 @@ public class MindmapActivity extends AppCompatActivity {
         int position = getPosition(item);
         int childPosition = position;
         ///not used yet...
+
 
     }
 
