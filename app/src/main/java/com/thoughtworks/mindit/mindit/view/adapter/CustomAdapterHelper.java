@@ -18,9 +18,17 @@ public class CustomAdapterHelper {
     private final CustomAdapter customAdapter;
     private ArrayList<UINode> nodeList;
 
+    public ArrayList<UINode> getNodeList() {
+        return nodeList;
+    }
+
+    public void setNodeList(ArrayList<UINode> nodeList) {
+        this.nodeList = nodeList;
+    }
+
     public CustomAdapterHelper(CustomAdapter customAdapter) {
         this.customAdapter = customAdapter;
-        this.nodeList = customAdapter.getNodeArrayList();
+        this.nodeList = customAdapter.getNodeList();
     }
 
     void updateText(NodeHolder nodeHolder, UINode currentNode) {
@@ -81,7 +89,6 @@ public class CustomAdapterHelper {
                 } else {
                     expand(position, currentNode);
                 }
-                currentNode.toggleStatus();
                 customAdapter.notifyDataSetChanged();
             }
         });
@@ -95,65 +102,6 @@ public class CustomAdapterHelper {
                 addChild(position, currentNode);
             }
         });
-    }
-
-    void addChild(int position, UINode parentNode) {
-        if (parentNode.getStatus().equals(Constants.STATUS.COLLAPSE.toString())) {
-            parentNode.setStatus(Constants.STATUS.EXPAND.toString());
-            this.expand(position, parentNode);
-        }
-        int childCount = 1;
-        for (int index = position + 1; index < nodeList.size() && nodeList.get(index).getDepth() > parentNode.getDepth(); index++) {
-            childCount++;
-        }
-        int newNodePosition = position + childCount;
-        customAdapter.setNewNodePosition(newNodePosition);
-
-        UINode node = new UINode("Enter Text", parentNode.getDepth() + 20, parentNode.getId());
-        nodeList.add(newNodePosition, node);
-
-        parentNode.getChildSubTree().add(parentNode.getChildSubTree().size(), node);
-        System.out.println("node:" + node);
-        System.out.println("parent:" + parentNode);
-        System.out.println("nodelist:" + nodeList);
-        customAdapter.notifyDataSetChanged();
-    }
-
-    void addPadding(int position, View rowView) {
-        RelativeLayout relativeLayout = (RelativeLayout) rowView.findViewById(R.id.layout);
-        relativeLayout.setPadding(nodeList.get(position).getDepth(), 0, 0, 0);
-    }
-
-    void setImageForExpandCollapse(NodeHolder nodeHolder, View rowView, UINode currentNode) {
-        nodeHolder.expandCollapseButton = (ImageView) rowView.findViewById(R.id.expandCollapse);
-        if (currentNode.getChildSubTree().size() == 0) {
-            nodeHolder.expandCollapseButton.setImageResource(R.drawable.leaf);
-        } else if (currentNode.getStatus().equalsIgnoreCase(Constants.STATUS.EXPAND.toString())) {
-            nodeHolder.expandCollapseButton.setImageResource(R.drawable.expand);
-        } else {
-            nodeHolder.expandCollapseButton.setImageResource(R.drawable.collapse);
-        }
-    }
-
-    public void expand(int position, UINode currentNode) {
-        int childPosition = position + 1;
-        ArrayList<UINode> childSubTree = currentNode.getChildSubTree();
-        for (int nodeIndex = 0; nodeIndex < childSubTree.size(); nodeIndex++) {
-            nodeList.add(childPosition++, childSubTree.get(nodeIndex));
-        }
-    }
-
-    void collapse(int position, UINode currentNode) {
-        int nodeIndex = position + 1;
-        while (nodeIndex < nodeList.size()) {
-            if (nodeList.get(nodeIndex).getDepth() > currentNode.getDepth()) {
-                if (nodeList.get(nodeIndex).getStatus().equals(Constants.STATUS.EXPAND.toString()))
-                    nodeList.get(nodeIndex).toggleStatus();
-                nodeList.remove(nodeIndex);
-            } else {
-                break;
-            }
-        }
     }
 
     public void addNode(final NodeHolder nodeHolder, final UINode currentNode) {
@@ -176,5 +124,75 @@ public class CustomAdapterHelper {
         });
 
 
+    }
+
+    public UINode addChild(int position, UINode parent) {
+        if (parent.getStatus().equals(Constants.STATUS.COLLAPSE.toString())) {
+            this.expand(position, parent);
+        }
+
+        int newNodePosition = getNewNodePosition(position, parent);
+        customAdapter.setNewNodePosition(newNodePosition);
+
+        UINode node = new UINode("Enter Text", parent.getDepth() + 20, parent.getId());
+        nodeList.add(newNodePosition, node);
+
+        boolean addedInParent = parent.addChild(node);
+
+        customAdapter.notifyDataSetChanged();
+
+        if (nodeList.contains(node) && addedInParent)
+            return node;
+        else
+            return null;
+    }
+
+    private int getNewNodePosition(int position, UINode parent) {
+        int childCount = 1;
+        for (int index = position + 1; index < nodeList.size() && nodeList.get(index).getDepth() > parent.getDepth(); index++) {
+            childCount++;
+        }
+        return position + childCount;
+    }
+
+    void addPadding(int position, View rowView) {
+        RelativeLayout relativeLayout = (RelativeLayout) rowView.findViewById(R.id.layout);
+        relativeLayout.setPadding(nodeList.get(position).getDepth(), 0, 0, 0);
+    }
+
+    void setImageForExpandCollapse(NodeHolder nodeHolder, View rowView, UINode currentNode) {
+        nodeHolder.expandCollapseButton = (ImageView) rowView.findViewById(R.id.expandCollapse);
+        if (currentNode.getChildSubTree().size() == 0) {
+            nodeHolder.expandCollapseButton.setImageResource(R.drawable.leaf);
+        } else if (currentNode.getStatus().equalsIgnoreCase(Constants.STATUS.EXPAND.toString())) {
+            nodeHolder.expandCollapseButton.setImageResource(R.drawable.expand);
+        } else {
+            nodeHolder.expandCollapseButton.setImageResource(R.drawable.collapse);
+        }
+    }
+
+    public ArrayList<UINode> expand(int position, UINode currentNode) {
+        int childPosition = position + 1;
+        ArrayList<UINode> childSubTree = currentNode.getChildSubTree();
+        for (int nodeIndex = 0; nodeIndex < childSubTree.size(); nodeIndex++) {
+            nodeList.add(childPosition++, childSubTree.get(nodeIndex));
+        }
+        currentNode.setStatus(Constants.STATUS.EXPAND.toString());
+        return nodeList;
+    }
+
+    public ArrayList<UINode> collapse(int position, UINode currentNode) {
+        int nodeIndex = position + 1;
+        while (nodeIndex < nodeList.size()) {
+            if (nodeList.get(nodeIndex).getDepth() > currentNode.getDepth()) {
+                if (nodeList.get(nodeIndex).getStatus().equals(Constants.STATUS.EXPAND.toString()))
+                    nodeList.get(nodeIndex).toggleStatus();
+                nodeList.remove(nodeIndex);
+            } else {
+                break;
+            }
+        }
+        currentNode.setStatus(Constants.STATUS.COLLAPSE.toString());
+        return nodeList;
     }
 }

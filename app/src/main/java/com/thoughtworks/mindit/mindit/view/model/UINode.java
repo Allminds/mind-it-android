@@ -92,6 +92,12 @@ public class UINode {
         return result;
     }
 
+    public boolean addChild(UINode uiNode) {
+        ArrayList<UINode> parentChildSubTree = this.getChildSubTree();
+        parentChildSubTree.add(this.getChildSubTree().size(), uiNode);
+        return parentChildSubTree.contains(uiNode);
+    }
+
     @Override
     public String toString() {
         return "UINode{" +

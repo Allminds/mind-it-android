@@ -17,34 +17,29 @@ import com.thoughtworks.mindit.mindit.presenter.Presenter;
 import java.util.ArrayList;
 
 public class CustomAdapter extends BaseAdapter {
-    private final int deviceWidth;
     private final int deviceHeight;
     private final CustomAdapterHelper customAdapterHelper;
     private Context context;
-    private ArrayList<UINode> nodeArrayList;
+    private ArrayList<UINode> nodeList;
     private LayoutInflater layoutInflater;
-    private int newNodePosition=-1;
+    private int newNodePosition = -1;
     private Presenter presenter;
 
 
     public CustomAdapter(Context context, Presenter presenter) {
         this.context = context;
         this.presenter = presenter;
-        this.nodeArrayList = presenter.buildNodeListFromTree();
+        this.nodeList = presenter.buildNodeListFromTree();
         customAdapterHelper = new CustomAdapterHelper(this);
-        customAdapterHelper.expand(0, nodeArrayList.get(0));
+        customAdapterHelper.expand(0, nodeList.get(0));
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        Display display = ((Activity)context).getWindowManager().getDefaultDisplay();
+        Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
 
         Point size = new Point();
         display.getSize(size);
-        deviceWidth = size.x;
         deviceHeight = size.y;
     }
 
-    public int getNewNodePosition() {
-        return newNodePosition;
-    }
     public int getDeviceHeight() {
         return deviceHeight;
     }
@@ -53,17 +48,33 @@ public class CustomAdapter extends BaseAdapter {
         return context;
     }
 
-    public ArrayList<UINode> getNodeArrayList() {
-        return nodeArrayList;
+    public ArrayList<UINode> getNodeList() {
+        return nodeList;
     }
 
     public Presenter getPresenter() {
         return presenter;
     }
 
+    public void expand(int position, UINode currentNode) {
+        customAdapterHelper.expand(position, currentNode);
+    }
+
+    public void collapse(int position, UINode currentNode) {
+        customAdapterHelper.collapse(position, currentNode);
+    }
+
+    public void setNewNodePosition(int newNodePosition) {
+        this.newNodePosition = newNodePosition;
+    }
+
+    public void resetNewNodePosition() {
+        this.newNodePosition = -1;
+    }
+
     @Override
     public int getCount() {
-        return nodeArrayList.size();
+        return nodeList.size();
     }
 
     @Override
@@ -84,10 +95,10 @@ public class CustomAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         final NodeHolder nodeHolder = new NodeHolder();
-        final UINode currentNode = nodeArrayList.get(position);
+        final UINode currentNode = nodeList.get(position);
         final View rowView = layoutInflater.inflate(R.layout.layout_node, null);
 
-        nodeHolder.editText = (EditText)rowView.findViewById(R.id.editText);
+        nodeHolder.editText = (EditText) rowView.findViewById(R.id.editText);
         nodeHolder.editText.setVisibility(View.GONE);
 
         customAdapterHelper.initializeTextView(nodeHolder, rowView, currentNode);
@@ -96,24 +107,9 @@ public class CustomAdapter extends BaseAdapter {
         customAdapterHelper.setEventToExpandCollapse(position, nodeHolder, currentNode);
         customAdapterHelper.setEventToAddNodeButton(position, nodeHolder, rowView, currentNode);
 
-        if(position == newNodePosition)
+        if (position == newNodePosition)
             customAdapterHelper.addNode(nodeHolder, currentNode);
 
         return rowView;
-    }
-
-    public void expand(int position, UINode currentNode) {
-        customAdapterHelper.expand(position, currentNode);
-    }
-
-    public void collapse(int position, UINode currentNode) {
-        customAdapterHelper.collapse(position, currentNode);
-    }
-
-    public void setNewNodePosition(int newNodePosition) {
-        this.newNodePosition = newNodePosition;
-    }
-    public void resetNewNodePosition() {
-        this.newNodePosition = -1;
     }
 }

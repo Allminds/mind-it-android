@@ -42,7 +42,7 @@ public class MindmapActivity extends AppCompatActivity {
         adapter = new CustomAdapter(this, presenter);
         listView.setAdapter(adapter);
         presenter.setCustomAdapter(adapter);
-        nodeList = adapter.getNodeArrayList();
+        nodeList = adapter.getNodeList();
     }
 
     @Override
