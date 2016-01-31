@@ -95,13 +95,9 @@ public class Presenter implements IObserver {
         uiNode.setChildSubTree(childSubTree);
     }
 
-    public void addChild(UINode uiNode) {
+    public void addNode(UINode uiNode) {
         Node parent = tree.getNode(uiNode.getParentId());
-
         String rootId = parent.getRootId();
-        if (parent.isARoot())
-            rootId = parent.getId();
-
         Node node = new Node("", uiNode.getName(), parent, rootId, 0);
         this.uiNode = uiNode;
         tracker.addChild(node);
@@ -117,12 +113,15 @@ public class Presenter implements IObserver {
         tracker.deleteNode(uiNode.getId());
     }
 
-    public UINode getUiNode(String id) {
-        for (UINode uiNode : nodeList) {
-            if (uiNode.getId().equals(id))
-                return uiNode;
+    private ArrayList<UINode> addNewNodeFromWebToParent(Node parent) {
+        ArrayList<String> temp = parent.getChildSubTree();
+        ArrayList<UINode>childSubTree = new ArrayList<UINode>();
+        for (int i = 0; i < temp.size(); i++) {
+            UINode uiNode = nodeTree.get(temp.get(i));
+            childSubTree.add(uiNode);
         }
-        return null;
+
+        return childSubTree;
     }
 
     @Override
@@ -181,16 +180,5 @@ public class Presenter implements IObserver {
                 e.printStackTrace();
             }
         }
-    }
-
-    private ArrayList<UINode> addNewNodeFromWebToParent(Node parent) {
-        ArrayList<String> temp = parent.getChildSubTree();
-        ArrayList<UINode>childSubTree = new ArrayList<UINode>();
-        for (int i = 0; i < temp.size(); i++) {
-            UINode uiNode = nodeTree.get(temp.get(i));
-            childSubTree.add(uiNode);
-        }
-
-        return childSubTree;
     }
 }

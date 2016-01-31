@@ -116,7 +116,7 @@ public class CustomAdapterHelper {
                 if (keyCode == KeyEvent.KEYCODE_ENTER) {
                     updateText(nodeHolder, currentNode);
                     customAdapter.resetNewNodePosition();
-                    customAdapter.getPresenter().addChild(currentNode);
+                    customAdapter.getPresenter().addNode(currentNode);
                     return true;
                 }
                 return false;

@@ -189,7 +189,7 @@ public class MindmapActivity extends AppCompatActivity {
         protected UINode doInBackground(UINode... params) {
             UINode node = params[0];
             node.setId("");
-            presenter.addChild(node);
+            presenter.addNode(node);
             while (node.getId().equals("")) ;
             return node;
         }
