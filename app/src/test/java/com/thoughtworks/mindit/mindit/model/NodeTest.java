@@ -1,15 +1,14 @@
 package com.thoughtworks.mindit.mindit.model;
 
-
 import com.thoughtworks.mindit.mindit.Constants;
 import com.thoughtworks.mindit.mindit.exception.NodeDoesNotExistException;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
+
 
 
 public class NodeTest {
@@ -50,7 +49,8 @@ public class NodeTest {
     public void shouldNotAddThisChildToLeftSubtree(){
         child1.setPosition(Constants.POSITION.RIGHT.toString());
         root.addThisChild(child1, 0);
-        assertEquals(true,root.getLeft().contains(child1.getId()));
+
+        assertEquals(false,root.getLeft().contains(child1.getId()));
     }
     @Test
     public void shouldAddThisChildToRightSubtree(){
@@ -74,7 +74,6 @@ public class NodeTest {
 
     @Test (expected= NodeDoesNotExistException.class)
     public void shouldNotRemoveThisChildTwice()throws NodeDoesNotExistException{
-        System.out.println("hi");
         root.addThisChild(child1, 0);
         root.removeThisChild(child1);
         root.removeThisChild(child1);

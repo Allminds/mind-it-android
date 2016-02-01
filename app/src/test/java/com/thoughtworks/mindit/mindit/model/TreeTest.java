@@ -1,4 +1,4 @@
-package com.thoughtworks.mindit.mindit;
+package com.thoughtworks.mindit.mindit.model;
 
 import com.thoughtworks.mindit.mindit.exception.NodeAlreadyDeletedException;
 import com.thoughtworks.mindit.mindit.model.Node;

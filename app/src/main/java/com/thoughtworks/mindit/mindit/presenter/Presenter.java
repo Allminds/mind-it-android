@@ -29,6 +29,15 @@ public class Presenter implements IObserver {
         tree.register(this);
         uiNode = null;
     }
+    public Presenter(Tracker tracker,Tree tree)
+    {
+        nodeList = new ArrayList<UINode>();
+        nodeTree = new HashMap<String, UINode>();
+        this.tracker = tracker;
+        this.tree = tree;
+    //    tree.register(this);
+        uiNode = null;
+    }
 
     public void setCustomAdapter(CustomAdapter customAdapter) {
         this.customAdapter = customAdapter;
