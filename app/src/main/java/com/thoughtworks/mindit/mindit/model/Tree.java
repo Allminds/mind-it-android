@@ -167,7 +167,6 @@ public class Tree implements Serializable, ISubject {
         this.notifyObservers();
         return this;
     }
-
     @Override
     public String toString() {
         return "Tree{" +
@@ -193,5 +192,10 @@ public class Tree implements Serializable, ISubject {
         for (IObserver obj : observersLocal) {
             obj.update(updateOption, updateParameter);
         }
+    }
+
+    public void removeAllNodes() {
+        nodes.clear();
+        instance = null;
     }
 }

@@ -3,7 +3,6 @@ package com.thoughtworks.mindit.mindit;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.thoughtworks.mindit.mindit.exception.NodeAlreadyDeletedException;
 import com.thoughtworks.mindit.mindit.helper.ITracker;
 import com.thoughtworks.mindit.mindit.helper.JsonParserService;
 import com.thoughtworks.mindit.mindit.helper.Meteor;
@@ -15,7 +14,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +39,7 @@ public class Tracker implements MeteorCallback, ITracker {
         return instance;
     }
 
+
     public static Tracker getInstance() {
         return instance;
     }
@@ -48,7 +47,14 @@ public class Tracker implements MeteorCallback, ITracker {
     public Tree getTree() {
         return tree;
     }
+    public void resetTree()
+    {
+        tree.removeAllNodes();
+        this.tree = null;
+        instance = null;
+        meteor.disconnect();
 
+    }
     public void subscribe(String rootId) {
         meteor.subscribe("mindmap", new String[]{rootId});
     }
@@ -79,9 +85,9 @@ public class Tracker implements MeteorCallback, ITracker {
                 //ignore first([) and last character(])
                 s = s.substring(1, s.length() - 1);
                 Node tempNode = JsonParserService.parseNode(s);
+                System.out.println("Added:    " + tempNode);
                 node.set_id(tempNode.getId());
                 tree.addNode(node);
-
                 updateParentInDB(node);
             }
 
@@ -201,8 +207,7 @@ public class Tracker implements MeteorCallback, ITracker {
             if (fields.has("name")) {
                 String name = fields.getString("name");
                 tree.updateNode(node, "name", name);
-            }
-            else if (fields.has("childSubTree")) {
+            } else if (fields.has("childSubTree")) {
                 Node parent = node;
                 ArrayList<String> oldChildSubTree = parent.getChildSubTree();
 
@@ -212,55 +217,50 @@ public class Tracker implements MeteorCallback, ITracker {
                     newChildSubTree.add(jsonChildSubTree.getString(i));
                 }
 
-                if(newChildSubTree.size() - oldChildSubTree.size() == 1) {
-                    ArrayList<String> clonedChildSubTree = (ArrayList<String>)newChildSubTree.clone();
+                if (newChildSubTree.size() - oldChildSubTree.size() == 1) {
+                    ArrayList<String> clonedChildSubTree = (ArrayList<String>) newChildSubTree.clone();
                     clonedChildSubTree.removeAll(oldChildSubTree);
                     String newNodeId = clonedChildSubTree.get(0);
-                    if(tree.getNode(newNodeId) == null) {
+                    if (tree.getNode(newNodeId) == null) {
                         Node newNode = new Node(newNodeId, "", parent, parent.getRootId(), newChildSubTree.indexOf(newNodeId));
                         tree.addNodeFromWeb(newNode);
                     }
                 }
-                if(newChildSubTree.equals(oldChildSubTree)) {
+                if (newChildSubTree.equals(oldChildSubTree)) {
                     return;
                 }
                 //separate condition in case of repositioning of nodes
                 tree.updateNode(node, "childSubTree", newChildSubTree);
-            }
-            else if (fields.has("left")) {
-                Node root=tree.getRoot();
-                JSONArray jsonLeftTree=(JSONArray)fields.get("left");
-                ArrayList<String> leftTree=new ArrayList<String>();
-                for(int i=0;i<jsonLeftTree.length();i++){
+            } else if (fields.has("left")) {
+                Node root = tree.getRoot();
+                JSONArray jsonLeftTree = (JSONArray) fields.get("left");
+                ArrayList<String> leftTree = new ArrayList<String>();
+                for (int i = 0; i < jsonLeftTree.length(); i++) {
                     leftTree.add(jsonLeftTree.getString(i));
-                    String newNodeId=jsonLeftTree.getString(i);
+                    String newNodeId = jsonLeftTree.getString(i);
 
-                    if(tree.getNode(newNodeId) == null)
-                    {
+                    if (tree.getNode(newNodeId) == null) {
                         Node newNode = new Node(newNodeId, "", root, root.getId(), i);
                         tree.addNodeFromWeb(newNode);
                     }
                 }
                 System.out.println(leftTree);
-                tree.updateNode(node,"left",leftTree);
-            }
-            else if (fields.has("right")) {
-                JSONArray jsonRightTree=(JSONArray)fields.get("right");
-                ArrayList<String> rightTree=new ArrayList<String>();
-                Node root =tree.getRoot();
-                for(int i=0;i<jsonRightTree.length();i++){
+                tree.updateNode(node, "left", leftTree);
+            } else if (fields.has("right")) {
+                JSONArray jsonRightTree = (JSONArray) fields.get("right");
+                ArrayList<String> rightTree = new ArrayList<String>();
+                Node root = tree.getRoot();
+                for (int i = 0; i < jsonRightTree.length(); i++) {
                     rightTree.add(jsonRightTree.getString(i));
-                    String newNodeId=jsonRightTree.getString(i);
+                    String newNodeId = jsonRightTree.getString(i);
 
-                    if(tree.getNode(newNodeId) == null)
-                    {
+                    if (tree.getNode(newNodeId) == null) {
                         Node newNode = new Node(newNodeId, "", root, root.getId(), i);
                         tree.addNodeFromWeb(newNode);
                     }
                 }
-                tree.updateNode(node,"right",rightTree);
-            }
-            else if(fields.has("parentId")){
+                tree.updateNode(node, "right", rightTree);
+            } else if (fields.has("parentId")) {
                 String parentId = fields.getString("parentId");
                 tree.updateNode(node, "parentId", parentId);
             }

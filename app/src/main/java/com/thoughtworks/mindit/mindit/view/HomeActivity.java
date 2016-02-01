@@ -33,7 +33,6 @@ public class HomeActivity extends AppCompatActivity
 
     Tracker tracker;
     ProgressBar progressBar;
-    Tree tree;
     String rootId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +42,7 @@ public class HomeActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         Intent intent = getIntent();
-        String action;
         Uri data;
-
-        action = intent.getAction();
         data = intent.getData();
         progressBar = (ProgressBar)findViewById(R.id.progressBar);
         if(data!=null) {
@@ -144,6 +140,12 @@ public class HomeActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        tracker.resetTree();
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -184,6 +186,7 @@ public class HomeActivity extends AppCompatActivity
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+            System.out.println(rootId+"   "+tracker.getTree());
             return rootId;
         }
         @Override
