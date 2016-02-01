@@ -54,9 +54,7 @@ public class PresenterTest {
 
     @Test
     public void shouldBuildNodeListFromTree() throws Exception {
-        tracker.getTree().addNode(root);
         ArrayList<UINode> nodeList = presenter.buildNodeListFromTree();
-        Node root = tracker.getTree().getRoot();
         UINode uiRoot = nodeList.get(0);
         assertEquals(uiRoot.getId(), root.getId());
     }
@@ -76,18 +74,36 @@ public class PresenterTest {
     @Test
     public void shouldAddNode() {
         uiNode = new UINode("child2", 1, root.getId());
-
-        // Node node = new Node("", uiNode.getName(), parent, rootId, 0);
-        //Mockito.verify(tracker).addChild();
-        //  when(tracker.addChild(any(Node)).thenReturn(5));
-        //  assertEquals(5,presenter.addNode(uiNode));
         ArgumentCaptor<Node> argumentCaptor = ArgumentCaptor.forClass(Node.class);
         presenter.addNode(uiNode);
         verify(tracker).addChild(argumentCaptor.capture());
-        //verify(tracker).addChild(Matchers.eq(argumentCaptor.capture()));
-        assertEquals(uiNode.getId(), argumentCaptor.getValue().getId());
-        // System.out.println("UINode:" + uiNode);
-        //System.out.println("Node:" + argumentCaptor.getValue());
+    }
+    @Test
+    public void shouldUpdateNode(){
+        uiNode = new UINode("child2", 1, root.getId());
+        Node node= presenter.convertUINodeToModelNode(uiNode,root);
+        tree.addNode(node);
+        uiNode.setName("child2");
+        ArgumentCaptor<Node> argumentCaptor = ArgumentCaptor.forClass(Node.class);
+        presenter.updateNode(uiNode);
+        verify(tracker).updateNode(argumentCaptor.capture());
+
+    }
+    @Test
+    public void shouldDeleteNode(){
+        uiNode = new UINode("child2", 1, root.getId());
+        Node node= presenter.convertUINodeToModelNode(uiNode, root);
+        tree.addNode(node);
+        uiNode.setName("child2");
+        ArgumentCaptor<String > argumentCaptor = ArgumentCaptor.forClass(String.class);
+        presenter.deleteNode(uiNode);
+        verify(tracker).deleteNode(argumentCaptor.capture());
+
+    }
+
+    @Test
+    public void shouldAddNodFromWebToParent(){
+
     }
 
 }
