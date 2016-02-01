@@ -49,7 +49,7 @@ public class JsonParserService {
 
     public static JSONObject rawParse(String json) throws JSONException {
         JSONObject jsonObject = new JSONObject(json);
-        System.out.println("jsonobject: " + jsonObject);
+      //  System.out.println("jsonobject: " + jsonObject);
         return jsonObject;
     }
 }
