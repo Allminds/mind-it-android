@@ -37,6 +37,7 @@ public class MindmapActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.listView);
         registerForContextMenu(listView);
 
+
         presenter = new Presenter();
 
         adapter = new CustomAdapter(this, presenter);
@@ -48,13 +49,19 @@ public class MindmapActivity extends AppCompatActivity {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        menu.setHeaderTitle("Select The Action");
-     //   menu.add(0, 1, 0, "Add");
+        menu.setHeaderTitle("Select The Action");//        menu.add(0, 1, 0, "Add");
+
+        /*menu.add(0, 1, 0, "Delete");
+        menu.add(0, 3, 0, "Copy");
+        menu.add(0, 4, 0, "Cut");
+        if (clipboard != null)
+            menu.add(0, 5, 0, "Paste");*/
+
+        AdapterView.AdapterContextMenuInfo adapterContextMenuInfo = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        int position = adapterContextMenuInfo.position;
+        if (position != 0) {
             menu.add(0, 2, 0, "Delete");
-//        menu.add(0, 3, 0, "Copy");
-//        menu.add(0, 4, 0, "Cut");
-//        if (clipboard != null)
-//            menu.add(0, 5, 0, "Paste");
+        }
     }
 
     @Override
@@ -100,7 +107,7 @@ public class MindmapActivity extends AppCompatActivity {
     private void pasteNode(MenuItem item) {
         int position = getPosition(item);
         UINode parent = nodeList.get(position);
-        int childPosition=parent.getChildSubTree().size();
+        int childPosition = parent.getChildSubTree().size();
 
         clipboard.setDepth(parent.getDepth() + 20);
         clipboard.setParentId(parent.getId());
@@ -144,8 +151,8 @@ public class MindmapActivity extends AppCompatActivity {
 
     private void deleteNode(MenuItem item) {
         int position = getPosition(item);
-        if(position==0){
-            Toast.makeText(getApplicationContext(),"Can not delete root node...",Toast.LENGTH_SHORT).show();
+        if (position == 0) {
+            Toast.makeText(getApplicationContext(), "Can not delete root node...", Toast.LENGTH_SHORT).show();
             return;
         }
         UINode uiNode = nodeList.get(position);
