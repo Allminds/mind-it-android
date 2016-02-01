@@ -157,10 +157,12 @@ public class Presenter implements IObserver {
                     case "childSubTree":
                         UINode existingParent = nodeTree.get(tree.getLastUpdatedNode().getId());
                         existingParent.setChildSubTree(this.addNewNodeFromWebToParent(tree.getLastUpdatedNode()));
-                        customAdapter.collapse(nodeList.indexOf(existingParent), existingParent);
-                        customAdapter.expand(nodeList.indexOf(existingParent), existingParent);
-                        existingParent.setStatus(Constants.STATUS.EXPAND.toString());
-                        System.out.println("updated childsubtree " + existingParent.getChildSubTree());
+                        if(nodeList.indexOf(existingParent) != -1) {
+                            customAdapter.collapse(nodeList.indexOf(existingParent), existingParent);
+                            customAdapter.expand(nodeList.indexOf(existingParent), existingParent);
+                            existingParent.setStatus(Constants.STATUS.EXPAND.toString());
+                            System.out.println("updated childsubtree " + existingParent.getChildSubTree());
+                        }
                         break;
                     case "left":
                     case "right":
