@@ -142,6 +142,8 @@ public class Tree implements Serializable, ISubject {
                 break;
             case "parentId":
                 node.setParentId((String) data);
+                Node parent = this.getNode(node.getParentId());
+                updateDepthOfAllNodes(node, parent.getDepth());
                 break;
         }
 

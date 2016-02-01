@@ -202,6 +202,7 @@ public class Tracker implements MeteorCallback, ITracker {
     @Override
     public void onChanged(String collectionName, String documentID, String updatedValuesJson, String removedValuesJson) {
         Node node = tree.getNode(documentID);
+        System.out.println("onChanged:   "+updatedValuesJson);
         try {
             JSONObject fields = JsonParserService.rawParse(updatedValuesJson);
             if (fields.has("name")) {

@@ -54,7 +54,7 @@ public class Presenter implements IObserver {
 
     public Node convertUINodeToModelNode(UINode uiNode, Node parent) {
         Node node;
-        String rootId = "";
+        String rootId;
         if (parent != null) {
             rootId = parent.getRootId();
             if (parent.isARoot())
@@ -173,6 +173,10 @@ public class Presenter implements IObserver {
                         root.setStatus(Constants.STATUS.EXPAND.toString());
                         break;
                     case "parentId":
+                        Node node = tree.getLastUpdatedNode();
+                        UINode child = nodeTree.get(node.getId());
+                        updateDepthOfAllChildrenInUINode(child, node.getDepth()*Constants.PADDING_FOR_DEPTH);
+                        child.setDepth(node.getDepth()*Constants.PADDING_FOR_DEPTH);
                         break;
                 }
                 break;
@@ -193,6 +197,13 @@ public class Presenter implements IObserver {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void updateDepthOfAllChildrenInUINode(UINode node, int depth) {
+        node.setDepth(depth);
+        for ( UINode child : node.getChildSubTree()) {
+            updateDepthOfAllChildrenInUINode(child, depth+Constants.PADDING_FOR_DEPTH);
         }
     }
 }
