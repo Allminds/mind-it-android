@@ -29,13 +29,13 @@ public class Presenter implements IObserver {
         tree.register(this);
         uiNode = null;
     }
-    public Presenter(Tracker tracker,Tree tree)
-    {
+
+    public Presenter(Tracker tracker, Tree tree) {
         nodeList = new ArrayList<UINode>();
         nodeTree = new HashMap<String, UINode>();
         this.tracker = tracker;
         this.tree = tree;
-    //    tree.register(this);
+        //    tree.register(this);
         uiNode = null;
     }
 
@@ -75,7 +75,7 @@ public class Presenter implements IObserver {
         if (nodeList.size() != 0)
             nodeList.clear();
         //---get expanded tree for the first time---//
-        if(rootNode.getChildSubTree().size()!=0)
+        if (rootNode.getChildSubTree().size() != 0)
             rootNode.setStatus(Constants.STATUS.EXPAND.toString());
         else
             rootNode.setStatus(Constants.STATUS.COLLAPSE.toString());
@@ -107,6 +107,9 @@ public class Presenter implements IObserver {
     public void addNode(UINode uiNode) {
         Node parent = tree.getNode(uiNode.getParentId());
         String rootId = parent.getRootId();
+        if (parent == tree.getRoot()) {
+            rootId = parent.getId();
+        }
         Node node = new Node("", uiNode.getName(), parent, rootId, 0);
         this.uiNode = uiNode;
         tracker.addChild(node);
@@ -124,7 +127,7 @@ public class Presenter implements IObserver {
 
     private ArrayList<UINode> addNewNodeFromWebToParent(Node parent) {
         ArrayList<String> temp = parent.getChildSubTree();
-        ArrayList<UINode>childSubTree = new ArrayList<UINode>();
+        ArrayList<UINode> childSubTree = new ArrayList<UINode>();
         for (int i = 0; i < temp.size(); i++) {
             UINode uiNode = nodeTree.get(temp.get(i));
             childSubTree.add(uiNode);
