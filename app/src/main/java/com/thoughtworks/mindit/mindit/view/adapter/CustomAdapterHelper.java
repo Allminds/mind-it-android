@@ -4,9 +4,11 @@ import android.content.Context;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import com.thoughtworks.mindit.mindit.Constants;
 import com.thoughtworks.mindit.mindit.R;
@@ -39,9 +41,11 @@ public class CustomAdapterHelper {
     }
 
     void initializeTextView(final NodeHolder nodeHolder, View rowView, final UINode currentNode) {
-        nodeHolder.textViewForName = (TextView) rowView.findViewById(R.id.name);
+        nodeHolder.switcher=(ViewSwitcher)rowView.findViewById(R.id.viewSwitcher);
+        nodeHolder.textViewForName = (TextView) nodeHolder.switcher.findViewById(R.id.clickable_text_view);
         nodeHolder.textViewForName.setText(currentNode.getName());
-        nodeHolder.textViewForName.setHeight(customAdapter.getDeviceHeight() / Constants.HEIGHT_DIVIDER);
+      //  nodeHolder.textViewForName.setHeight(customAdapter.getDeviceHeight() / Constants.HEIGHT_DIVIDER);
+        nodeHolder.editText=(EditText)nodeHolder.switcher.findViewById(R.id.hidden_edit_view);
         this.editText(nodeHolder, currentNode);
     }
 
@@ -49,17 +53,20 @@ public class CustomAdapterHelper {
         nodeHolder.textViewForName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nodeHolder.textViewForName.setVisibility(View.GONE);
-                nodeHolder.editText.setVisibility(View.VISIBLE);
+//                nodeHolder.textViewForName.setVisibility(View.GONE);
+//                nodeHolder.editText.setVisibility(View.VISIBLE);
+                nodeHolder.switcher.showNext();
                 nodeHolder.editText.requestFocus();
                 nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
                 nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
 
                 final InputMethodManager inputMethodManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (inputMethodManager != null) {
-                    inputMethodManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_FORCED);
-                }
+                if(nodeHolder.editText.requestFocus()){
+                    if (inputMethodManager != null) {
+                        inputMethodManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_FORCED);
+                    }
 
+                }
                 nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
                     @Override
                     public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -69,6 +76,7 @@ public class CustomAdapterHelper {
                                 inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                             }
                             customAdapter.getPresenter().updateNode(currentNode);
+                            nodeHolder.switcher.showPrevious();
                             return true;
                         }
                         return false;
@@ -105,24 +113,48 @@ public class CustomAdapterHelper {
     }
 
     public void addNode(final NodeHolder nodeHolder, final UINode currentNode) {
-        nodeHolder.textViewForName.setVisibility(View.GONE);
-        nodeHolder.editText.setVisibility(View.VISIBLE);
+//        nodeHolder.textViewForName.setVisibility(View.GONE);
+//        nodeHolder.editText.setVisibility(View.VISIBLE);
+//        nodeHolder.editText.requestFocus();
+//        String s = "" + nodeHolder.textViewForName.getText();
+//
+//        nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+//                    updateText(nodeHolder, currentNode);
+//                    customAdapter.resetNewNodePosition();
+//                    customAdapter.getPresenter().addNode(currentNode);
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
+        nodeHolder.switcher.showNext();
         nodeHolder.editText.requestFocus();
-        String s = "" + nodeHolder.textViewForName.getText();
+        nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
+        nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
 
+        final InputMethodManager inputMethodManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null) {
+            inputMethodManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_FORCED);
+        }
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_ENTER) {
                     updateText(nodeHolder, currentNode);
+                    if (inputMethodManager != null) {
+                        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                    }
                     customAdapter.resetNewNodePosition();
                     customAdapter.getPresenter().addNode(currentNode);
+                    nodeHolder.switcher.showPrevious();
                     return true;
                 }
                 return false;
             }
         });
-
 
     }
 
@@ -134,7 +166,7 @@ public class CustomAdapterHelper {
         int newNodePosition = getNewNodePosition(position, parent);
         customAdapter.setNewNodePosition(newNodePosition);
 
-        UINode node = new UINode("Enter Text", parent.getDepth() + 20, parent.getId());
+        UINode node = new UINode("", parent.getDepth() + 20, parent.getId());
         nodeList.add(newNodePosition, node);
 
         boolean addedInParent = parent.addChild(node);

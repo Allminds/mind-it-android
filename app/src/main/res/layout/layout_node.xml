@@ -13,29 +13,56 @@
         android:id="@+id/expandCollapse"
         android:onClick="toggle"/>
 
-    <TextView
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/name"-->
+        <!--android:textSize="20dp"-->
+        <!--android:inputType="textMultiLine|textNoSuggestions"-->
+        <!--android:editable="false"-->
+        <!--android:layout_toEndOf="@+id/expandCollapse"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_toRightOf="@+id/expandCollapse"-->
+        <!--android:layout_toStartOf="@+id/options"-->
+        <!--android:layout_toLeftOf="@+id/options" />-->
+    <!--<EditText-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:textSize="15dp"-->
+        <!--android:id="@+id/editText"-->
+        <!--android:inputType="textMultiLine|textNoSuggestions"-->
+        <!--android:layout_toEndOf="@+id/expandCollapse"-->
+        <!--android:layout_toRightOf="@+id/expandCollapse"-->
+        <!--android:layout_toStartOf="@+id/options"-->
+        <!--android:layout_toLeftOf="@+id/options"-->
+        <!--android:layout_below="@+id/options" />-->
+    <ViewSwitcher
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/name"
-        android:textSize="20dp"
-        android:inputType="textMultiLine|textNoSuggestions"
-        android:editable="false"
-        android:layout_toEndOf="@+id/expandCollapse"
+        android:id="@+id/viewSwitcher"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/expandCollapse"
-        android:layout_toStartOf="@+id/options"
-        android:layout_toLeftOf="@+id/options" />
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="15dp"
-        android:id="@+id/editText"
-        android:inputType="textMultiLine|textNoSuggestions"
-        android:layout_toEndOf="@+id/expandCollapse"
-        android:layout_toRightOf="@+id/expandCollapse"
-        android:layout_toStartOf="@+id/options"
-        android:layout_toLeftOf="@+id/options"
-        android:layout_below="@+id/options" />
+        android:layout_marginLeft="30dp"
+        >
+        <TextView
+            android:id="@+id/clickable_text_view"
+            android:clickable="true"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="some_value"
+            android:textSize="20dp"
+            android:inputType="textMultiLine|textNoSuggestions"
+            />
+        <EditText
+            android:id="@+id/hidden_edit_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="20dp"
+            android:inputType="textMultiLine|textNoSuggestions"
+
+            />
+
+    </ViewSwitcher>
     <ImageView
         android:layout_width="20dp"
         android:layout_height="20dp"
