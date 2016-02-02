@@ -27,8 +27,22 @@
         android:adjustViewBounds="true"
         android:baselineAlignBottom="false"
         android:scaleType="centerInside"
-        android:src="@drawable/mindmap" />
-
+        android:src="@drawable/logo" />
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_centerVertical="true"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:elevation="10dp"
+        android:progressDrawable="@drawable/circular"
+        android:layout_alignParentTop="true"
+        android:paddingBottom="10dp"
+        android:layout_height="wrap_content"></ProgressBar>
     <Button
         android:id="@+id/importMindmap"
         android:layout_width="match_parent"
@@ -41,20 +55,18 @@
         android:layout_below="@+id/icon"
         android:layout_marginBottom="106dp"
         android:allowUndo="false"
-        android:drawableLeft="@drawable/import_home"
         android:elevation="8dp"
         android:fontFamily="sans-serif-medium"
-        android:text="Import Mindmap"
-        android:textStyle="normal|italic"
+        android:text="Import MindMap"
+        android:textStyle="normal"
         android:theme="@style/MyButton"
-        android:translationZ="8dp" />
+        android:translationZ="8dp"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFFFF"
+        android:textSize="30sp"
+        android:background="@drawable/buttonshape"
+        android:shadowColor="#A8A8A8"
+        />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:visibility="gone"></ProgressBar>
+
 </LinearLayout>

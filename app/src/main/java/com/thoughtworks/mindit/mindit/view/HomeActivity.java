@@ -34,11 +34,12 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
         Intent intent = getIntent();
         Uri data;
         data = intent.getData();
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
+
         importMindmap = (Button) findViewById(R.id.importMindmap);
         importMindmap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,7 +131,8 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        tracker.resetTree();
+        if (tracker != null)
+            tracker.resetTree();
     }
 
 

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class CustomAdapterHelper {
     private final CustomAdapter customAdapter;
     private ArrayList<UINode> nodeList;
-
+    private int mode = Constants.SELECTION_MODE;
     public ArrayList<UINode> getNodeList() {
         return nodeList;
     }
@@ -27,7 +27,10 @@ public class CustomAdapterHelper {
     public void setNodeList(ArrayList<UINode> nodeList) {
         this.nodeList = nodeList;
     }
-
+    public void resetMode()
+    {
+        mode =Constants.SELECTION_MODE;
+    }
     public CustomAdapterHelper(CustomAdapter customAdapter) {
         this.customAdapter = customAdapter;
         this.nodeList = customAdapter.getNodeList();
@@ -50,38 +53,48 @@ public class CustomAdapterHelper {
     }
 
     void editText(final NodeHolder nodeHolder, final UINode currentNode) {
+
         nodeHolder.textViewForName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                nodeHolder.textViewForName.setVisibility(View.GONE);
-//                nodeHolder.editText.setVisibility(View.VISIBLE);
-                nodeHolder.switcher.showNext();
-                nodeHolder.editText.requestFocus();
-                nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
-                nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
-
-                final InputMethodManager inputMethodManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if(nodeHolder.editText.requestFocus()){
-                    if (inputMethodManager != null) {
-                        inputMethodManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_FORCED);
-                    }
-
+                if (mode == Constants.SELECTION_MODE || nodeList.indexOf(currentNode) != customAdapter.getSelectedNodePosition()) {
+                    customAdapter.setSelectedNodePosition(nodeList.indexOf(currentNode));
+                    mode = Constants.EDITMODE;
+                    customAdapter.notifyDataSetChanged();
+                } else {
+                    editTextOfNode(nodeHolder, currentNode);
+                    mode = Constants.SELECTION_MODE;
                 }
-                nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
-                    @Override
-                    public boolean onKey(View v, int keyCode, KeyEvent event) {
-                        if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                            updateText(nodeHolder, currentNode);
-                            if (inputMethodManager != null) {
-                                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                            }
-                            customAdapter.getPresenter().updateNode(currentNode);
-                            nodeHolder.switcher.showPrevious();
-                            return true;
-                        }
-                        return false;
+            }
+        });
+    }
+
+    private void editTextOfNode(final NodeHolder nodeHolder, final UINode currentNode) {
+        nodeHolder.switcher.showNext();
+        nodeHolder.editText.requestFocus();
+        nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
+        nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
+
+        final InputMethodManager inputMethodManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if(nodeHolder.editText.requestFocus()){
+            if (inputMethodManager != null) {
+                inputMethodManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_FORCED);
+            }
+
+        }
+        nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    updateText(nodeHolder, currentNode);
+                    if (inputMethodManager != null) {
+                        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                     }
-                });
+                    customAdapter.getPresenter().updateNode(currentNode);
+                    nodeHolder.switcher.showPrevious();
+                    return true;
+                }
+                return false;
             }
         });
     }
@@ -103,33 +116,16 @@ public class CustomAdapterHelper {
     }
 
     void setEventToAddNodeButton(final int position, NodeHolder nodeHolder, View rowView, final UINode currentNode) {
-        nodeHolder.addNodeButton = (ImageView) rowView.findViewById(R.id.options);
-        nodeHolder.addNodeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addChild(position, currentNode);
-            }
-        });
-    }
-
-    public void addNode(final NodeHolder nodeHolder, final UINode currentNode) {
-//        nodeHolder.textViewForName.setVisibility(View.GONE);
-//        nodeHolder.editText.setVisibility(View.VISIBLE);
-//        nodeHolder.editText.requestFocus();
-//        String s = "" + nodeHolder.textViewForName.getText();
-//
-//        nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
+       // nodeHolder.addNodeButton = (ImageView) rowView.findViewById(R.id.options);
+//        nodeHolder.addNodeButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
-//            public boolean onKey(View v, int keyCode, KeyEvent event) {
-//                if (keyCode == KeyEvent.KEYCODE_ENTER) {
-//                    updateText(nodeHolder, currentNode);
-//                    customAdapter.resetNewNodePosition();
-//                    customAdapter.getPresenter().addNode(currentNode);
-//                    return true;
-//                }
-//                return false;
+//            public void onClick(View v) {
+//                addChild(position, currentNode);
 //            }
 //        });
+    }
+
+    public void addNode (final NodeHolder nodeHolder, final UINode currentNode) {
         nodeHolder.switcher.showNext();
         nodeHolder.editText.requestFocus();
         nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
