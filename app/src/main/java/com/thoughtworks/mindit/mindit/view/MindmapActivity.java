@@ -3,8 +3,10 @@ package com.thoughtworks.mindit.mindit.view;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,24 +28,56 @@ public class MindmapActivity extends AppCompatActivity {
     private Presenter presenter;
     private UINode clipboard;
     private ArrayList<UINode> nodeList;
-
+    private ActionMode actionMode;
+    private Toolbar toolbar;
+    private MenuItem delete;
+    private MenuItem add;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mindmap);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         listView = (ListView) findViewById(R.id.listView);
         registerForContextMenu(listView);
-
-
         presenter = new Presenter();
-
         adapter = new CustomAdapter(this, presenter);
         listView.setAdapter(adapter);
         presenter.setCustomAdapter(adapter);
         nodeList = adapter.getNodeList();
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+
+        getMenuInflater().inflate(R.menu.mindmap_activity_menu, menu);
+        add = menu.getItem(0);
+        add.setVisible(false);
+        delete = menu.getItem(1);
+        delete.setVisible(false);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int postionOfSelectedNode = adapter.getSelectedNodePosition();
+        switch (item.getItemId())
+        {
+            case R.id.add:
+                adapter.addChild(postionOfSelectedNode, nodeList.get(postionOfSelectedNode));
+                break;
+            case R.id.delete:
+                deleteNode(postionOfSelectedNode);
+                break;
+            default:
+                return true;
+        }
+
+        adapter.resetSelectedNodePosition();
+        toolbar.setVisibility(View.VISIBLE);
+        adapter.notifyDataSetChanged();
+        return true;
     }
 
     @Override
@@ -66,20 +100,21 @@ public class MindmapActivity extends AppCompatActivity {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        int position = getPosition(item);
         switch (item.getItemId()) {
             case 1:
                 break;
             case 2:
-                deleteNode(item);
+                deleteNode(position);
                 break;
             case 3:
-                copyNode(item);
+                copyNode(position);
                 break;
             case 4:
-                cutNode(item);
+                cutNode(position);
                 break;
             case 5:
-                pasteNode(item);
+                pasteNode(position);
                 break;
             default:
                 return false;
@@ -87,25 +122,23 @@ public class MindmapActivity extends AppCompatActivity {
         return true;
     }
 
-    private void cutNode(MenuItem item) {
-        int position = getPosition(item);
+    private void cutNode(int position) {
         UINode node = nodeList.get(position);
         clipboard = node;
-        deleteNode(item);
+        deleteNode(position);
         clipboard.setId("");
         clipboard.setStatus("collapse");
     }
 
-    private void copyNode(MenuItem item) {
-        int position = getPosition(item);
+    private void copyNode(int position) {
         UINode node = nodeList.get(position);
         clipboard = new UINode(node.getName(), 0, "");
         copyChildSubTree(node, clipboard);
 
     }
 
-    private void pasteNode(MenuItem item) {
-        int position = getPosition(item);
+    private void pasteNode(int position) {
+
         UINode parent = nodeList.get(position);
         int childPosition = parent.getChildSubTree().size();
 
@@ -149,8 +182,7 @@ public class MindmapActivity extends AppCompatActivity {
         }
     }
 
-    private void deleteNode(MenuItem item) {
-        int position = getPosition(item);
+    private void deleteNode(int position) {
         if (position == 0) {
             Toast.makeText(getApplicationContext(), "Can not delete root node...", Toast.LENGTH_SHORT).show();
             return;
@@ -186,6 +218,16 @@ public class MindmapActivity extends AppCompatActivity {
         }
     }
 
+    public void addActions(int position) {
+
+        if(actionMode == null)
+        {
+            actionMode = this.startSupportActionMode(new ActionModeCallBack());
+        }
+//        add.setVisible(true);
+//        delete.setVisible(true);
+    }
+
     private class WaitForTree extends AsyncTask<UINode, Void, UINode> {
         @Override
         protected void onPreExecute() {
@@ -206,6 +248,51 @@ public class MindmapActivity extends AppCompatActivity {
             updateChildSubTree(result);
         }
     }
+    private class ActionModeCallBack implements ActionMode.Callback {
 
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            // TODO Auto-generated method stub
+            int postionOfSelectedNode = adapter.getSelectedNodePosition();
+            switch (item.getItemId())
+            {
+                case R.id.add:
+                    adapter.addChild(postionOfSelectedNode, nodeList.get(postionOfSelectedNode));
+                    break;
+                case R.id.delete:
+                    deleteNode(postionOfSelectedNode);
+                    break;
+                default:
+                    return true;
+            }
+
+            adapter.resetSelectedNodePosition();
+            adapter.notifyDataSetChanged();
+            mode.finish();
+            return true;
+        }
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            // TODO Auto-generated method stub
+            mode.getMenuInflater().inflate(R.menu.mindmap_activity_menu, menu);
+            return true;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            // TODO Auto-generated method stub
+            toolbar.setVisibility(View.VISIBLE);
+           actionMode = null;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            // TODO Auto-gene   rated method stub
+            toolbar.setVisibility(View.GONE);
+            mode.setTitle("Select Action:");
+            return false;
+        }
+    }
 
 }
