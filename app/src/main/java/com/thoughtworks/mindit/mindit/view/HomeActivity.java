@@ -7,15 +7,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -23,12 +21,12 @@ import android.widget.ProgressBar;
 import com.thoughtworks.mindit.mindit.R;
 import com.thoughtworks.mindit.mindit.Tracker;
 
-public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class HomeActivity extends AppCompatActivity {
 
     Tracker tracker;
     ProgressBar progressBar;
     String rootId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,20 +37,11 @@ public class HomeActivity extends AppCompatActivity
         Intent intent = getIntent();
         Uri data;
         data = intent.getData();
-        progressBar = (ProgressBar)findViewById(R.id.progressBar);
-        if(data!=null) {
-            String [] uri = data.toString().split("/");
-            new WaitForTree().execute(uri[uri.length-1]);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        if (data != null) {
+            String[] uri = data.toString().split("/");
+            new WaitForTree().execute(uri[uri.length - 1]);
         }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
 
 
     }
@@ -85,22 +74,22 @@ public class HomeActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             return true;
         }
-        if (id == R.id.imports){
+        if (id == R.id.imports) {
             final Dialog importDialog = new Dialog(this);
             importDialog.setTitle("Enter Url");
             importDialog.setContentView(R.layout.import_dialog);
             importDialog.show();
-            Button imports = (Button)importDialog.findViewById(R.id.imports);
+            Button imports = (Button) importDialog.findViewById(R.id.imports);
             imports.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    EditText editUrl = (EditText)importDialog.findViewById(R.id.editUrl);
+                    EditText editUrl = (EditText) importDialog.findViewById(R.id.editUrl);
                     String url = editUrl.getText().toString();
                     new WaitForTree().execute(url);
                     importDialog.dismiss();
                 }
             });
-            Button cancel = (Button)importDialog.findViewById(R.id.cancel);
+            Button cancel = (Button) importDialog.findViewById(R.id.cancel);
             cancel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -116,7 +105,7 @@ public class HomeActivity extends AppCompatActivity
                     ClipData abc = myClipboard.getPrimaryClip();
                     ClipData.Item item = abc.getItemAt(0);
                     String text = item.getText().toString();
-                    EditText editUrl = (EditText)importDialog.findViewById(R.id.editUrl);
+                    EditText editUrl = (EditText) importDialog.findViewById(R.id.editUrl);
                     editUrl.setText(text);
                     editUrl.setSelection(editUrl.getText().length());
                 }
@@ -131,36 +120,13 @@ public class HomeActivity extends AppCompatActivity
         tracker.resetTree();
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-    private class WaitForTree extends AsyncTask<String,Void,String>
-    {
+    private class WaitForTree extends AsyncTask<String, Void, String> {
         @Override
-        protected void onPreExecute(){
+        protected void onPreExecute() {
             progressBar.setVisibility(View.VISIBLE);
         }
+
         @Override
         protected String doInBackground(String... params) {
             rootId = params[0];
@@ -171,9 +137,10 @@ public class HomeActivity extends AppCompatActivity
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            System.out.println(rootId+"   "+tracker.getTree());
+            System.out.println(rootId + "   " + tracker.getTree());
             return rootId;
         }
+
         @Override
         protected void onPostExecute(String result) {
             rootId = result;
