@@ -26,6 +26,7 @@ public class HomeActivity extends AppCompatActivity {
     Tracker tracker;
     ProgressBar progressBar;
     String rootId;
+    Button importMindmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +39,58 @@ public class HomeActivity extends AppCompatActivity {
         Uri data;
         data = intent.getData();
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        importMindmap = (Button) findViewById(R.id.importMindmap);
+        importMindmap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                importMindMap();
+
+            }
+        });
         if (data != null) {
             String[] uri = data.toString().split("/");
             new WaitForTree().execute(uri[uri.length - 1]);
         }
 
 
+    }
+
+    public void importMindMap() {
+        final Dialog importDialog = new Dialog(this);
+        importDialog.setTitle("Enter Url");
+        importDialog.setContentView(R.layout.import_dialog);
+        importDialog.show();
+        Button imports = (Button) importDialog.findViewById(R.id.imports);
+        imports.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText editUrl = (EditText) importDialog.findViewById(R.id.editUrl);
+                String url = editUrl.getText().toString();
+                new WaitForTree().execute(url);
+                importDialog.dismiss();
+            }
+        });
+        Button cancel = (Button) importDialog.findViewById(R.id.cancel);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                importDialog.dismiss();
+            }
+        });
+        Button paste = (Button) importDialog.findViewById(R.id.paste);
+        paste.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipboardManager myClipboard;
+                myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                ClipData abc = myClipboard.getPrimaryClip();
+                ClipData.Item item = abc.getItemAt(0);
+                String text = item.getText().toString();
+                EditText editUrl = (EditText) importDialog.findViewById(R.id.editUrl);
+                editUrl.setText(text);
+                editUrl.setSelection(editUrl.getText().length());
+            }
+        });
     }
 
     @Override
@@ -75,41 +122,7 @@ public class HomeActivity extends AppCompatActivity {
             return true;
         }
         if (id == R.id.imports) {
-            final Dialog importDialog = new Dialog(this);
-            importDialog.setTitle("Enter Url");
-            importDialog.setContentView(R.layout.import_dialog);
-            importDialog.show();
-            Button imports = (Button) importDialog.findViewById(R.id.imports);
-            imports.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    EditText editUrl = (EditText) importDialog.findViewById(R.id.editUrl);
-                    String url = editUrl.getText().toString();
-                    new WaitForTree().execute(url);
-                    importDialog.dismiss();
-                }
-            });
-            Button cancel = (Button) importDialog.findViewById(R.id.cancel);
-            cancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    importDialog.dismiss();
-                }
-            });
-            Button paste = (Button) importDialog.findViewById(R.id.paste);
-            paste.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ClipboardManager myClipboard;
-                    myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                    ClipData abc = myClipboard.getPrimaryClip();
-                    ClipData.Item item = abc.getItemAt(0);
-                    String text = item.getText().toString();
-                    EditText editUrl = (EditText) importDialog.findViewById(R.id.editUrl);
-                    editUrl.setText(text);
-                    editUrl.setSelection(editUrl.getText().length());
-                }
-            });
+
         }
         return super.onOptionsItemSelected(item);
     }
