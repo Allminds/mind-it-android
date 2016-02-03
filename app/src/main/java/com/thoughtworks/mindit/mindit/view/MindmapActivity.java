@@ -4,8 +4,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -47,6 +50,7 @@ public class MindmapActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
         presenter.setCustomAdapter(adapter);
         nodeList = adapter.getNodeList();
+
     }
 
     @Override
@@ -71,8 +75,11 @@ public class MindmapActivity extends AppCompatActivity {
         System.out.println(item.getTitle() + " " + item.getItemId());
         switch (item.getItemId()) {
             case R.id.add:
-                newSelectionPosition = nodeList.indexOf(adapter.addChild(positionOfSelectedNode, nodeList.get(positionOfSelectedNode)));
-
+                UINode parent =  nodeList.get(positionOfSelectedNode);
+                UINode newNode = adapter.addChild(positionOfSelectedNode, parent);
+                adapter.collapse(nodeList.indexOf(parent), parent);
+                adapter.expand(nodeList.indexOf(parent),parent);
+                newSelectionPosition = nodeList.indexOf(newNode);
                 break;
             case R.id.delete:
                 deleteNode(positionOfSelectedNode);
@@ -204,6 +211,4 @@ public class MindmapActivity extends AppCompatActivity {
             updateChildSubTree(result);
         }
     }
-
-
 }

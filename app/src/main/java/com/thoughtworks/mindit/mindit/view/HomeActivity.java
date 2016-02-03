@@ -153,6 +153,7 @@ public class HomeActivity extends AppCompatActivity {
             progressDialog=new ProgressDialog(HomeActivity.this);
             progressDialog.setTitle("Please wait...");
             progressDialog.setMessage("Checking network connection....");
+            progressDialog.setCancelable(false);
             progressDialog.show();
 
         }
