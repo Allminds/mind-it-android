@@ -9,11 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 
 import com.thoughtworks.mindit.mindit.R;
 import com.thoughtworks.mindit.mindit.presenter.Presenter;
-import com.thoughtworks.mindit.mindit.view.MindmapActivity;
 import com.thoughtworks.mindit.mindit.view.model.UINode;
 
 import java.util.ArrayList;

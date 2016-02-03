@@ -15,14 +15,25 @@ import java.util.List;
 
 public class JsonParserService {
 
+
+    public static void resetErrorOccurredFlag() {
+        JsonParserService.isErrorOccurred = false;
+    }
+
+    static boolean isErrorOccurred = false;
+    public static boolean isErrorOccurred() {
+        return isErrorOccurred;
+    }
     public static Tree parse (String json) throws JsonSyntaxException{
         Gson gson = new Gson();
 
         Type type = new TypeToken<List<Node>>() {}.getType();
         Tree tree = null;
         List<Node> nodes = gson.fromJson(json, type);
-
-        if (nodes != null && nodes.size() != 0)
+        System.out.println("***********nodes::"+nodes);
+        if (nodes == null || nodes.size() == 0)
+            isErrorOccurred=true;
+        else
             tree = convertToTree(nodes);
         if (tree != null) {
             tree.fillRootChildSubtree();

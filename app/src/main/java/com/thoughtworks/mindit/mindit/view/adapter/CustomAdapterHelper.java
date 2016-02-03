@@ -146,6 +146,7 @@ public class CustomAdapterHelper {
         if (inputMethodManager != null) {
             inputMethodManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_FORCED);
         }
+
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
