@@ -5,6 +5,9 @@ public class Constants {
     public static final int HEIGHT_DIVIDER = 15;
     public static final int SELECTION_MODE = 25;
     public static final int EDITMODE = 30;
+    public static final int ADD = 0;
+    public static final int DELETE = 1;
+
     public enum POSITION {
         LEFT("left"),
         RIGHT("right");

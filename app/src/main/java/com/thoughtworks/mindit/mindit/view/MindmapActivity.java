@@ -3,9 +3,7 @@ package com.thoughtworks.mindit.mindit.view;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,15 +21,16 @@ import java.util.ArrayList;
 
 public class MindmapActivity extends AppCompatActivity {
 
+    Menu myMenu;
     private ListView listView;
     private CustomAdapter adapter;
     private Presenter presenter;
     private UINode clipboard;
     private ArrayList<UINode> nodeList;
-    private ActionMode actionMode;
     private Toolbar toolbar;
     private MenuItem delete;
     private MenuItem add;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,78 +48,42 @@ public class MindmapActivity extends AppCompatActivity {
         presenter.setCustomAdapter(adapter);
         nodeList = adapter.getNodeList();
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
 
-        getMenuInflater().inflate(R.menu.mindmap_activity_menu, menu);
-        add = menu.getItem(0);
-        add.setVisible(false);
-        delete = menu.getItem(1);
-        delete.setVisible(false);
+        getMenuInflater().inflate(R.menu.actions, menu);
+        myMenu = menu;
+        add = myMenu.getItem(Constants.ADD);
+        delete = myMenu.getItem(Constants.DELETE);
+        add.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        delete.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        add.setVisible(true);
+        delete.setVisible(true);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int postionOfSelectedNode = adapter.getSelectedNodePosition();
-        switch (item.getItemId())
-        {
+        int newSelectionPosition;
+        int positionOfSelectedNode = adapter.getSelectedNodePosition();
+        System.out.println(item.getTitle() + " " + item.getItemId());
+        switch (item.getItemId()) {
             case R.id.add:
-                adapter.addChild(postionOfSelectedNode, nodeList.get(postionOfSelectedNode));
+                newSelectionPosition = nodeList.indexOf(adapter.addChild(positionOfSelectedNode, nodeList.get(positionOfSelectedNode)));
+
                 break;
             case R.id.delete:
-                deleteNode(postionOfSelectedNode);
+                deleteNode(positionOfSelectedNode);
+                newSelectionPosition = (positionOfSelectedNode == 0) ? 0 : positionOfSelectedNode - 1;
                 break;
             default:
                 return true;
         }
-
-        adapter.resetSelectedNodePosition();
+        adapter.resetSelectedNodePosition(newSelectionPosition);
         toolbar.setVisibility(View.VISIBLE);
         adapter.notifyDataSetChanged();
-        return true;
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        menu.setHeaderTitle("Select The Action");//        menu.add(0, 1, 0, "Add");
-
-        /*menu.add(0, 1, 0, "Delete");
-        menu.add(0, 3, 0, "Copy");
-        menu.add(0, 4, 0, "Cut");
-        if (clipboard != null)
-            menu.add(0, 5, 0, "Paste");*/
-
-        AdapterView.AdapterContextMenuInfo adapterContextMenuInfo = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        int position = adapterContextMenuInfo.position;
-        if (position != 0) {
-            menu.add(0, 2, 0, "Delete");
-        }
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        int position = getPosition(item);
-        switch (item.getItemId()) {
-            case 1:
-                break;
-            case 2:
-                deleteNode(position);
-                break;
-            case 3:
-                copyNode(position);
-                break;
-            case 4:
-                cutNode(position);
-                break;
-            case 5:
-                pasteNode(position);
-                break;
-            default:
-                return false;
-        }
         return true;
     }
 
@@ -220,15 +183,6 @@ public class MindmapActivity extends AppCompatActivity {
         }
     }
 
-    public void addActions(int position) {
-
-        if(actionMode == null)
-        {
-            actionMode = this.startSupportActionMode(new ActionModeCallBack());
-        }
-//        add.setVisible(true);
-//        delete.setVisible(true);
-    }
 
     private class WaitForTree extends AsyncTask<UINode, Void, UINode> {
         @Override
@@ -250,51 +204,6 @@ public class MindmapActivity extends AppCompatActivity {
             updateChildSubTree(result);
         }
     }
-    private class ActionModeCallBack implements ActionMode.Callback {
 
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            // TODO Auto-generated method stub
-            int postionOfSelectedNode = adapter.getSelectedNodePosition();
-            switch (item.getItemId())
-            {
-                case R.id.add:
-                    adapter.addChild(postionOfSelectedNode, nodeList.get(postionOfSelectedNode));
-                    break;
-                case R.id.delete:
-                    deleteNode(postionOfSelectedNode);
-                    break;
-                default:
-                    return true;
-            }
-
-            adapter.resetSelectedNodePosition();
-            adapter.notifyDataSetChanged();
-            mode.finish();
-            return true;
-        }
-
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            // TODO Auto-generated method stub
-            mode.getMenuInflater().inflate(R.menu.mindmap_activity_menu, menu);
-            return true;
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            // TODO Auto-generated method stub
-            toolbar.setVisibility(View.VISIBLE);
-           actionMode = null;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            // TODO Auto-gene   rated method stub
-            toolbar.setVisibility(View.GONE);
-            mode.setTitle("Select Action:");
-            return false;
-        }
-    }
 
 }

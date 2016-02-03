@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -49,24 +50,34 @@ public class CustomAdapterHelper {
         nodeHolder.textViewForName.setText(currentNode.getName());
       //  nodeHolder.textViewForName.setHeight(customAdapter.getDeviceHeight() / Constants.HEIGHT_DIVIDER);
         nodeHolder.editText=(EditText)nodeHolder.switcher.findViewById(R.id.hidden_edit_view);
-        this.editText(nodeHolder, currentNode);
+        this.editText(nodeHolder, currentNode, rowView);
     }
 
-    void editText(final NodeHolder nodeHolder, final UINode currentNode) {
-
-        nodeHolder.textViewForName.setOnClickListener(new View.OnClickListener() {
+    void editText(final NodeHolder nodeHolder, final UINode currentNode, final View rowView) {
+        LinearLayout linearLayout = (LinearLayout)rowView.findViewById(R.id.layout_text);
+        linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mode == Constants.SELECTION_MODE || nodeList.indexOf(currentNode) != customAdapter.getSelectedNodePosition()) {
-                    customAdapter.setSelectedNodePosition(nodeList.indexOf(currentNode));
-                    mode = Constants.EDITMODE;
-                    customAdapter.notifyDataSetChanged();
-                } else {
-                    editTextOfNode(nodeHolder, currentNode);
-                    mode = Constants.SELECTION_MODE;
-                }
+                handleSelectionMode(currentNode, nodeHolder);
             }
         });
+       nodeHolder.textViewForName.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               handleSelectionMode(currentNode, nodeHolder);
+           }
+       });
+    }
+
+    private void handleSelectionMode(UINode currentNode, NodeHolder nodeHolder) {
+        if (mode == Constants.SELECTION_MODE || nodeList.indexOf(currentNode) != customAdapter.getSelectedNodePosition()) {
+            customAdapter.setSelectedNodePosition(nodeList.indexOf(currentNode));
+            mode = Constants.EDITMODE;
+            customAdapter.notifyDataSetChanged();
+        } else {
+            editTextOfNode(nodeHolder, currentNode);
+            mode = Constants.SELECTION_MODE;
+        }
     }
 
     private void editTextOfNode(final NodeHolder nodeHolder, final UINode currentNode) {
@@ -184,8 +195,8 @@ public class CustomAdapterHelper {
     }
 
     void addPadding(int position, View rowView) {
-        RelativeLayout relativeLayout = (RelativeLayout) rowView.findViewById(R.id.layout);
-        relativeLayout.setPadding(nodeList.get(position).getDepth(), 0, 0, 0);
+        LinearLayout linearLayout = (LinearLayout) rowView.findViewById(R.id.layout);
+        linearLayout.setPadding(nodeList.get(position).getDepth(), 0, 0, 0);
     }
 
     void setImageForExpandCollapse(NodeHolder nodeHolder, View rowView, UINode currentNode) {
