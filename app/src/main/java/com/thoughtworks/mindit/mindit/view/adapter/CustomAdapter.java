@@ -9,11 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
+
 import com.thoughtworks.mindit.mindit.R;
+import com.thoughtworks.mindit.mindit.presenter.Presenter;
 import com.thoughtworks.mindit.mindit.view.MindmapActivity;
 import com.thoughtworks.mindit.mindit.view.model.UINode;
-import com.thoughtworks.mindit.mindit.presenter.Presenter;
+
 import java.util.ArrayList;
 
 public class CustomAdapter extends BaseAdapter {
@@ -24,7 +25,7 @@ public class CustomAdapter extends BaseAdapter {
     private LayoutInflater layoutInflater;
     private int newNodePosition = -1;
     private Presenter presenter;
-    private int selectedNodePosition = -1;
+    private int selectedNodePosition = 0;
 
     public CustomAdapter(Context context, Presenter presenter) {
         this.context = context;
@@ -39,18 +40,18 @@ public class CustomAdapter extends BaseAdapter {
         display.getSize(size);
         deviceHeight = size.y;
     }
+
     public int getSelectedNodePosition() {
         return selectedNodePosition;
     }
+
     public void setSelectedNodePosition(int selectedNodePosition) {
         this.selectedNodePosition = selectedNodePosition;
     }
-    public void resetSelectedNodePosition() {
-        this.selectedNodePosition = -1;
+
+    public void resetSelectedNodePosition(int newSelectionPosition) {
+        this.selectedNodePosition = newSelectionPosition;
         customAdapterHelper.resetMode();
-    }
-    public int getDeviceHeight() {
-        return deviceHeight;
     }
 
     public Context getContext() {
@@ -72,9 +73,10 @@ public class CustomAdapter extends BaseAdapter {
     public void collapse(int position, UINode currentNode) {
         customAdapterHelper.collapse(position, currentNode);
     }
-    public void addChild(int position, UINode parent)
-    {
-        customAdapterHelper.addChild(position, parent);
+
+    public UINode addChild(int position, UINode parent) {
+        return customAdapterHelper.addChild(position, parent);
+
     }
 
     public void setNewNodePosition(int newNodePosition) {
@@ -118,17 +120,13 @@ public class CustomAdapter extends BaseAdapter {
         customAdapterHelper.setEventToExpandCollapse(position, nodeHolder, currentNode);
         customAdapterHelper.setEventToAddNodeButton(position, nodeHolder, rowView, currentNode);
 
-        if (position == newNodePosition){
+        if (position == newNodePosition) {
             customAdapterHelper.addNode(nodeHolder, currentNode);
             //nodeHolder.switcher.showPrevious();
         }
 
-        if(selectedNodePosition == position)
-        {
+        if (selectedNodePosition == position) {
             rowView.setBackgroundColor(Color.parseColor("#b8eeee"));
-            MindmapActivity mindmapActivity = (MindmapActivity)context;
-            mindmapActivity.addActions(position);
-
         }
         return rowView;
     }

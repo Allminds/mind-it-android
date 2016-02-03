@@ -49,12 +49,12 @@ public class CustomAdapterHelper {
         nodeHolder.textViewForName.setText(currentNode.getName());
       //  nodeHolder.textViewForName.setHeight(customAdapter.getDeviceHeight() / Constants.HEIGHT_DIVIDER);
         nodeHolder.editText=(EditText)nodeHolder.switcher.findViewById(R.id.hidden_edit_view);
-        this.editText(nodeHolder, currentNode);
+        this.editText(nodeHolder, currentNode, rowView);
     }
 
-    void editText(final NodeHolder nodeHolder, final UINode currentNode) {
+    void editText(final NodeHolder nodeHolder, final UINode currentNode, View rowView) {
 
-        nodeHolder.textViewForName.setOnClickListener(new View.OnClickListener() {
+       rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mode == Constants.SELECTION_MODE || nodeList.indexOf(currentNode) != customAdapter.getSelectedNodePosition()) {
