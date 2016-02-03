@@ -20,7 +20,7 @@ import java.util.ArrayList;
 public class CustomAdapterHelper {
     private final CustomAdapter customAdapter;
     private ArrayList<UINode> nodeList;
-    private int mode = Constants.SELECTION_MODE;
+    private int mode = Constants.EDITMODE;
     public ArrayList<UINode> getNodeList() {
         return nodeList;
     }
@@ -85,21 +85,22 @@ public class CustomAdapterHelper {
         nodeHolder.editText.requestFocus();
         nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
         nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
+        final InputMethodManager lManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        final InputMethodManager inputMethodManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if(nodeHolder.editText.requestFocus()){
-            if (inputMethodManager != null) {
-                inputMethodManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_FORCED);
+        nodeHolder.editText.post(new Runnable() {
+            public void run() {
+                nodeHolder.editText.requestFocusFromTouch();
+                lManager.showSoftInput(nodeHolder.editText, 0);
             }
-
-        }
+        });
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                System.out.println("KeyCode:"+KeyEvent.keyCodeToString(keyCode));
+                if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_BACK) {
                     updateText(nodeHolder, currentNode);
-                    if (inputMethodManager != null) {
-                        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                    if (lManager != null) {
+                        lManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                     }
                     customAdapter.getPresenter().updateNode(currentNode);
                     nodeHolder.switcher.showPrevious();
@@ -141,11 +142,16 @@ public class CustomAdapterHelper {
         nodeHolder.editText.requestFocus();
         nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
         nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
-
-        final InputMethodManager inputMethodManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (inputMethodManager != null) {
-            inputMethodManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_FORCED);
-        }
+//
+        nodeHolder.editText.post(new Runnable() {
+            public void run() {
+                nodeHolder.editText.requestFocusFromTouch();
+                InputMethodManager lManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                lManager.showSoftInput(nodeHolder.editText, 0);
+            }
+        });
+       final InputMethodManager inputMethodManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+     //  inputMethodManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_IMPLICIT);
 
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override

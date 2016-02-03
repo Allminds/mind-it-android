@@ -4,6 +4,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -71,8 +73,11 @@ public class MindmapActivity extends AppCompatActivity {
         System.out.println(item.getTitle() + " " + item.getItemId());
         switch (item.getItemId()) {
             case R.id.add:
-                newSelectionPosition = nodeList.indexOf(adapter.addChild(positionOfSelectedNode, nodeList.get(positionOfSelectedNode)));
-
+                UINode parent =  nodeList.get(positionOfSelectedNode);
+                UINode newNode = adapter.addChild(positionOfSelectedNode, parent);
+                adapter.collapse(nodeList.indexOf(parent), parent);
+                adapter.expand(nodeList.indexOf(parent),parent);
+                newSelectionPosition = nodeList.indexOf(newNode);
                 break;
             case R.id.delete:
                 deleteNode(positionOfSelectedNode);
@@ -205,5 +210,23 @@ public class MindmapActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        System.out.println("In ONBACKPRESSED");
 
+
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        System.out.println("KeyCode:"+KeyEvent.keyCodeToString(keyCode));
+        if (Integer.parseInt(android.os.Build.VERSION.SDK) < 5
+                && keyCode == KeyEvent.KEYCODE_BACK
+                && event.getRepeatCount() == 0) {
+            Log.d("CDA", "onKeyDown Called");
+            adapter.notifyDataSetChanged();
+            onBackPressed();
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
 }

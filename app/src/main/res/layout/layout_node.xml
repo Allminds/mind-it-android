@@ -67,7 +67,7 @@
             android:text=""
             android:textColor="@color/textcolor"
             android:textSize="20dp"
-            android:inputType="textMultiLine|textNoSuggestions"
+            android:inputType="textNoSuggestions"
 
             />
 
