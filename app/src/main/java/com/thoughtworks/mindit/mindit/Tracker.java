@@ -47,14 +47,19 @@ public class Tracker implements MeteorCallback, ITracker {
     public Tree getTree() {
         return tree;
     }
-    public void resetTree()
-    {
-        tree.removeAllNodes();
-        this.tree = null;
+
+    public void resetTree() {
+        System.out.println("**** in reset....");
+        if (tree != null) {
+            tree.removeAllNodes();
+            this.tree = null;
+        }
+
         instance = null;
         meteor.disconnect();
 
     }
+
     public void subscribe(String rootId) {
         meteor.subscribe("mindmap", new String[]{rootId});
     }
@@ -202,7 +207,7 @@ public class Tracker implements MeteorCallback, ITracker {
     @Override
     public void onChanged(String collectionName, String documentID, String updatedValuesJson, String removedValuesJson) {
         Node node = tree.getNode(documentID);
-        System.out.println("onChanged:   "+updatedValuesJson);
+        System.out.println("onChanged:   " + updatedValuesJson);
         try {
             JSONObject fields = JsonParserService.rawParse(updatedValuesJson);
             if (fields.has("name")) {

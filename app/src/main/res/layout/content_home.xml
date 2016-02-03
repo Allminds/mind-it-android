@@ -28,21 +28,6 @@
         android:baselineAlignBottom="false"
         android:scaleType="centerInside"
         android:src="@drawable/logo" />
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_vertical|center_horizontal"
-        android:gravity="center_vertical|center_horizontal"
-        android:layout_centerVertical="true"
-        android:layout_centerInParent="true"
-        android:visibility="gone"
-        android:elevation="10dp"
-        android:progressDrawable="@drawable/circular"
-        android:layout_alignParentTop="true"
-        android:paddingBottom="10dp"
-        android:layout_height="wrap_content"></ProgressBar>
     <Button
         android:id="@+id/importMindmap"
         android:layout_width="match_parent"
