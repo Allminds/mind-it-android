@@ -38,7 +38,7 @@ public class MindmapActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
-        getSupportActionBar().setTitle("Hi Guest");
+        getSupportActionBar().setTitle("MindIt");
 
         listView = (ListView) findViewById(R.id.listView);
         registerForContextMenu(listView);

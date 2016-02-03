@@ -118,14 +118,14 @@ public class CustomAdapter extends BaseAdapter {
         customAdapterHelper.setImageForExpandCollapse(nodeHolder, rowView, currentNode);
         customAdapterHelper.setEventToExpandCollapse(position, nodeHolder, currentNode);
         customAdapterHelper.setEventToAddNodeButton(position, nodeHolder, rowView, currentNode);
-
+        rowView.setBackgroundColor(Color.parseColor("#FDF1E3"));
         if (position == newNodePosition) {
             customAdapterHelper.addNode(nodeHolder, currentNode);
             //nodeHolder.switcher.showPrevious();
         }
 
         if (selectedNodePosition == position) {
-            rowView.setBackgroundColor(Color.parseColor("#b8eeee"));
+            rowView.setBackgroundColor(Color.parseColor("#FDD7AF"));
         }
 
         return rowView;
