@@ -8,6 +8,7 @@ import com.thoughtworks.mindit.mindit.helper.JsonParserService;
 import com.thoughtworks.mindit.mindit.helper.Meteor;
 import com.thoughtworks.mindit.mindit.model.Node;
 import com.thoughtworks.mindit.mindit.model.Tree;
+import com.thoughtworks.mindit.mindit.presenter.Presenter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -80,6 +81,7 @@ public class Tracker implements MeteorCallback, ITracker {
 
             }
         });
+
     }
 
     public void addChild(final Node node) {
@@ -278,5 +280,9 @@ public class Tracker implements MeteorCallback, ITracker {
     @Override
     public void onRemoved(String collectionName, String documentID) {
         System.out.println("removed : " + documentID);
+    }
+
+    public void registerThisToTree(Presenter presenter) {
+        tree.register(presenter);
     }
 }

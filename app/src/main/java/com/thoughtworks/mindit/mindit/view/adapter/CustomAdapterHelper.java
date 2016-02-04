@@ -81,14 +81,13 @@ public class CustomAdapterHelper {
         nodeHolder.editText.requestFocus();
         nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
         nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
-
-
         final InputMethodManager lManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+
         showKeypad(nodeHolder, lManager);
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                System.out.println("KeyCode:" + KeyEvent.keyCodeToString(keyCode));
+                System.out.println("KeyCode:"+KeyEvent.keyCodeToString(keyCode));
                 if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_BACK) {
                     updateText(nodeHolder, currentNode);
                     if (lManager != null) {
@@ -133,11 +132,9 @@ public class CustomAdapterHelper {
         nodeHolder.switcher.showNext();
         nodeHolder.editText.requestFocus();
         nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
-        nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
-
         final InputMethodManager lManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-
         showKeypad(nodeHolder, lManager);
+
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -154,7 +151,7 @@ public class CustomAdapterHelper {
     private void showKeypad(final NodeHolder nodeHolder, final InputMethodManager lManager) {
         nodeHolder.editText.post(new Runnable() {
             public void run() {
-                nodeHolder.editText.requestFocusFromTouch();
+                nodeHolder.editText.requestFocus();
                 lManager.showSoftInput(nodeHolder.editText, 0);
             }
         });
@@ -178,7 +175,7 @@ public class CustomAdapterHelper {
         int newNodePosition = getNewNodePosition(position, parent);
         customAdapter.setNewNodePosition(newNodePosition);
 
-        UINode node = new UINode("", parent.getDepth() + 20, parent.getId());
+        UINode node = new UINode("", parent.getDepth() + Constants.PADDING_FOR_DEPTH, parent.getId());
         nodeList.add(newNodePosition, node);
 
         boolean addedInParent = parent.addChild(node);

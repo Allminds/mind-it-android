@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.thoughtworks.mindit.mindit.Constants;
 import com.thoughtworks.mindit.mindit.R;
 import com.thoughtworks.mindit.mindit.presenter.Presenter;
 import com.thoughtworks.mindit.mindit.view.model.UINode;
@@ -17,7 +18,6 @@ import com.thoughtworks.mindit.mindit.view.model.UINode;
 import java.util.ArrayList;
 
 public class CustomAdapter extends BaseAdapter {
-    private final int deviceHeight;
     private final CustomAdapterHelper customAdapterHelper;
     private Context context;
     private ArrayList<UINode> nodeList;
@@ -26,10 +26,10 @@ public class CustomAdapter extends BaseAdapter {
     private Presenter presenter;
     private int selectedNodePosition = 0;
 
-    public CustomAdapter(Context context, Presenter presenter) {
+    public CustomAdapter(Context context, Presenter presenter, ArrayList<UINode> uiNodes) {
         this.context = context;
         this.presenter = presenter;
-        this.nodeList = presenter.buildNodeListFromTree();
+        this.nodeList = uiNodes;
         customAdapterHelper = new CustomAdapterHelper(this);
         customAdapterHelper.expand(0, nodeList.get(0));
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -129,6 +129,14 @@ public class CustomAdapter extends BaseAdapter {
         }
 
         return rowView;
+    }
+
+    public void updateChildSubTree(UINode existingParent) {
+        if (nodeList.indexOf(existingParent) != -1) {
+            this.collapse(nodeList.indexOf(existingParent), existingParent);
+            this.expand(nodeList.indexOf(existingParent), existingParent);
+            existingParent.setStatus(Constants.STATUS.EXPAND.toString());
+        }
     }
 }
 

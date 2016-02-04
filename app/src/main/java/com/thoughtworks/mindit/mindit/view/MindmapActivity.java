@@ -4,11 +4,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -22,7 +19,7 @@ import com.thoughtworks.mindit.mindit.view.model.UINode;
 
 import java.util.ArrayList;
 
-public class MindmapActivity extends AppCompatActivity {
+public class MindmapActivity extends AppCompatActivity implements IMindmapView {
 
     Menu myMenu;
     private ListView listView;
@@ -45,10 +42,10 @@ public class MindmapActivity extends AppCompatActivity {
 
         listView = (ListView) findViewById(R.id.listView);
         registerForContextMenu(listView);
-        presenter = new Presenter();
-        adapter = new CustomAdapter(this, presenter);
+        presenter = new Presenter(this);
+        adapter = new CustomAdapter(this, presenter,presenter.buildNodeListFromTree());
+
         listView.setAdapter(adapter);
-        presenter.setCustomAdapter(adapter);
         nodeList = adapter.getNodeList();
 
     }
@@ -190,6 +187,21 @@ public class MindmapActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void notifyDataChanged() {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                adapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    public void updateChildTree(UINode existingParent) {
+        adapter.updateChildSubTree(existingParent);
+    }
+
 
     private class WaitForTree extends AsyncTask<UINode, Void, UINode> {
         @Override
@@ -208,7 +220,7 @@ public class MindmapActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(UINode result) {
-            updateChildSubTree(result);
+            updateChildTree(result);
         }
     }
 }
