@@ -7,7 +7,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
@@ -40,15 +39,12 @@ public class CustomAdapterHelper {
     void updateText(NodeHolder nodeHolder, UINode currentNode) {
         nodeHolder.textViewForName.setText(nodeHolder.editText.getText());
         currentNode.setName("" + nodeHolder.editText.getText());
-        nodeHolder.editText.setVisibility(View.GONE);
-        nodeHolder.textViewForName.setVisibility(View.VISIBLE);
     }
 
     void initializeTextView(final NodeHolder nodeHolder, View rowView, final UINode currentNode) {
         nodeHolder.switcher=(ViewSwitcher)rowView.findViewById(R.id.viewSwitcher);
         nodeHolder.textViewForName = (TextView) nodeHolder.switcher.findViewById(R.id.clickable_text_view);
         nodeHolder.textViewForName.setText(currentNode.getName());
-      //  nodeHolder.textViewForName.setHeight(customAdapter.getDeviceHeight() / Constants.HEIGHT_DIVIDER);
         nodeHolder.editText=(EditText)nodeHolder.switcher.findViewById(R.id.hidden_edit_view);
         this.editText(nodeHolder, currentNode, rowView);
     }
@@ -87,12 +83,7 @@ public class CustomAdapterHelper {
         nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
         final InputMethodManager lManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        nodeHolder.editText.post(new Runnable() {
-            public void run() {
-                nodeHolder.editText.requestFocusFromTouch();
-                lManager.showSoftInput(nodeHolder.editText, 0);
-            }
-        });
+        showKeypad(nodeHolder, lManager);
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -141,35 +132,39 @@ public class CustomAdapterHelper {
         nodeHolder.switcher.showNext();
         nodeHolder.editText.requestFocus();
         nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
-        nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
-//
-        nodeHolder.editText.post(new Runnable() {
-            public void run() {
-                nodeHolder.editText.requestFocusFromTouch();
-                InputMethodManager lManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                lManager.showSoftInput(nodeHolder.editText, 0);
-            }
-        });
-       final InputMethodManager inputMethodManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-     //  inputMethodManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_IMPLICIT);
+        final InputMethodManager lManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        showKeypad(nodeHolder, lManager);
 
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                    updateText(nodeHolder, currentNode);
-                    if (inputMethodManager != null) {
-                        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                    }
-                    customAdapter.resetNewNodePosition();
-                    customAdapter.getPresenter().addNode(currentNode);
-                    nodeHolder.switcher.showPrevious();
+                    updateTextOfNewNode(nodeHolder, currentNode, lManager);
                     return true;
                 }
                 return false;
             }
         });
 
+    }
+
+    private void showKeypad(final NodeHolder nodeHolder, final InputMethodManager lManager) {
+        nodeHolder.editText.post(new Runnable() {
+            public void run() {
+                nodeHolder.editText.requestFocus();
+                lManager.showSoftInput(nodeHolder.editText, 0);
+            }
+        });
+    }
+
+    private void updateTextOfNewNode(NodeHolder nodeHolder, UINode currentNode, InputMethodManager inputMethodManager) {
+        updateText(nodeHolder, currentNode);
+        if (inputMethodManager != null) {
+            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        }
+        customAdapter.resetNewNodePosition();
+        customAdapter.getPresenter().addNode(currentNode);
+        nodeHolder.switcher.showPrevious();
     }
 
     public UINode addChild(int position, UINode parent) {
