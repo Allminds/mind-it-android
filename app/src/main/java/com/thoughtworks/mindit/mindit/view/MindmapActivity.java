@@ -2,6 +2,8 @@ package com.thoughtworks.mindit.mindit.view;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -73,9 +75,10 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         switch (item.getItemId()) {
             case R.id.add:
                 UINode parent =  nodeList.get(positionOfSelectedNode);
-                UINode newNode = adapter.addChild(positionOfSelectedNode, parent);
                 adapter.collapse(nodeList.indexOf(parent), parent);
                 adapter.expand(nodeList.indexOf(parent),parent);
+                UINode newNode = adapter.addChild(positionOfSelectedNode, parent);
+
                 newSelectionPosition = nodeList.indexOf(newNode);
                 break;
             case R.id.delete:
@@ -85,7 +88,7 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
             default:
                 return true;
         }
-        adapter.resetSelectedNodePosition(newSelectionPosition);
+        adapter.setSelectedNodePosition(newSelectionPosition);
         toolbar.setVisibility(View.VISIBLE);
         adapter.notifyDataSetChanged();
         return true;
@@ -223,4 +226,5 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
             updateChildTree(result);
         }
     }
+   
 }

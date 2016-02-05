@@ -130,6 +130,7 @@ public class CustomAdapterHelper {
 
     public void addNode (final NodeHolder nodeHolder, final UINode currentNode) {
         nodeHolder.switcher.showNext();
+    //    nodeHolder.switcher.addOnAttachStateChangeListener();
         nodeHolder.editText.requestFocus();
         nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
         final InputMethodManager lManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -138,6 +139,7 @@ public class CustomAdapterHelper {
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
+                System.out.println("KeyCode:" + KeyEvent.keyCodeToString(keyCode));
                 if (keyCode == KeyEvent.KEYCODE_ENTER) {
                     updateTextOfNewNode(nodeHolder, currentNode, lManager);
                     return true;
@@ -145,7 +147,6 @@ public class CustomAdapterHelper {
                 return false;
             }
         });
-
     }
 
     private void showKeypad(final NodeHolder nodeHolder, final InputMethodManager lManager) {
@@ -214,11 +215,13 @@ public class CustomAdapterHelper {
 
     public ArrayList<UINode> expand(int position, UINode currentNode) {
         int childPosition = position + 1;
+
         ArrayList<UINode> childSubTree = currentNode.getChildSubTree();
         for (int nodeIndex = 0; nodeIndex < childSubTree.size(); nodeIndex++) {
             nodeList.add(childPosition++, childSubTree.get(nodeIndex));
         }
         currentNode.setStatus(Constants.STATUS.EXPAND.toString());
+
         return nodeList;
     }
 
