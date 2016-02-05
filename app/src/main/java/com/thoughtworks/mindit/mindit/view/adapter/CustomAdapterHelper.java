@@ -10,8 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
-import com.thoughtworks.mindit.mindit.Constants;
 import com.thoughtworks.mindit.mindit.R;
+import com.thoughtworks.mindit.mindit.constant.Constants;
 import com.thoughtworks.mindit.mindit.view.model.UINode;
 
 import java.util.ArrayList;
@@ -19,7 +19,13 @@ import java.util.ArrayList;
 public class CustomAdapterHelper {
     private final CustomAdapter customAdapter;
     private ArrayList<UINode> nodeList;
-    private int mode = Constants.EDITMODE;
+    private int mode = Constants.EDIT_MODE;
+
+    public CustomAdapterHelper(CustomAdapter customAdapter) {
+        this.customAdapter = customAdapter;
+        this.nodeList = customAdapter.getNodeList();
+    }
+
     public ArrayList<UINode> getNodeList() {
         return nodeList;
     }
@@ -27,13 +33,9 @@ public class CustomAdapterHelper {
     public void setNodeList(ArrayList<UINode> nodeList) {
         this.nodeList = nodeList;
     }
-    public void resetMode()
-    {
-        mode =Constants.SELECTION_MODE;
-    }
-    public CustomAdapterHelper(CustomAdapter customAdapter) {
-        this.customAdapter = customAdapter;
-        this.nodeList = customAdapter.getNodeList();
+
+    public void resetMode() {
+        mode = Constants.SELECTION_MODE;
     }
 
     void updateText(NodeHolder nodeHolder, UINode currentNode) {
@@ -42,33 +44,33 @@ public class CustomAdapterHelper {
     }
 
     void initializeTextView(final NodeHolder nodeHolder, View rowView, final UINode currentNode) {
-        nodeHolder.switcher=(ViewSwitcher)rowView.findViewById(R.id.viewSwitcher);
+        nodeHolder.switcher = (ViewSwitcher) rowView.findViewById(R.id.viewSwitcher);
         nodeHolder.textViewForName = (TextView) nodeHolder.switcher.findViewById(R.id.clickable_text_view);
         nodeHolder.textViewForName.setText(currentNode.getName());
-        nodeHolder.editText=(EditText)nodeHolder.switcher.findViewById(R.id.hidden_edit_view);
+        nodeHolder.editText = (EditText) nodeHolder.switcher.findViewById(R.id.hidden_edit_view);
         this.editText(nodeHolder, currentNode, rowView);
     }
 
     void editText(final NodeHolder nodeHolder, final UINode currentNode, final View rowView) {
-        LinearLayout linearLayout = (LinearLayout)rowView.findViewById(R.id.layout_text);
+        LinearLayout linearLayout = (LinearLayout) rowView.findViewById(R.id.layout_text);
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 handleSelectionMode(currentNode, nodeHolder);
             }
         });
-       nodeHolder.textViewForName.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               handleSelectionMode(currentNode, nodeHolder);
-           }
-       });
+        nodeHolder.textViewForName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleSelectionMode(currentNode, nodeHolder);
+            }
+        });
     }
 
     private void handleSelectionMode(UINode currentNode, NodeHolder nodeHolder) {
         if (mode == Constants.SELECTION_MODE || nodeList.indexOf(currentNode) != customAdapter.getSelectedNodePosition()) {
             customAdapter.setSelectedNodePosition(nodeList.indexOf(currentNode));
-            mode = Constants.EDITMODE;
+            mode = Constants.EDIT_MODE;
             customAdapter.notifyDataSetChanged();
         } else {
             editTextOfNode(nodeHolder, currentNode);
@@ -87,7 +89,6 @@ public class CustomAdapterHelper {
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                System.out.println("KeyCode:"+KeyEvent.keyCodeToString(keyCode));
                 if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_BACK) {
                     updateText(nodeHolder, currentNode);
                     if (lManager != null) {
@@ -119,16 +120,16 @@ public class CustomAdapterHelper {
     }
 
     void setEventToAddNodeButton(final int position, NodeHolder nodeHolder, View rowView, final UINode currentNode) {
-       // nodeHolder.addNodeButton = (ImageView) rowView.findViewById(R.id.options);
-//        nodeHolder.addNodeButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                addChild(position, currentNode);
-//            }
-//        });
+/*        nodeHolder.addNodeButton = (ImageView) rowView.findViewById(R.id.options);
+        nodeHolder.addNodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addChild(position, currentNode);
+            }
+        });*/
     }
 
-    public void addNode (final NodeHolder nodeHolder, final UINode currentNode) {
+    public void addNode(final NodeHolder nodeHolder, final UINode currentNode) {
         nodeHolder.switcher.showNext();
         nodeHolder.editText.requestFocus();
         nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
@@ -148,7 +149,7 @@ public class CustomAdapterHelper {
         nodeHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus)
+                if (!hasFocus)
                     updateTextOfNewNode(nodeHolder, currentNode, lManager);
             }
         });
@@ -181,7 +182,7 @@ public class CustomAdapterHelper {
         int newNodePosition = getNewNodePosition(position, parent);
         customAdapter.setNewNodePosition(newNodePosition);
 
-        UINode node = new UINode("", parent.getDepth() + Constants.PADDING_FOR_DEPTH, parent.getId());
+        UINode node = new UINode(Constants.EMPTY_STRING, parent.getDepth() + Constants.PADDING_FOR_DEPTH, parent.getId());
         nodeList.add(newNodePosition, node);
 
         boolean addedInParent = parent.addChild(node);

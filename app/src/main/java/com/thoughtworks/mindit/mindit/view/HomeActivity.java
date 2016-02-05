@@ -1,14 +1,12 @@
 package com.thoughtworks.mindit.mindit.view;
 
 import android.app.Dialog;
-
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,12 +16,13 @@ import android.widget.EditText;
 
 import com.thoughtworks.mindit.mindit.R;
 import com.thoughtworks.mindit.mindit.Tracker;
-
-import static com.thoughtworks.mindit.mindit.R.color.textcolor;
+import com.thoughtworks.mindit.mindit.constant.Colors;
+import com.thoughtworks.mindit.mindit.constant.Constants;
 
 public class HomeActivity extends AppCompatActivity {
     Button importMindmap;
     Tracker tracker;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,23 +44,21 @@ public class HomeActivity extends AppCompatActivity {
 
     public void importMindMap() {
         final Dialog importDialog = new Dialog(this);
-        importDialog.setTitle(Html.fromHtml("<font color='#F39C38'>Enter URL</font>"));
-//        importDialog.getWindow().setTitleColor(Color.parseColor("#F39C38"));
+        importDialog.setTitle(Html.fromHtml(Constants.IMPORT_DIALOG_TITLE));
         importDialog.setContentView(R.layout.import_dialog);
         importDialog.show();
-       final EditText editUrl = (EditText) importDialog.findViewById(R.id.editUrl);
+        final EditText editUrl = (EditText) importDialog.findViewById(R.id.editUrl);
         editUrl.setSelection(editUrl.getText().length());
-      // editUrl.getBackground().setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.SRC_IN);
         final Button imports = (Button) importDialog.findViewById(R.id.imports);
         imports.setFocusable(true);
-        if(imports.isFocused()) {
-            imports.setBackgroundColor(Color.parseColor("#F39C38"));
+        if (imports.isFocused()) {
+            imports.setBackgroundColor(Color.parseColor(Colors.IMPORT_DIALOG_BACKGROUND_COLOR_ON_FOCUS));
         }
         imports.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus)
-                    imports.setBackgroundColor(Color.parseColor("#F39C38"));
+                if (hasFocus)
+                    imports.setBackgroundColor(Color.parseColor(Colors.IMPORT_DIALOG_BACKGROUND_COLOR_ON_FOCUS_CHANGED));
             }
         });
         imports.setOnClickListener(new View.OnClickListener() {
