@@ -180,7 +180,7 @@ public class CustomAdapterHelper {
         int newNodePosition = getNewNodePosition(position, parent);
         customAdapter.setNewNodePosition(newNodePosition);
 
-        UINode node = new UINode("", parent.getDepth() + 20, parent.getId());
+        UINode node = new UINode("", parent.getDepth() + Constants.PADDING_FOR_DEPTH, parent.getId());
         nodeList.add(newNodePosition, node);
 
         boolean addedInParent = parent.addChild(node);

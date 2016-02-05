@@ -213,7 +213,7 @@ public class MindmapActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         System.out.println("In ONBACKPRESSED");
-
+        supportFinishAfterTransition();
 
     }
     @Override

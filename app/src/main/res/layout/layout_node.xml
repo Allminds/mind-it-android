@@ -12,7 +12,8 @@
         android:src="@drawable/collapse"
         android:tag="expand"
         android:id="@+id/expandCollapse"
-        android:onClick="toggle"/>
+        android:onClick="toggle"
+        android:layout_gravity="center_vertical"/>
 
     <!--<TextView-->
         <!--android:layout_width="wrap_content"-->
@@ -42,6 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:layout_gravity="center_vertical"
         android:id="@+id/layout_text">
     <ViewSwitcher
         android:layout_width="wrap_content"
@@ -49,6 +51,7 @@
         android:id="@+id/viewSwitcher"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="30dp"
+        android:layout_gravity="center_vertical"
         >
         <TextView
             android:id="@+id/clickable_text_view"
@@ -58,6 +61,7 @@
             android:text="some_value"
             android:textSize="20dp"
             android:textColor="@color/textcolor"
+            android:layout_gravity="center_vertical"
             android:inputType="textMultiLine|textNoSuggestions"
             />
         <EditText
@@ -67,7 +71,9 @@
             android:text=""
             android:textColor="@color/textcolor"
             android:textSize="20dp"
+            android:layout_gravity="center_vertical"
             android:inputType="textNoSuggestions"
+            android:textCursorDrawable="@null"
 
             />
 
