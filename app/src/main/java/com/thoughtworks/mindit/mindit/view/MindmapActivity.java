@@ -6,9 +6,12 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -226,5 +229,21 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
             updateChildTree(result);
         }
     }
-   
+
+    @Override
+    public void onBackPressed() {
+        System.out.println("In ONBACKPRESSED");
+        supportFinishAfterTransition();
+
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        System.out.println("KeyCode:"+KeyEvent.keyCodeToString(keyCode));
+
+            Log.d("CDA", "onKeyDown Called");
+            adapter.notifyDataSetChanged();
+            onBackPressed();
+
+        return true;
+    }
 }

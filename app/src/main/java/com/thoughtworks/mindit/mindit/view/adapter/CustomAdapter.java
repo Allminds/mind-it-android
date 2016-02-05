@@ -2,6 +2,7 @@ package com.thoughtworks.mindit.mindit.view.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.view.Display;
@@ -22,6 +23,11 @@ public class CustomAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<UINode> nodeList;
     private LayoutInflater layoutInflater;
+
+    public int getNewNodePosition() {
+        return newNodePosition;
+    }
+
     private int newNodePosition = -1;
     private Presenter presenter;
     private int selectedNodePosition = 0;
@@ -119,6 +125,8 @@ public class CustomAdapter extends BaseAdapter {
 
         if (selectedNodePosition == position) {
             rowView.setBackgroundColor(Color.parseColor("#FDD7AF"));
+            nodeHolder.textViewForName.setTextColor(Color.parseColor("#AD5D02"));
+            nodeHolder.editText.setTextColor(Color.parseColor("#AD5D02"));
         }
 
         return rowView;

@@ -1,15 +1,18 @@
 package com.thoughtworks.mindit.mindit.view;
 
 import android.app.Dialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
+
+
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +21,10 @@ import android.widget.EditText;
 
 import com.thoughtworks.mindit.mindit.R;
 import com.thoughtworks.mindit.mindit.Tracker;
+
+import java.net.URL;
+
+import static com.thoughtworks.mindit.mindit.R.color.textcolor;
 
 public class HomeActivity extends AppCompatActivity {
     Button importMindmap;
@@ -29,9 +36,6 @@ public class HomeActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
-        Intent intent = getIntent();
-        Uri data;
-        data = intent.getData();
 
         importMindmap = (Button) findViewById(R.id.importMindmap);
         importMindmap.setOnClickListener(new View.OnClickListener() {
@@ -41,24 +45,40 @@ public class HomeActivity extends AppCompatActivity {
 
             }
         });
+
+        Intent intent = getIntent();
+        Uri data = intent.getData();
         if (data != null) {
             String[] url = data.toString().split("/");
             tracker = Tracker.getInstance(this, url[url.length - 1]);
         }
-
-
     }
 
     public void importMindMap() {
         final Dialog importDialog = new Dialog(this);
-        importDialog.setTitle("Enter Url");
+        importDialog.setTitle(Html.fromHtml("<font color='#F39C38'>Enter URL</font>"));
+//        importDialog.getWindow().setTitleColor(Color.parseColor("#F39C38"));
         importDialog.setContentView(R.layout.import_dialog);
         importDialog.show();
-        Button imports = (Button) importDialog.findViewById(R.id.imports);
+       final EditText editUrl = (EditText) importDialog.findViewById(R.id.editUrl);
+        editUrl.setSelection(editUrl.getText().length());
+      // editUrl.getBackground().setColorFilter(Color.parseColor("#000000"), PorterDuff.Mode.SRC_IN);
+        final Button imports = (Button) importDialog.findViewById(R.id.imports);
+        imports.setFocusable(true);
+        if(imports.isFocused()) {
+            imports.setBackgroundColor(Color.parseColor("#F39C38"));
+        }
+        imports.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus)
+                    imports.setBackgroundColor(Color.parseColor("#F39C38"));
+            }
+        });
         imports.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText editUrl = (EditText) importDialog.findViewById(R.id.editUrl);
+
                 String url = editUrl.getText().toString();
                 tracker = Tracker.getInstance(HomeActivity.this, url);
                 importDialog.dismiss();
@@ -69,20 +89,6 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 importDialog.dismiss();
-            }
-        });
-        Button paste = (Button) importDialog.findViewById(R.id.paste);
-        paste.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ClipboardManager myClipboard;
-                myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                ClipData abc = myClipboard.getPrimaryClip();
-                ClipData.Item item = abc.getItemAt(0);
-                String text = item.getText().toString();
-                EditText editUrl = (EditText) importDialog.findViewById(R.id.editUrl);
-                editUrl.setText(text);
-                editUrl.setSelection(editUrl.getText().length());
             }
         });
     }
@@ -126,5 +132,3 @@ public class HomeActivity extends AppCompatActivity {
             tracker.resetTree();
     }
 }
-
-

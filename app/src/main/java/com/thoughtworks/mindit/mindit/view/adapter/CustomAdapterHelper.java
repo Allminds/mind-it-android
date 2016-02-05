@@ -67,6 +67,14 @@ public class CustomAdapterHelper {
 
     private void handleSelectionMode(UINode currentNode, NodeHolder nodeHolder) {
         if (mode == Constants.SELECTION_MODE || nodeList.indexOf(currentNode) != customAdapter.getSelectedNodePosition()) {
+            int lastFocusedNode = customAdapter.getSelectedNodePosition();
+           if(nodeList.get(lastFocusedNode).getName().equals("") && lastFocusedNode ==customAdapter.getNewNodePosition()) {
+               nodeList.remove(lastFocusedNode);
+               customAdapter.resetNewNodePosition();
+           }
+            final InputMethodManager lManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if(lManager.isActive())
+                lManager.hideSoftInputFromWindow(nodeHolder.editText.getWindowToken(), 0);
             customAdapter.setSelectedNodePosition(nodeList.indexOf(currentNode));
             mode = Constants.EDITMODE;
             customAdapter.notifyDataSetChanged();
@@ -78,17 +86,15 @@ public class CustomAdapterHelper {
 
     private void editTextOfNode(final NodeHolder nodeHolder, final UINode currentNode) {
         nodeHolder.switcher.showNext();
-        nodeHolder.editText.requestFocus();
         nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
         nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
         final InputMethodManager lManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-
         showKeypad(nodeHolder, lManager);
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                System.out.println("KeyCode:"+KeyEvent.keyCodeToString(keyCode));
-                if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_BACK) {
+                System.out.println("KeyCode:" + KeyEvent.keyCodeToString(keyCode) +"***"+event.toString());
+                if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_BACK || event.getAction() == KeyEvent.ACTION_DOWN || event.getAction() == KeyEvent.ACTION_UP) {
                     updateText(nodeHolder, currentNode);
                     if (lManager != null) {
                         lManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
@@ -133,20 +139,22 @@ public class CustomAdapterHelper {
     //    nodeHolder.switcher.addOnAttachStateChangeListener();
         nodeHolder.editText.requestFocus();
         nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
-        final InputMethodManager lManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+       final InputMethodManager lManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         showKeypad(nodeHolder, lManager);
 
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 System.out.println("KeyCode:" + KeyEvent.keyCodeToString(keyCode));
-                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER || event.getAction() == KeyEvent.ACTION_DOWN || event.getAction() == KeyEvent.ACTION_UP) {
                     updateTextOfNewNode(nodeHolder, currentNode, lManager);
                     return true;
                 }
                 return false;
             }
         });
+
+
     }
 
     private void showKeypad(final NodeHolder nodeHolder, final InputMethodManager lManager) {
