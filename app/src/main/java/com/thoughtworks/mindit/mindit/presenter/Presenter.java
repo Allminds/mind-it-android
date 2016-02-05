@@ -156,8 +156,11 @@ public class Presenter implements IObserver {
                     case "left":
                     case "right":
                         UINode root = lastUpdatedNode;
-                        root.setChildSubTree(this.addNewNodeFromWebToParent(tracker.getTree().getLastUpdatedNode()));
-                        mView.updateChildTree(root);
+                        ArrayList<UINode>childSubTree = this.addNewNodeFromWebToParent(tracker.getTree().getLastUpdatedNode());
+                        if(!(root.getChildSubTree().equals(childSubTree))) {
+                            root.setChildSubTree(childSubTree);
+                            mView.updateChildTree(root);
+                        }
                         break;
                     case "parentId":
                         Node node = tracker.getTree().getLastUpdatedNode();

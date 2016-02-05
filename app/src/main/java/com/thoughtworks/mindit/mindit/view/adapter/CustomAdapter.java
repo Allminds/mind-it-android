@@ -37,7 +37,6 @@ public class CustomAdapter extends BaseAdapter {
 
         Point size = new Point();
         display.getSize(size);
-        deviceHeight = size.y;
     }
 
     public int getSelectedNodePosition() {
@@ -46,11 +45,6 @@ public class CustomAdapter extends BaseAdapter {
 
     public void setSelectedNodePosition(int selectedNodePosition) {
         this.selectedNodePosition = selectedNodePosition;
-    }
-
-    public void resetSelectedNodePosition(int newSelectionPosition) {
-        this.selectedNodePosition = newSelectionPosition;
-        customAdapterHelper.resetMode();
     }
 
     public Context getContext() {

@@ -145,7 +145,13 @@ public class CustomAdapterHelper {
                 return false;
             }
         });
-
+        nodeHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus)
+                    updateTextOfNewNode(nodeHolder, currentNode, lManager);
+            }
+        });
     }
 
     private void showKeypad(final NodeHolder nodeHolder, final InputMethodManager lManager) {
@@ -214,11 +220,13 @@ public class CustomAdapterHelper {
 
     public ArrayList<UINode> expand(int position, UINode currentNode) {
         int childPosition = position + 1;
+
         ArrayList<UINode> childSubTree = currentNode.getChildSubTree();
         for (int nodeIndex = 0; nodeIndex < childSubTree.size(); nodeIndex++) {
             nodeList.add(childPosition++, childSubTree.get(nodeIndex));
         }
         currentNode.setStatus(Constants.STATUS.EXPAND.toString());
+
         return nodeList;
     }
 
