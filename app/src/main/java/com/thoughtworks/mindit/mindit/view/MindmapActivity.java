@@ -75,9 +75,10 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         switch (item.getItemId()) {
             case R.id.add:
                 UINode parent =  nodeList.get(positionOfSelectedNode);
-                UINode newNode = adapter.addChild(positionOfSelectedNode, parent);
                 adapter.collapse(nodeList.indexOf(parent), parent);
                 adapter.expand(nodeList.indexOf(parent),parent);
+                UINode newNode = adapter.addChild(positionOfSelectedNode, parent);
+
                 newSelectionPosition = nodeList.indexOf(newNode);
                 break;
             case R.id.delete:
@@ -87,7 +88,7 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
             default:
                 return true;
         }
-        adapter.resetSelectedNodePosition(newSelectionPosition);
+        adapter.setSelectedNodePosition(newSelectionPosition);
         toolbar.setVisibility(View.VISIBLE);
         adapter.notifyDataSetChanged();
         return true;

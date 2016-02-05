@@ -1,7 +1,16 @@
 package com.thoughtworks.mindit.mindit;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import com.thoughtworks.mindit.mindit.helper.ITracker;
 import com.thoughtworks.mindit.mindit.helper.JsonParserService;
@@ -9,6 +18,8 @@ import com.thoughtworks.mindit.mindit.helper.Meteor;
 import com.thoughtworks.mindit.mindit.model.Node;
 import com.thoughtworks.mindit.mindit.model.Tree;
 import com.thoughtworks.mindit.mindit.presenter.Presenter;
+import com.thoughtworks.mindit.mindit.view.HomeActivity;
+import com.thoughtworks.mindit.mindit.view.MindmapActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,9 +37,10 @@ public class Tracker implements MeteorCallback, ITracker {
     private Meteor meteor;
     private String rootId;
     private Tree tree;
-
+    private Context context;
     private Tracker(Context context, String rootId) {
         this.rootId = rootId;
+        this.context = context;
         //Meteor.setLoggingEnabled(true);
         meteor = new Meteor(context, "ws://www.mindit.xyz/websocket", this);
         meteor.setCallback(this);
@@ -60,7 +72,6 @@ public class Tracker implements MeteorCallback, ITracker {
         meteor.disconnect();
 
     }
-
     public void subscribe(String rootId) {
         meteor.subscribe("mindmap", new String[]{rootId});
     }
@@ -74,6 +85,8 @@ public class Tracker implements MeteorCallback, ITracker {
             @Override
             public void onSuccess(String jsonResponse) {
                 tree = JsonParserService.parse(jsonResponse);
+                System.out.println("OnSuccess:***********"+tree);
+
             }
 
             @Override
@@ -81,7 +94,7 @@ public class Tracker implements MeteorCallback, ITracker {
 
             }
         });
-
+        new WaitForTree().execute(this.tree);
     }
 
     public void addChild(final Node node) {
@@ -284,5 +297,98 @@ public class Tracker implements MeteorCallback, ITracker {
 
     public void registerThisToTree(Presenter presenter) {
         tree.register(presenter);
+    }
+
+    class WaitForTree extends AsyncTask<Tree, Void, String> {
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setTitle("Please wait...");
+            progressDialog.setMessage("Checking network connection....");
+            progressDialog.setCancelable(false);
+            System.out.println("Context:"+context   );
+            ((HomeActivity) context).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressDialog.show();
+                }
+            });
+
+
+        }
+
+        @Override
+        protected String doInBackground(Tree... params) {
+            ConnectivityManager cm =
+                    (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            if (activeNetwork != null && activeNetwork.isConnected()) {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                ((HomeActivity) context).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.setMessage("Downloading mindmap... ");
+                    }
+                });
+
+                while (tree == null) {
+                    System.out.println("In DoInBack>>>>>>"+tree);
+                    if (JsonParserService.isErrorOccurred())
+                        break;
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                //    System.out.println(rootId + "   " + tracker.getTree());
+                return "success";
+            } else {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                String message = "Please check your network connection.";
+                return message;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            progressDialog.dismiss();
+            if (result.equals("Please check your network connection.")) {
+
+                Toast toast = Toast.makeText(context, result, Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 100);
+                toast.show();
+
+            } else if (JsonParserService.isErrorOccurred()) {
+                resetTree();
+                JsonParserService.resetErrorOccurredFlag();
+                final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+                alertDialog.setMessage("Oops!!!!!\n" + "Looks like you were led astray with an incorrect URL..");
+                alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        alertDialog.dismiss();
+                    }
+                });
+                alertDialog.show();
+            } else {
+                String rootId = result;
+                Intent intent = new Intent(context, MindmapActivity.class);
+                context.startActivity(intent);
+            }
+
+        }
     }
 }
