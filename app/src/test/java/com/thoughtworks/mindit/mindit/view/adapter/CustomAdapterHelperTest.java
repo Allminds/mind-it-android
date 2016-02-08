@@ -1,6 +1,6 @@
 package com.thoughtworks.mindit.mindit.view.adapter;
 
-import com.thoughtworks.mindit.mindit.Constants;
+import com.thoughtworks.mindit.mindit.constant.Constants;
 import com.thoughtworks.mindit.mindit.view.model.UINode;
 
 import org.junit.Before;

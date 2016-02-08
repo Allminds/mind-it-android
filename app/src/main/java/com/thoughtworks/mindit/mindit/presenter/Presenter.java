@@ -1,10 +1,10 @@
 package com.thoughtworks.mindit.mindit.presenter;
 
-import com.thoughtworks.mindit.mindit.Constants;
 import com.thoughtworks.mindit.mindit.PublishSubscribe.IObserver;
 import com.thoughtworks.mindit.mindit.Tracker;
+import com.thoughtworks.mindit.mindit.constant.Constants;
+import com.thoughtworks.mindit.mindit.constant.Fields;
 import com.thoughtworks.mindit.mindit.model.Node;
-import com.thoughtworks.mindit.mindit.model.Tree;
 import com.thoughtworks.mindit.mindit.view.IMindmapView;
 import com.thoughtworks.mindit.mindit.view.model.UINode;
 
@@ -26,7 +26,7 @@ public class Presenter implements IObserver {
         uiNode = null;
     }
 
-    public Presenter(Tracker tracker ){
+    public Presenter(Tracker tracker) {
         nodeTree = new HashMap<String, UINode>();
         this.tracker = tracker;
         //    tree.register(this);
@@ -103,7 +103,7 @@ public class Presenter implements IObserver {
         String rootId = parent.getRootId();
         if (parent.isARoot())
             rootId = parent.getId();
-        Node node = new Node("", uiNode.getName(), parent, rootId, 0);
+        Node node = new Node(Constants.EMPTY_STRING, uiNode.getName(), parent, rootId, 0);
         this.uiNode = uiNode;
         tracker.addChild(node);
     }
@@ -144,25 +144,25 @@ public class Presenter implements IObserver {
             case 2:
                 UINode lastUpdatedNode = nodeTree.get(tracker.getTree().getLastUpdatedNode().getId());
                 switch (updateParameter) {
-                    case "name":
+                    case Fields.NAME:
                         UINode tempUINode = lastUpdatedNode;
                         tempUINode.setName(tracker.getTree().getLastUpdatedNode().getName());
                         break;
-                    case "childSubTree":
+                    case Fields.CHILD_SUBTREE:
                         UINode existingParent = lastUpdatedNode;
                         existingParent.setChildSubTree(this.addNewNodeFromWebToParent(tracker.getTree().getLastUpdatedNode()));
                         mView.updateChildTree(existingParent);
                         break;
-                    case "left":
-                    case "right":
+                    case Fields.LEFT:
+                    case Fields.RIGHT:
                         UINode root = lastUpdatedNode;
-                        ArrayList<UINode>childSubTree = this.addNewNodeFromWebToParent(tracker.getTree().getLastUpdatedNode());
-                        if(!(root.getChildSubTree().equals(childSubTree))) {
+                        ArrayList<UINode> childSubTree = this.addNewNodeFromWebToParent(tracker.getTree().getLastUpdatedNode());
+                        if (!(root.getChildSubTree().equals(childSubTree))) {
                             root.setChildSubTree(childSubTree);
                             mView.updateChildTree(root);
                         }
                         break;
-                    case "parentId":
+                    case Fields.PARENT_ID:
                         Node node = tracker.getTree().getLastUpdatedNode();
                         UINode child = nodeTree.get(node.getId());
                         updateDepthOfAllChildrenInUINode(child, node.getDepth() * Constants.PADDING_FOR_DEPTH);

@@ -16,8 +16,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.thoughtworks.mindit.mindit.Constants;
 import com.thoughtworks.mindit.mindit.R;
+import com.thoughtworks.mindit.mindit.constant.Constants;
+import com.thoughtworks.mindit.mindit.constant.MindIt;
 import com.thoughtworks.mindit.mindit.presenter.Presenter;
 import com.thoughtworks.mindit.mindit.view.adapter.CustomAdapter;
 import com.thoughtworks.mindit.mindit.view.model.UINode;
@@ -26,15 +27,13 @@ import java.util.ArrayList;
 
 public class MindmapActivity extends AppCompatActivity implements IMindmapView {
 
-    Menu myMenu;
+    private Menu myMenu;
     private ListView listView;
     private CustomAdapter adapter;
     private Presenter presenter;
     private UINode clipboard;
     private ArrayList<UINode> nodeList;
     private Toolbar toolbar;
-    private MenuItem delete;
-    private MenuItem add;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +42,12 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
-        getSupportActionBar().setTitle("MindIt");
+        getSupportActionBar().setTitle(MindIt.TITLE);
 
         listView = (ListView) findViewById(R.id.listView);
         registerForContextMenu(listView);
         presenter = new Presenter(this);
-        adapter = new CustomAdapter(this, presenter,presenter.buildNodeListFromTree());
+        adapter = new CustomAdapter(this, presenter, presenter.buildNodeListFromTree());
 
         listView.setAdapter(adapter);
         nodeList = adapter.getNodeList();
@@ -61,8 +60,8 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
 
         getMenuInflater().inflate(R.menu.actions, menu);
         myMenu = menu;
-        add = myMenu.getItem(Constants.ADD);
-        delete = myMenu.getItem(Constants.DELETE);
+        MenuItem add = myMenu.getItem(Constants.ADD);
+        MenuItem delete = myMenu.getItem(Constants.DELETE);
         add.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         delete.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         add.setVisible(true);
@@ -74,19 +73,12 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
     public boolean onOptionsItemSelected(MenuItem item) {
         int newSelectionPosition;
         int positionOfSelectedNode = adapter.getSelectedNodePosition();
-        System.out.println(item.getTitle() + " " + item.getItemId());
         switch (item.getItemId()) {
             case R.id.add:
-                UINode parent =  nodeList.get(positionOfSelectedNode);
-                adapter.collapse(nodeList.indexOf(parent), parent);
-                adapter.expand(nodeList.indexOf(parent),parent);
-                UINode newNode = adapter.addChild(positionOfSelectedNode, parent);
-
-                newSelectionPosition = nodeList.indexOf(newNode);
+                newSelectionPosition = addNode(positionOfSelectedNode);
                 break;
             case R.id.delete:
-                deleteNode(positionOfSelectedNode);
-                newSelectionPosition = (positionOfSelectedNode == 0) ? 0 : positionOfSelectedNode - 1;
+                newSelectionPosition = deleteSelectedNode(positionOfSelectedNode);
                 break;
             default:
                 return true;
@@ -97,17 +89,34 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         return true;
     }
 
+    private int deleteSelectedNode(int positionOfSelectedNode) {
+        int newSelectionPosition;
+        deleteNode(positionOfSelectedNode);
+        newSelectionPosition = (positionOfSelectedNode == 0) ? 0 : positionOfSelectedNode - 1;
+        return newSelectionPosition;
+    }
+
+    private int addNode(int positionOfSelectedNode) {
+        int newSelectionPosition;
+        UINode parent = nodeList.get(positionOfSelectedNode);
+        adapter.collapse(nodeList.indexOf(parent), parent);
+        adapter.expand(nodeList.indexOf(parent), parent);
+        UINode newNode = adapter.addChild(positionOfSelectedNode, parent);
+        newSelectionPosition = nodeList.indexOf(newNode);
+        return newSelectionPosition;
+    }
+
     private void cutNode(int position) {
         UINode node = nodeList.get(position);
         clipboard = node;
         deleteNode(position);
-        clipboard.setId("");
-        clipboard.setStatus("collapse");
+        clipboard.setId(Constants.EMPTY_STRING);
+        clipboard.setStatus(Constants.STATUS.COLLAPSE.toString());
     }
 
     private void copyNode(int position) {
         UINode node = nodeList.get(position);
-        clipboard = new UINode(node.getName(), 0, "");
+        clipboard = new UINode(node.getName(), 0, Constants.EMPTY_STRING);
         copyChildSubTree(node, clipboard);
 
     }
@@ -123,14 +132,14 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
 
         new WaitForTree().execute(clipboard);
 
-        if (parent.getStatus().equals("collapse")) {
-            parent.setStatus("expand");
+        if (parent.getStatus().equals(Constants.STATUS.COLLAPSE.toString())) {
+            parent.setStatus(Constants.STATUS.EXPAND.toString());
             adapter.expand(position, parent);
         } else
             nodeList.add(childPosition, clipboard);
 
         UINode temporary = clipboard;
-        clipboard = new UINode(clipboard.getName(), 0, "");
+        clipboard = new UINode(clipboard.getName(), 0, Constants.EMPTY_STRING);
         copyChildSubTree(temporary, clipboard);
 
         adapter.notifyDataSetChanged();
@@ -159,7 +168,7 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
 
     private void deleteNode(int position) {
         if (position == 0) {
-            Toast.makeText(getApplicationContext(), "Can not delete root node...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), Constants.ROOT_DELETE_ERROR, Toast.LENGTH_SHORT).show();
             return;
         }
         UINode uiNode = nodeList.get(position);
@@ -170,7 +179,6 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
                 break;
             }
         }
-        System.out.println("*******" + uiNode.getName() + "*********" + nodeList.get(position).getName());
         presenter.deleteNode(uiNode);
 
         //remove from parent childsubtree
@@ -182,7 +190,7 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
                 break;
             }
         }
-        boolean result = parent != null ? parent.removeChild(uiNode) : false;
+        boolean result = parent != null && parent.removeChild(uiNode);
         if (result) {
             if (parent.getChildSubTree().size() == 0) {
                 parent.setStatus(Constants.STATUS.COLLAPSE.toString());
@@ -218,9 +226,9 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         @Override
         protected UINode doInBackground(UINode... params) {
             UINode node = params[0];
-            node.setId("");
+            node.setId(Constants.EMPTY_STRING);
             presenter.addNode(node);
-            while (node.getId().equals("")) ;
+            while (node.getId().equals(Constants.EMPTY_STRING)) ;
             return node;
         }
 
@@ -229,21 +237,20 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
             updateChildTree(result);
         }
     }
-
     @Override
     public void onBackPressed() {
         System.out.println("In ONBACKPRESSED");
         supportFinishAfterTransition();
 
     }
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)  {
-        System.out.println("KeyCode:"+KeyEvent.keyCodeToString(keyCode));
-
-            Log.d("CDA", "onKeyDown Called");
-            adapter.notifyDataSetChanged();
-            onBackPressed();
-
-        return true;
-    }
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+//        System.out.println("KeyCode:"+KeyEvent.keyCodeToString(keyCode));
+//
+//            Log.d("CDA", "onKeyDown Called");
+//            adapter.notifyDataSetChanged();
+//            onBackPressed();
+//
+//        return true;
+//    }
 }

@@ -5,10 +5,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
-public class NodeHolder{
+public class NodeHolder {
     ViewSwitcher switcher;
     ImageView expandCollapseButton;
     TextView textViewForName;
-    ImageView addNodeButton;
     EditText editText;
 }

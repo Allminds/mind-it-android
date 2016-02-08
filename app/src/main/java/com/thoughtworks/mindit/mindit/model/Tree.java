@@ -1,8 +1,9 @@
 package com.thoughtworks.mindit.mindit.model;
 
-import com.thoughtworks.mindit.mindit.Constants;
 import com.thoughtworks.mindit.mindit.PublishSubscribe.IObserver;
 import com.thoughtworks.mindit.mindit.PublishSubscribe.ISubject;
+import com.thoughtworks.mindit.mindit.constant.Constants;
+import com.thoughtworks.mindit.mindit.constant.Fields;
 import com.thoughtworks.mindit.mindit.exception.NodeAlreadyDeletedException;
 
 import java.io.Serializable;
@@ -24,7 +25,7 @@ public class Tree implements Serializable, ISubject {
         this.setRoot();
         lastUpdatedNode = null;
         observers = new ArrayList<IObserver>();
-        updateParameter = "childSubTree";
+        updateParameter = Fields.CHILD_SUBTREE;
     }
 
     public static Tree getInstance(HashMap<String, Node> nodes) {
@@ -113,7 +114,7 @@ public class Tree implements Serializable, ISubject {
         lastUpdatedNode = node;
         updateOption = Constants.TREE_UPDATE_OPTIONS.ADD.getValue();
         //if(!nodes.containsKey(node.getId()))
-             nodes.put(node.getId(), node);
+        nodes.put(node.getId(), node);
 
         Node parent = this.getNode(node.getParentId());
         node.setDepth(parent.getDepth() + 1);
@@ -126,21 +127,21 @@ public class Tree implements Serializable, ISubject {
         updateOption = Constants.TREE_UPDATE_OPTIONS.UPDATE.getValue();
         updateParameter = attribute;
         switch (attribute) {
-            case "name":
+            case Fields.NAME:
                 node.setName((String) data);
                 break;
-            case "childSubTree":
+            case Fields.CHILD_SUBTREE:
                 node.setChildSubTree((ArrayList<String>) data);
                 break;
-            case "left":
+            case Fields.LEFT:
                 node.setLeft((ArrayList<String>) data);
                 this.fillRootChildSubtree();
                 break;
-            case "right":
+            case Fields.RIGHT:
                 node.setRight((ArrayList<String>) data);
                 this.fillRootChildSubtree();
                 break;
-            case "parentId":
+            case Fields.PARENT_ID:
                 node.setParentId((String) data);
                 Node parent = this.getNode(node.getParentId());
                 updateDepthOfAllNodes(node, parent.getDepth());
@@ -169,6 +170,7 @@ public class Tree implements Serializable, ISubject {
         this.notifyObservers();
         return this;
     }
+
     @Override
     public String toString() {
         return "Tree{" +
