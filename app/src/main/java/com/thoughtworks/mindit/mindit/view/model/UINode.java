@@ -1,6 +1,6 @@
 package com.thoughtworks.mindit.mindit.view.model;
 
-import com.thoughtworks.mindit.mindit.Constants;
+import com.thoughtworks.mindit.mindit.constant.Constants;
 
 import java.util.ArrayList;
 

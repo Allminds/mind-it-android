@@ -1,11 +1,13 @@
 package com.thoughtworks.mindit.mindit.model;
 
-import com.thoughtworks.mindit.mindit.Constants;
+import com.thoughtworks.mindit.mindit.constant.Constants;
 import com.thoughtworks.mindit.mindit.exception.NodeDoesNotExistException;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Node implements Serializable {
+    private static boolean directionToggler = true;
     private String _id;
     private String name;
     private ArrayList<String> childSubTree;
@@ -16,9 +18,8 @@ public class Node implements Serializable {
     private int depth;
     private int index;
     private String position;
-    private static boolean directionToggler = true;
 
-    public Node(String id, String text, Node parent, String rootId, int index){
+    public Node(String id, String text, Node parent, String rootId, int index) {
         this._id = id;
         this.name = text;
         this.left = new ArrayList<String>();
@@ -26,9 +27,9 @@ public class Node implements Serializable {
         this.childSubTree = new ArrayList<String>();
         this.parentId = (parent != null) ? parent.getId() : null;
         this.rootId = rootId;
-        this.depth = (parent != null) ? parent.getDepth()+1 : 0;
+        this.depth = (parent != null) ? parent.getDepth() + 1 : 0;
         this.index = index;
-        this.position = (parent != null) ? ((this.rootId == this.parentId ) ? this.getFirstLevelChildPosition() : parent.getPosition()) : null;
+        this.position = (parent != null) ? ((this.rootId == this.parentId) ? this.getFirstLevelChildPosition() : parent.getPosition()) : null;
     }
 
     //Getters-setters start
@@ -40,24 +41,20 @@ public class Node implements Serializable {
         this.position = position;
     }
 
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
-
     public ArrayList<String> getLeft() {
         return left;
+    }
+
+    public void setLeft(ArrayList<String> left) {
+        this.left = left;
     }
 
     public ArrayList<String> getRight() {
         return right;
     }
 
-    public void setChildSubTree(ArrayList<String> childSubTree) {
-        this.childSubTree = childSubTree;
-    }
-
-    public void setDepth(int depth) {
-        this.depth = depth;
+    public void setRight(ArrayList<String> right) {
+        this.right = right;
     }
 
     public int getIndex() {
@@ -84,18 +81,30 @@ public class Node implements Serializable {
         return childSubTree;
     }
 
+    public void setChildSubTree(ArrayList<String> childSubTree) {
+        this.childSubTree = childSubTree;
+    }
+
     public String getParentId() {
         return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
     }
 
     public String getRootId() {
         return rootId;
     }
+    //Getters-setters end
 
     public int getDepth() {
         return depth;
     }
-    //Getters-setters end
+
+    public void setDepth(int depth) {
+        this.depth = depth;
+    }
 
     public Node updateParent(Node newParent, Node oldParent, int index) throws Exception {
         oldParent.removeThisChild(this);
@@ -104,12 +113,11 @@ public class Node implements Serializable {
         return this;
     }
 
-    private String getFirstLevelChildPosition () {
-        if(directionToggler) {
+    private String getFirstLevelChildPosition() {
+        if (directionToggler) {
             directionToggler = false;
             return "right";
-        }
-        else {
+        } else {
             directionToggler = true;
             return "left";
         }
@@ -134,7 +142,7 @@ public class Node implements Serializable {
         }
         node.setParentId(this.getId());
 
-        if(this.isARoot()) {
+        if (this.isARoot()) {
             this.addThisFirstLevelChildToSubTree(node);
         }
         return this;
@@ -169,11 +177,9 @@ public class Node implements Serializable {
     private void removeThisFirstLevelChildFromSubtree(Node node) throws NodeDoesNotExistException {
         if (node.getPosition().equals(Constants.POSITION.RIGHT.toString()) && this.isChildAlreadyExists(node, this.getRight())) {
             this.getRight().remove(node.getId());
-        }
-        else if (node.getPosition().equals(Constants.POSITION.LEFT.toString()) && this.isChildAlreadyExists(node, this.getLeft())) {
+        } else if (node.getPosition().equals(Constants.POSITION.LEFT.toString()) && this.isChildAlreadyExists(node, this.getLeft())) {
             this.getLeft().remove(node.getId());
-        }
-        else
+        } else
             throw new NodeDoesNotExistException();
     }
 
@@ -207,13 +213,5 @@ public class Node implements Serializable {
     @Override
     public int hashCode() {
         return getId().hashCode();
-    }
-
-    public void setRight(ArrayList<String> right) {
-        this.right = right;
-    }
-
-    public void setLeft(ArrayList<String> left) {
-        this.left = left;
     }
 }
