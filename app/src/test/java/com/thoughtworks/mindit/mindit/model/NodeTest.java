@@ -1,6 +1,6 @@
 package com.thoughtworks.mindit.mindit.model;
 
-import com.thoughtworks.mindit.mindit.Constants;
+import com.thoughtworks.mindit.mindit.constant.Constants;
 import com.thoughtworks.mindit.mindit.exception.NodeDoesNotExistException;
 
 import org.junit.Before;
