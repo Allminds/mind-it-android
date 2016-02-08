@@ -222,13 +222,19 @@ public class Tracker implements MeteorCallback, ITracker {
     @Override
     public void onChanged(String collectionName, String documentID, String updatedValuesJson, String removedValuesJson) {
         Node node = tree.getNode(documentID);
-        System.out.println("onChanged:   " + updatedValuesJson);
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Npde name::   "+node.getName()+"      onChanged:   " + updatedValuesJson);
         try {
             JSONObject fields = JsonParserService.rawParse(updatedValuesJson);
             if (fields.has("name")) {
                 String name = fields.getString("name");
                 tree.updateNode(node, "name", name);
-            } else if (fields.has("childSubTree")) {
+            }
+            if (fields.has("childSubTree")) {
                 Node parent = node;
                 ArrayList<String> oldChildSubTree = parent.getChildSubTree();
 
@@ -252,7 +258,8 @@ public class Tracker implements MeteorCallback, ITracker {
                 }
                 //separate condition in case of repositioning of nodes
                 tree.updateNode(node, "childSubTree", newChildSubTree);
-            } else if (fields.has("left")) {
+            }
+            if (fields.has("left")) {
                 Node root = tree.getRoot();
                 JSONArray jsonLeftTree = (JSONArray) fields.get("left");
                 ArrayList<String> leftTree = new ArrayList<String>();
@@ -267,7 +274,8 @@ public class Tracker implements MeteorCallback, ITracker {
                 }
                 System.out.println(leftTree);
                 tree.updateNode(node, "left", leftTree);
-            } else if (fields.has("right")) {
+            }
+            if (fields.has("right")) {
                 JSONArray jsonRightTree = (JSONArray) fields.get("right");
                 ArrayList<String> rightTree = new ArrayList<String>();
                 Node root = tree.getRoot();
@@ -281,7 +289,9 @@ public class Tracker implements MeteorCallback, ITracker {
                     }
                 }
                 tree.updateNode(node, "right", rightTree);
-            } else if (fields.has("parentId")) {
+            }
+
+            if (fields.has("parentId")) {
                 String parentId = fields.getString("parentId");
                 tree.updateNode(node, "parentId", parentId);
             }
@@ -334,7 +344,7 @@ public class Tracker implements MeteorCallback, ITracker {
                 ((HomeActivity) context).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progressDialog.setMessage("Downloading mindmap... ");
+                        progressDialog.setMessage("Importing MindMap... ");
                     }
                 });
 

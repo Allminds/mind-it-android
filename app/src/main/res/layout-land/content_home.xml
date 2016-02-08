@@ -19,40 +19,35 @@
         android:id="@+id/icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_gravity="center"
         android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
         android:layout_weight="3"
-        android:src="@drawable/logo" />
+        android:src="@drawable/logo_land" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal"
         android:layout_weight="2"
-        >
+        android:layout_gravity="center_horizontal">
+
         <Button
             android:id="@+id/importMindmap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/icon"
             android:layout_centerHorizontal="true"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="center_horizontal|center_vertical"
             android:background="@drawable/buttonshape"
             android:fontFamily="sans-serif"
             android:shadowColor="#A8A8A8"
-            android:text="   Import MindMap   "
+            android:text="   Import MindMap    "
             android:textAllCaps="false"
             android:textColor="#FFFFFFFF"
             android:textSize="18sp"
             android:textStyle="normal"
-            android:theme="@style/MyButton"
-            android:layout_below="@id/icon" />
-
+            android:theme="@style/MyButton" />
     </LinearLayout>
-
-
 
 
 </LinearLayout>

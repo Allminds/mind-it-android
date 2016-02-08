@@ -2,7 +2,9 @@ package com.thoughtworks.mindit.mindit.view;
 
 import android.app.Dialog;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -24,6 +26,8 @@ import static com.thoughtworks.mindit.mindit.R.color.textcolor;
 public class HomeActivity extends AppCompatActivity {
     Button importMindmap;
     Tracker tracker;
+    int screenWidth;
+    int screenHeight;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +35,12 @@ public class HomeActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+        Intent intent = getIntent();
+        Uri data = intent.getData();
+        if (data != null) {
+            String[] url = data.toString().split("/");
+            tracker = Tracker.getInstance(this, url[url.length - 1]);
+        }
 
         importMindmap = (Button) findViewById(R.id.importMindmap);
         importMindmap.setOnClickListener(new View.OnClickListener() {
@@ -68,7 +78,10 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                String url = editUrl.getText().toString();
+                String input = editUrl.getText().toString();
+                String inputArray[]=input.split("/");
+                String url=inputArray[inputArray.length-1];
+                url=url.trim();
                 tracker = Tracker.getInstance(HomeActivity.this, url);
                 importDialog.dismiss();
             }
@@ -106,9 +119,10 @@ public class HomeActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+//        if (id == R.id.action_settings) {
+//
+//            return true;
+//        }
         if (id == R.id.imports) {
         }
         return super.onOptionsItemSelected(item);

@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -46,7 +47,6 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         registerForContextMenu(listView);
         presenter = new Presenter(this);
         adapter = new CustomAdapter(this, presenter,presenter.buildNodeListFromTree());
-
         listView.setAdapter(adapter);
         nodeList = adapter.getNodeList();
 

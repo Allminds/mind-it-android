@@ -11,10 +11,10 @@
         android:layout_marginLeft="24dp"
         android:layout_marginTop="10dp"
         android:background="@android:color/transparent"
-        android:hint="url here"
+        android:hint="Enter URL here"
         android:inputType="text"
         android:singleLine="true"
-        android:text="NKqEawyiTNN2kKkBz"
+        android:text="P7KXMa5BjTgmzHvGS"
         android:textColor="#595858"
         android:textSize="20dp" />
 

@@ -16,7 +16,8 @@
             android:name=".view.MindmapActivity"
             android:label="@string/title_activity_mindmap"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan"
+            >
         </activity>
 
         <activity
