@@ -243,6 +243,7 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         supportFinishAfterTransition();
 
     }
+<<<<<<< HEAD
 //    @Override
 //    public boolean onKeyDown(int keyCode, KeyEvent event)  {
 //        System.out.println("KeyCode:"+KeyEvent.keyCodeToString(keyCode));
@@ -253,4 +254,16 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
 //
 //        return true;
 //    }
+=======
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        System.out.println("KeyCode:"+KeyEvent.keyCodeToString(keyCode));
+
+            Log.d("CDA", "onKeyDown Called");
+            adapter.notifyDataSetChanged();
+            onBackPressed();
+
+        return true;
+    }
+>>>>>>> df8601b619bf2e2d9709389bd95aecd6b6e040f4
 }

@@ -95,8 +95,10 @@ public class CustomAdapterHelper {
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
+
                 System.out.println("KeyCode add:" + KeyEvent.keyCodeToString(keyCode) +"***"+event.toString());
                 if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_BACK ) {
+
                     updateText(nodeHolder, currentNode);
                     if (lManager != null) {
                         lManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
