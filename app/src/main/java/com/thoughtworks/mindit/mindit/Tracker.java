@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import dmax.dialog.SpotsDialog;
 import im.delight.android.ddp.MeteorCallback;
 import im.delight.android.ddp.ResultListener;
 
@@ -74,8 +73,6 @@ public class Tracker implements MeteorCallback, ITracker {
             this.tree = null;
         }
         instance = null;
-        meteor.disconnect();
-
     }
 
     public void subscribe(String rootId) {
@@ -188,7 +185,6 @@ public class Tracker implements MeteorCallback, ITracker {
 
     @Override
     public void onDisconnect() {
-
     }
 
     @Override
@@ -323,13 +319,13 @@ public class Tracker implements MeteorCallback, ITracker {
     }
 
     class WaitForTree extends AsyncTask<Tree, Void, String> {
-//        AlertDialog progressDialog;
+        //        AlertDialog progressDialog;
         ProgressDialog progressDialog;
 
         @Override
         protected void onPreExecute() {
 //            progressDialog = new SpotsDialog(context,"Please wait");
-            progressDialog=new ProgressDialog(context);
+            progressDialog = new ProgressDialog(context);
 //            progressDialog.setTitle(NetworkMessage.CONNECTION_CHECK.toString());
             progressDialog.setTitle(NetworkMessage.WAIT);
             progressDialog.setMessage(NetworkMessage.CONNECTION_CHECK);

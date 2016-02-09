@@ -144,7 +144,8 @@ public class Tree implements Serializable, ISubject {
             case Fields.PARENT_ID:
                 node.setParentId((String) data);
                 Node parent = this.getNode(node.getParentId());
-                updateDepthOfAllNodes(node, parent.getDepth());
+                if (parent != null)
+                    updateDepthOfAllNodes(node, parent.getDepth());
                 break;
         }
 
@@ -201,5 +202,8 @@ public class Tree implements Serializable, ISubject {
     public void removeAllNodes() {
         nodes.clear();
         instance = null;
+        nodes = null;
+        lastUpdatedNode = null;
+        root = null;
     }
 }

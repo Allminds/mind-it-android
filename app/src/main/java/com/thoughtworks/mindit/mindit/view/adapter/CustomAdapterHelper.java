@@ -3,15 +3,14 @@ package com.thoughtworks.mindit.mindit.view.adapter;
 import android.content.Context;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import com.thoughtworks.mindit.mindit.Config;
 import com.thoughtworks.mindit.mindit.R;
 import com.thoughtworks.mindit.mindit.constant.Constants;
 import com.thoughtworks.mindit.mindit.view.model.UINode;
@@ -19,10 +18,10 @@ import com.thoughtworks.mindit.mindit.view.model.UINode;
 import java.util.ArrayList;
 
 public class CustomAdapterHelper {
+    final InputMethodManager lManager;
     private final CustomAdapter customAdapter;
     private ArrayList<UINode> nodeList;
     private int mode = Constants.EDIT_MODE;
-    final InputMethodManager lManager;
 
     public CustomAdapterHelper(CustomAdapter customAdapter) {
         this.customAdapter = customAdapter;
@@ -36,10 +35,6 @@ public class CustomAdapterHelper {
 
     public void setNodeList(ArrayList<UINode> nodeList) {
         this.nodeList = nodeList;
-    }
-
-    public void resetMode() {
-        mode = Constants.SELECTION_MODE;
     }
 
     void updateText(NodeHolder nodeHolder, UINode currentNode) {
@@ -82,11 +77,15 @@ public class CustomAdapterHelper {
             if (lManager.isActive())
                 lManager.hideSoftInputFromWindow(nodeHolder.editText.getWindowToken(), 0);
             customAdapter.setSelectedNodePosition(nodeList.indexOf(currentNode));
-            mode = Constants.EDIT_MODE;
+            if (Config.FEATURE_EDIT) {
+                mode = Constants.EDIT_MODE;
+            }
             customAdapter.notifyDataSetChanged();
         } else {
-            editTextOfNode(nodeHolder, currentNode);
-            mode = Constants.SELECTION_MODE;
+            if (Config.FEATURE_EDIT) {
+                editTextOfNode(nodeHolder, currentNode);
+                mode = Constants.SELECTION_MODE;
+            }
         }
     }
 
@@ -148,7 +147,6 @@ public class CustomAdapterHelper {
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                System.out.println("KeyCode edit:" + KeyEvent.keyCodeToString(keyCode));
                 if (keyCode == KeyEvent.KEYCODE_ENTER) {
                     updateTextOfNewNode(nodeHolder, currentNode, lManager);
                     return true;
