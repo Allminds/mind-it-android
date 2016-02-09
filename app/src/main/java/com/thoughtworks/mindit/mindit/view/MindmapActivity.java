@@ -40,7 +40,7 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         setContentView(R.layout.activity_mindmap);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+        getSupportActionBar().setIcon(R.drawable.minditlogo);
         getSupportActionBar().setTitle(MindIt.TITLE);
 
         listView = (ListView) findViewById(R.id.listView);

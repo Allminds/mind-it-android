@@ -8,7 +8,7 @@ public class Constants {
     public static final int DELETE = 1;
     public static final String EMPTY_STRING = "";
     public static final String OK = "OK";
-    public static final java.lang.String IMPORT_DIALOG_TITLE = "<font color='#F39C38'>Enter URL</font>";
+    public static final java.lang.String IMPORT_DIALOG_TITLE = "<font color='#ED8233'>Enter URL</font>";
     public static final String ROOT_DELETE_ERROR = "Can not delete root node...";
 
     public enum POSITION {

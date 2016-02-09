@@ -6,17 +6,19 @@
     <EditText
         android:id="@+id/editUrl"
         style="@style/myTheme"
-        android:layout_width="365dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginRight="24dp"
         android:layout_marginLeft="24dp"
         android:layout_marginTop="10dp"
-        android:background="@android:color/transparent"
+        android:background="@drawable/shape"
         android:hint="Enter URL here"
         android:inputType="text"
         android:singleLine="true"
         android:text="P7KXMa5BjTgmzHvGS"
         android:textColor="#595858"
-        android:textSize="20dp" />
+        android:paddingLeft="10dp"
+        android:textSize="17sp" />
 
     <RelativeLayout
         android:layout_width="wrap_content"

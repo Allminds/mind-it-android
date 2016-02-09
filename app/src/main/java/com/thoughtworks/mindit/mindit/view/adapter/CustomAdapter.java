@@ -131,6 +131,14 @@ public class CustomAdapter extends BaseAdapter {
             rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND_ON_SELECTION));
             nodeHolder.textViewForName.setTextColor(Color.parseColor(Colors.NODE_NAME));
             nodeHolder.editText.setTextColor(Color.parseColor(Colors.EDIT_TEXT));
+            if (currentNode.getChildSubTree().size() == 0) {
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.selected_leaf);
+            } else if (currentNode.getStatus().equalsIgnoreCase(Constants.STATUS.EXPAND.toString())) {
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.selectedexpand);
+            } else {
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.selectedcollapse);
+            }
+
         }
 
         return rowView;

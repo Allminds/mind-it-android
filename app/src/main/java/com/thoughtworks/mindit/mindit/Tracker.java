@@ -48,6 +48,8 @@ public class Tracker implements MeteorCallback, ITracker {
         this.rootId = rootId;
         this.context = context;
         //Meteor.setLoggingEnabled(true);
+        new WaitForTree().execute(this.tree);
+
         meteor = new Meteor(context, "ws://www.mindit.xyz/websocket", this);
         meteor.setCallback(this);
     }
@@ -97,7 +99,6 @@ public class Tracker implements MeteorCallback, ITracker {
 
             }
         });
-        new WaitForTree().execute(this.tree);
     }
 
     public void addChild(final Node node) {
@@ -323,13 +324,16 @@ public class Tracker implements MeteorCallback, ITracker {
     }
 
     class WaitForTree extends AsyncTask<Tree, Void, String> {
-        AlertDialog progressDialog;
+//        AlertDialog progressDialog;
+        ProgressDialog progressDialog;
 
         @Override
         protected void onPreExecute() {
-            progressDialog = new SpotsDialog(context,"Please wait");
-            progressDialog.setTitle(NetworkMessage.CONNECTION_CHECK.toString());
-            progressDialog.setMessage(NetworkMessage.CONNECTION_CHECK.toString());
+//            progressDialog = new SpotsDialog(context,"Please wait");
+            progressDialog=new ProgressDialog(context);
+//            progressDialog.setTitle(NetworkMessage.CONNECTION_CHECK.toString());
+            progressDialog.setTitle(NetworkMessage.WAIT);
+            progressDialog.setMessage(NetworkMessage.CONNECTION_CHECK);
             progressDialog.setCancelable(false);
 //            progressDialog.setProgressStyle(R.style.myProgressDialog);
             ((HomeActivity) context).runOnUiThread(new Runnable() {
@@ -362,17 +366,15 @@ public class Tracker implements MeteorCallback, ITracker {
 
         @NonNull
         private String downLoadMindmap() {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
             ((HomeActivity) context).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+
                     progressDialog.setTitle(NetworkMessage.DOWNLOAD);
                 }
             });
+
 
             while (tree == null) {
                 if (JsonParserService.isErrorOccurred())
@@ -390,6 +392,7 @@ public class Tracker implements MeteorCallback, ITracker {
         protected void onPostExecute(String result) {
             progressDialog.dismiss();
             if (result.equals(NetworkMessage.CONNECTION_ERROR)) {
+                resetTree();
                 Toast toast = Toast.makeText(context, result, Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.CENTER, 0, 100);
                 toast.show();
