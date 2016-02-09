@@ -235,21 +235,4 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
             updateChildTree(result);
         }
     }
-    @Override
-    public void onBackPressed() {
-        System.out.println("In ONBACKPRESSED");
-        supportFinishAfterTransition();
-
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)  {
-        System.out.println("KeyCode:"+KeyEvent.keyCodeToString(keyCode));
-
-            Log.d("CDA", "onKeyDown Called");
-            adapter.notifyDataSetChanged();
-            onBackPressed();
-
-        return true;
-    }
 }
