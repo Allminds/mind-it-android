@@ -48,6 +48,7 @@ public class Tracker implements MeteorCallback, ITracker {
         this.rootId = rootId;
         this.context = context;
         //Meteor.setLoggingEnabled(true);
+        new WaitForTree().execute(this.tree);
         meteor = new Meteor(context, "ws://www.mindit.xyz/websocket", this);
         meteor.setCallback(this);
     }
@@ -97,7 +98,6 @@ public class Tracker implements MeteorCallback, ITracker {
 
             }
         });
-        new WaitForTree().execute(this.tree);
     }
 
     public void addChild(final Node node) {
@@ -390,6 +390,7 @@ public class Tracker implements MeteorCallback, ITracker {
         protected void onPostExecute(String result) {
             progressDialog.dismiss();
             if (result.equals(NetworkMessage.CONNECTION_ERROR)) {
+                resetTree();
                 Toast toast = Toast.makeText(context, result, Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.CENTER, 0, 100);
                 toast.show();
