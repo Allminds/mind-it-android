@@ -22,8 +22,23 @@ import com.thoughtworks.mindit.mindit.constant.Colors;
 import com.thoughtworks.mindit.mindit.constant.Constants;
 
 public class HomeActivity extends AppCompatActivity {
-    Button importMindmap;
-    Tracker tracker;
+    private Button importMindmap;
+    private Tracker tracker;
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (intent == null)
+            return;
+        Uri data = intent.getData();
+        if (data != null) {
+            String[] url = data.toString().split("/");
+            if (tracker != null) {
+                tracker.resetTree();
+            }
+            tracker = Tracker.getInstance(this, url[url.length - 1]);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +50,8 @@ public class HomeActivity extends AppCompatActivity {
         Uri data = intent.getData();
         if (data != null) {
             String[] url = data.toString().split("/");
+            if (tracker != null)
+                tracker.resetTree();
             tracker = Tracker.getInstance(this, url[url.length - 1]);
         }
 
@@ -42,11 +59,12 @@ public class HomeActivity extends AppCompatActivity {
         importMindmap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (tracker != null)
+                    tracker.resetTree();
                 importMindMap();
 
             }
         });
-
     }
 
     public void importMindMap() {
@@ -65,7 +83,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
 
-                    imports.setBackgroundColor(Color.parseColor(Colors.IMPORT_DIALOG_BACKGROUND_COLOR_ON_FOCUS_CHANGED));
+                imports.setBackgroundColor(Color.parseColor(Colors.IMPORT_DIALOG_BACKGROUND_COLOR_ON_FOCUS_CHANGED));
             }
         });
         imports.setOnClickListener(new View.OnClickListener() {
@@ -73,9 +91,9 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 String input = editUrl.getText().toString();
-                String inputArray[]=input.split("/");
-                String url=inputArray[inputArray.length-1];
-                url=url.trim();
+                String inputArray[] = input.split("/");
+                String url = inputArray[inputArray.length - 1];
+                url = url.trim();
                 tracker = Tracker.getInstance(HomeActivity.this, url);
                 importDialog.dismiss();
             }
@@ -125,7 +143,6 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        if (tracker != null)
-            tracker.resetTree();
     }
+
 }

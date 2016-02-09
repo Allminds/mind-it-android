@@ -3,21 +3,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <EditText
         android:id="@+id/editUrl"
         style="@style/myTheme"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginRight="24dp"
         android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/shape"
         android:hint="Enter URL here"
         android:inputType="text"
-        android:singleLine="true"
-        android:text="P7KXMa5BjTgmzHvGS"
-        android:textColor="#595858"
         android:paddingLeft="10dp"
+        android:singleLine="true"
+        android:text="rJPmsKER7Wo7gdbns"
+        android:textColor="#595858"
         android:textSize="17sp" />
 
     <RelativeLayout
@@ -31,25 +32,24 @@
             android:id="@+id/cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
             android:layout_gravity="center"
+            android:layout_marginLeft="50dp"
             android:background="?android:attr/selectableItemBackground"
             android:text="@android:string/cancel"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="50dp"
-            android:textColor="#595858"
-            />
+            android:textColor="#595858" />
 
         <Button
             android:id="@+id/imports"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="50dp"
             android:background="?android:attr/selectableItemBackground"
             android:gravity="center"
             android:text="import"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="50dp"
             android:textColor="#595858"
 
             />

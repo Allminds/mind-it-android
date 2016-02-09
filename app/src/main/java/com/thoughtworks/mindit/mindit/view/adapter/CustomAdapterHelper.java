@@ -147,7 +147,6 @@ public class CustomAdapterHelper {
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                System.out.println("KeyCode edit:" + KeyEvent.keyCodeToString(keyCode));
                 if (keyCode == KeyEvent.KEYCODE_ENTER) {
                     updateTextOfNewNode(nodeHolder, currentNode, lManager);
                     return true;
