@@ -35,6 +35,8 @@ public class HomeActivity extends AppCompatActivity {
         Uri data = intent.getData();
         if (data != null) {
             String[] url = data.toString().split("/");
+            if(tracker != null)
+                tracker.resetTree();
             tracker = Tracker.getInstance(this, url[url.length - 1]);
         }
 
@@ -123,9 +125,31 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
+    protected void onResume(){
+        super.onResume();
+        System.out.println("in resume>>>...........");
         if (tracker != null)
             tracker.resetTree();
+        Intent intent = getIntent();
+        if(intent==null)
+            return;
+        Uri data = intent.getData();
+        if (data != null) {
+            String[] url = data.toString().split("/");
+            tracker = Tracker.getInstance(this, url[url.length - 1]);
+        }
+    }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        System.out.println("In OnRestart>>>>>>>>>>>>>>>>>>");
+        if (tracker != null)
+            tracker.resetTree();
+        Intent intent = getIntent();
+        Uri data = intent.getData();
+        if (data != null) {
+            String[] url = data.toString().split("/");
+            tracker = Tracker.getInstance(this, url[url.length - 1]);
+        }
     }
 }

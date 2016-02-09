@@ -370,7 +370,7 @@ public class Tracker implements MeteorCallback, ITracker {
                 @Override
                 public void run() {
 
-                    progressDialog.setTitle(NetworkMessage.DOWNLOAD);
+                    progressDialog.setMessage(NetworkMessage.DOWNLOAD);
                 }
             });
 

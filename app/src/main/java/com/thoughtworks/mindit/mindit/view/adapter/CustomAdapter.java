@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 
 import com.thoughtworks.mindit.mindit.R;
 import com.thoughtworks.mindit.mindit.constant.Colors;
@@ -115,27 +116,26 @@ public class CustomAdapter extends BaseAdapter {
         }
         final UINode currentNode = nodeList.get(position);
         final View rowView = layoutInflater.inflate(R.layout.layout_node, null);
-
+        nodeHolder.seperater=(LinearLayout)convertView.findViewById(R.id.seperator);
         customAdapterHelper.initializeTextView(nodeHolder, rowView, currentNode);
         customAdapterHelper.addPadding(position, rowView);
         customAdapterHelper.setImageForExpandCollapse(nodeHolder, rowView, currentNode);
         customAdapterHelper.setEventToExpandCollapse(position, nodeHolder, currentNode);
-        rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND));
+//        rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND));
         if (position == newNodePosition) {
             customAdapterHelper.addNode(nodeHolder, currentNode);
         }
-
         if (selectedNodePosition == position) {
-            rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND_ON_SELECTION));
-            nodeHolder.textViewForName.setTextColor(Color.parseColor(Colors.NODE_NAME));
-            nodeHolder.editText.setTextColor(Color.parseColor(Colors.EDIT_TEXT));
-            if (currentNode.getChildSubTree().size() == 0) {
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.selected_leaf);
-            } else if (currentNode.getStatus().equalsIgnoreCase(Constants.STATUS.EXPAND.toString())) {
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.selectedexpand);
-            } else {
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.selectedcollapse);
-            }
+           rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND_ON_SELECTION));
+            nodeHolder.textViewForName.setTextColor(Color.parseColor(Colors.ONSELECT_TEXT));
+            nodeHolder.editText.setTextColor(Color.parseColor(Colors.ONSELECT_TEXT));
+//            if (currentNode.getChildSubTree().size() == 0) {
+//                nodeHolder.expandCollapseButton.setImageResource(R.drawable.selected_leaf);
+//            } else if (currentNode.getStatus().equalsIgnoreCase(Constants.STATUS.EXPAND.toString())) {
+//                nodeHolder.expandCollapseButton.setImageResource(R.drawable.selectedexpand);
+//            } else {
+//                nodeHolder.expandCollapseButton.setImageResource(R.drawable.selectedcollapse);
+//            }
 
         }
 

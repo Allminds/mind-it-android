@@ -15,7 +15,7 @@
         android:hint="Enter URL here"
         android:inputType="text"
         android:singleLine="true"
-        android:text="P7KXMa5BjTgmzHvGS"
+        android:text="rJPmsKER7Wo7gdbns"
         android:textColor="#595858"
         android:paddingLeft="10dp"
         android:textSize="17sp" />
@@ -35,7 +35,7 @@
             android:background="?android:attr/selectableItemBackground"
             android:text="@android:string/cancel"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="50dp"
+            android:layout_marginLeft="30dp"
             android:textColor="#595858"
             />
 
@@ -45,11 +45,11 @@
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
             android:gravity="center"
-            android:text="import"
+            android:text="open mindmap"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginRight="50dp"
+            android:layout_marginRight="30dp"
             android:textColor="#595858"
 
             />

@@ -74,12 +74,12 @@ public class CustomAdapterHelper {
     private void handleSelectionMode(UINode currentNode, NodeHolder nodeHolder) {
         if (mode == Constants.SELECTION_MODE || nodeList.indexOf(currentNode) != customAdapter.getSelectedNodePosition()) {
             int lastFocusedNode = customAdapter.getSelectedNodePosition();
-           if(nodeList.get(lastFocusedNode).getName().equals("") && lastFocusedNode ==customAdapter.getNewNodePosition()) {
-               removeFromParentChildSubTree(lastFocusedNode);
-               nodeList.remove(lastFocusedNode);
-               customAdapter.resetNewNodePosition();
-           }
-            if(lManager.isActive())
+            if (nodeList.get(lastFocusedNode).getName().equals("") && lastFocusedNode == customAdapter.getNewNodePosition()) {
+                removeFromParentChildSubTree(lastFocusedNode);
+                nodeList.remove(lastFocusedNode);
+                customAdapter.resetNewNodePosition();
+            }
+            if (lManager.isActive())
                 lManager.hideSoftInputFromWindow(nodeHolder.editText.getWindowToken(), 0);
             customAdapter.setSelectedNodePosition(nodeList.indexOf(currentNode));
             mode = Constants.EDIT_MODE;
@@ -124,6 +124,7 @@ public class CustomAdapterHelper {
             }
         });
     }
+
     void setEventToExpandCollapse(final int position, NodeHolder nodeHolder, final UINode currentNode) {
         nodeHolder.expandCollapseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -215,11 +216,34 @@ public class CustomAdapterHelper {
     void setImageForExpandCollapse(NodeHolder nodeHolder, View rowView, UINode currentNode) {
         nodeHolder.expandCollapseButton = (ImageView) rowView.findViewById(R.id.expandCollapse);
         if (currentNode.getChildSubTree().size() == 0) {
-            nodeHolder.expandCollapseButton.setImageResource(R.drawable.leaf);
+            if (currentNode.getDepth() == 1 * Constants.PADDING_FOR_DEPTH)
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.leaf_blue);
+            else if (currentNode.getDepth() == 2 * Constants.PADDING_FOR_DEPTH)
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.leaf_green);
+            else if (currentNode.getDepth() == 3 * Constants.PADDING_FOR_DEPTH)
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.leaf_red);
+            else
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.other_leaf);
         } else if (currentNode.getStatus().equalsIgnoreCase(Constants.STATUS.EXPAND.toString())) {
-            nodeHolder.expandCollapseButton.setImageResource(R.drawable.expand);
+            if (currentNode.getDepth() == 1 * Constants.PADDING_FOR_DEPTH)
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.blue_expand);
+            else if (currentNode.getDepth() == 2 * Constants.PADDING_FOR_DEPTH)
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.green_expand);
+            else if (currentNode.getDepth() == 3 * Constants.PADDING_FOR_DEPTH)
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.red_expand);
+            else
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.other_expand);
         } else {
-            nodeHolder.expandCollapseButton.setImageResource(R.drawable.collapse);
+            if (currentNode.getParentId().equals(""))
+                return;
+            if (currentNode.getDepth() == 1 * Constants.PADDING_FOR_DEPTH)
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.blue_collapse);
+            else if (currentNode.getDepth() == 2 * Constants.PADDING_FOR_DEPTH)
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.green_collapse);
+            else if (currentNode.getDepth() == 3 * Constants.PADDING_FOR_DEPTH)
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.red_collapse);
+            else
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.other_collapse);
         }
     }
 
@@ -236,6 +260,8 @@ public class CustomAdapterHelper {
     }
 
     public ArrayList<UINode> collapse(int position, UINode currentNode) {
+        if (position == 0)
+            return nodeList;
         int nodeIndex = position + 1;
         while (nodeIndex < nodeList.size()) {
             if (nodeList.get(nodeIndex).getDepth() > currentNode.getDepth()) {
