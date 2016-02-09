@@ -117,11 +117,9 @@ public class CustomAdapter extends BaseAdapter {
         final View rowView = layoutInflater.inflate(R.layout.layout_node, null);
 
         customAdapterHelper.initializeTextView(nodeHolder, rowView, currentNode);
-        //if(nodeHolder.switcher.isShown())
         customAdapterHelper.addPadding(position, rowView);
         customAdapterHelper.setImageForExpandCollapse(nodeHolder, rowView, currentNode);
         customAdapterHelper.setEventToExpandCollapse(position, nodeHolder, currentNode);
-        customAdapterHelper.setEventToAddNodeButton(position, nodeHolder, rowView, currentNode);
         rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND));
         if (position == newNodePosition) {
             customAdapterHelper.addNode(nodeHolder, currentNode);

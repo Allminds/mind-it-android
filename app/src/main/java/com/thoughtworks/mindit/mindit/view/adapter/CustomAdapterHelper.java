@@ -3,11 +3,13 @@ package com.thoughtworks.mindit.mindit.view.adapter;
 import android.content.Context;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.thoughtworks.mindit.mindit.R;
@@ -20,10 +22,12 @@ public class CustomAdapterHelper {
     private final CustomAdapter customAdapter;
     private ArrayList<UINode> nodeList;
     private int mode = Constants.EDIT_MODE;
+    final InputMethodManager lManager;
 
     public CustomAdapterHelper(CustomAdapter customAdapter) {
         this.customAdapter = customAdapter;
         this.nodeList = customAdapter.getNodeList();
+        lManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
     public ArrayList<UINode> getNodeList() {
@@ -71,10 +75,10 @@ public class CustomAdapterHelper {
         if (mode == Constants.SELECTION_MODE || nodeList.indexOf(currentNode) != customAdapter.getSelectedNodePosition()) {
             int lastFocusedNode = customAdapter.getSelectedNodePosition();
            if(nodeList.get(lastFocusedNode).getName().equals("") && lastFocusedNode ==customAdapter.getNewNodePosition()) {
+               removeFromParentChildSubTree(lastFocusedNode);
                nodeList.remove(lastFocusedNode);
                customAdapter.resetNewNodePosition();
            }
-            final InputMethodManager lManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             if(lManager.isActive())
                 lManager.hideSoftInputFromWindow(nodeHolder.editText.getWindowToken(), 0);
             customAdapter.setSelectedNodePosition(nodeList.indexOf(currentNode));
@@ -86,21 +90,31 @@ public class CustomAdapterHelper {
         }
     }
 
+    private void removeFromParentChildSubTree(int lastFocusedNode) {
+        UINode parent = null;
+        UINode child = nodeList.get(lastFocusedNode);
+        for (UINode node : nodeList) {
+            if (node.getId().equals(child.getParentId())) {
+                parent = node;
+                break;
+            }
+        }
+        parent.getChildSubTree().remove(child);
+    }
+
     private void editTextOfNode(final NodeHolder nodeHolder, final UINode currentNode) {
         nodeHolder.switcher.showNext();
         nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
         nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
-        nodeHolder.editText.requestFocus();
-        final InputMethodManager lManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         showKeypad(nodeHolder, lManager);
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
 
-                if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_BACK ) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_BACK) {
                     updateText(nodeHolder, currentNode);
                     if (lManager != null) {
-                        lManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                        lManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                     }
                     customAdapter.getPresenter().updateNode(currentNode);
                     nodeHolder.switcher.showPrevious();
@@ -126,27 +140,15 @@ public class CustomAdapterHelper {
         });
     }
 
-    void setEventToAddNodeButton(final int position, NodeHolder nodeHolder, View rowView, final UINode currentNode) {
-/*        nodeHolder.addNodeButton = (ImageView) rowView.findViewById(R.id.options);
-        nodeHolder.addNodeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addChild(position, currentNode);
-            }
-        });*/
-    }
-
     public void addNode(final NodeHolder nodeHolder, final UINode currentNode) {
         nodeHolder.switcher.showNext();
-        nodeHolder.editText.requestFocus();
         nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
-       final InputMethodManager lManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         showKeypad(nodeHolder, lManager);
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 System.out.println("KeyCode edit:" + KeyEvent.keyCodeToString(keyCode));
-                if (keyCode == KeyEvent.KEYCODE_ENTER  ) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
                     updateTextOfNewNode(nodeHolder, currentNode, lManager);
                     return true;
                 }
@@ -154,13 +156,14 @@ public class CustomAdapterHelper {
             }
         });
 
+
     }
 
     private void showKeypad(final NodeHolder nodeHolder, final InputMethodManager lManager) {
+        nodeHolder.editText.requestFocus();
         nodeHolder.editText.post(new Runnable() {
             public void run() {
-                nodeHolder.editText.requestFocus();
-                lManager.showSoftInput(nodeHolder.editText,InputMethodManager.SHOW_IMPLICIT);
+                lManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_IMPLICIT);
             }
         });
     }
@@ -168,7 +171,7 @@ public class CustomAdapterHelper {
     private void updateTextOfNewNode(NodeHolder nodeHolder, UINode currentNode, InputMethodManager inputMethodManager) {
         updateText(nodeHolder, currentNode);
         if (inputMethodManager != null) {
-            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
         }
         customAdapter.resetNewNodePosition();
         customAdapter.getPresenter().addNode(currentNode);

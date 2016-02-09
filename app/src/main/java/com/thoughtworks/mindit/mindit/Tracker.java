@@ -49,7 +49,6 @@ public class Tracker implements MeteorCallback, ITracker {
         this.context = context;
         //Meteor.setLoggingEnabled(true);
         new WaitForTree().execute(this.tree);
-
         meteor = new Meteor(context, "ws://www.mindit.xyz/websocket", this);
         meteor.setCallback(this);
     }
