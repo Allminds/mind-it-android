@@ -109,10 +109,6 @@ public class CustomAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         final NodeHolder nodeHolder = new NodeHolder();
-        if(nodeList.size() <= position)
-        {
-            System.out.println("In CustomAdapter:"+nodeList);
-        }
         final UINode currentNode = nodeList.get(position);
         final View rowView = layoutInflater.inflate(R.layout.layout_node, null);
 
