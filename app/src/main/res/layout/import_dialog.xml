@@ -32,13 +32,13 @@
             android:id="@+id/cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
             android:layout_gravity="center"
+            android:layout_marginLeft="50dp"
             android:background="?android:attr/selectableItemBackground"
             android:text="@android:string/cancel"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="30dp"
-            android:textColor="#595858"
-        ></Button>
+            android:textColor="#595858" />
+
         <Button
             android:id="@+id/imports"
             android:layout_width="wrap_content"
@@ -49,7 +49,7 @@
             android:layout_marginRight="50dp"
             android:background="?android:attr/selectableItemBackground"
             android:gravity="center"
-            android:text="open mindmap"
+            android:text="import"
             android:textColor="#595858"
 
             />

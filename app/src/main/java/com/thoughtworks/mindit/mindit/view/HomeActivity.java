@@ -140,7 +140,9 @@ public class HomeActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
-
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
 
 }

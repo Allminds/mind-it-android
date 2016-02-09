@@ -1,6 +1,5 @@
 package com.thoughtworks.mindit.mindit.view;
 
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
@@ -16,7 +15,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.thoughtworks.mindit.mindit.Config;
 import com.thoughtworks.mindit.mindit.R;
 import com.thoughtworks.mindit.mindit.constant.Constants;
 import com.thoughtworks.mindit.mindit.constant.MindIt;
@@ -57,18 +55,15 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.actions, menu);
         myMenu = menu;
-        if(Config.FEATURE_ADD) {
-            MenuItem add = myMenu.getItem(Constants.ADD);
-            add.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-            add.setVisible(true);
-        }
-        if(Config.FEATURE_DELETE) {
-            MenuItem delete = myMenu.getItem(Constants.DELETE);
-            delete.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-            delete.setVisible(true);
-        }
+        MenuItem add = myMenu.getItem(Constants.ADD);
+        MenuItem delete = myMenu.getItem(Constants.DELETE);
+        add.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        delete.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        add.setVisible(true);
+        delete.setVisible(true);
         return true;
     }
 

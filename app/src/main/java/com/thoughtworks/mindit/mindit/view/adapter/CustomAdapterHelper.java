@@ -3,14 +3,15 @@ package com.thoughtworks.mindit.mindit.view.adapter;
 import android.content.Context;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
-import com.thoughtworks.mindit.mindit.Config;
 import com.thoughtworks.mindit.mindit.R;
 import com.thoughtworks.mindit.mindit.constant.Constants;
 import com.thoughtworks.mindit.mindit.view.model.UINode;
@@ -18,10 +19,10 @@ import com.thoughtworks.mindit.mindit.view.model.UINode;
 import java.util.ArrayList;
 
 public class CustomAdapterHelper {
-    final InputMethodManager lManager;
     private final CustomAdapter customAdapter;
     private ArrayList<UINode> nodeList;
     private int mode = Constants.EDIT_MODE;
+    final InputMethodManager lManager;
 
     public CustomAdapterHelper(CustomAdapter customAdapter) {
         this.customAdapter = customAdapter;
@@ -35,6 +36,10 @@ public class CustomAdapterHelper {
 
     public void setNodeList(ArrayList<UINode> nodeList) {
         this.nodeList = nodeList;
+    }
+
+    public void resetMode() {
+        mode = Constants.SELECTION_MODE;
     }
 
     void updateText(NodeHolder nodeHolder, UINode currentNode) {
@@ -69,23 +74,19 @@ public class CustomAdapterHelper {
     private void handleSelectionMode(UINode currentNode, NodeHolder nodeHolder) {
         if (mode == Constants.SELECTION_MODE || nodeList.indexOf(currentNode) != customAdapter.getSelectedNodePosition()) {
             int lastFocusedNode = customAdapter.getSelectedNodePosition();
-            if (nodeList.get(lastFocusedNode).getName().equals("") && lastFocusedNode == customAdapter.getNewNodePosition()) {
-                removeFromParentChildSubTree(lastFocusedNode);
-                nodeList.remove(lastFocusedNode);
-                customAdapter.resetNewNodePosition();
-            }
-            if (lManager.isActive())
+           if(nodeList.get(lastFocusedNode).getName().equals("") && lastFocusedNode ==customAdapter.getNewNodePosition()) {
+               removeFromParentChildSubTree(lastFocusedNode);
+               nodeList.remove(lastFocusedNode);
+               customAdapter.resetNewNodePosition();
+           }
+            if(lManager.isActive())
                 lManager.hideSoftInputFromWindow(nodeHolder.editText.getWindowToken(), 0);
             customAdapter.setSelectedNodePosition(nodeList.indexOf(currentNode));
-            if (Config.FEATURE_EDIT) {
-                mode = Constants.EDIT_MODE;
-            }
+            mode = Constants.EDIT_MODE;
             customAdapter.notifyDataSetChanged();
         } else {
-            if (Config.FEATURE_EDIT) {
-                editTextOfNode(nodeHolder, currentNode);
-                mode = Constants.SELECTION_MODE;
-            }
+            editTextOfNode(nodeHolder, currentNode);
+            mode = Constants.SELECTION_MODE;
         }
     }
 
@@ -123,7 +124,6 @@ public class CustomAdapterHelper {
             }
         });
     }
-
     void setEventToExpandCollapse(final int position, NodeHolder nodeHolder, final UINode currentNode) {
         nodeHolder.expandCollapseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -214,34 +214,11 @@ public class CustomAdapterHelper {
     void setImageForExpandCollapse(NodeHolder nodeHolder, View rowView, UINode currentNode) {
         nodeHolder.expandCollapseButton = (ImageView) rowView.findViewById(R.id.expandCollapse);
         if (currentNode.getChildSubTree().size() == 0) {
-            if (currentNode.getDepth() == 1 * Constants.PADDING_FOR_DEPTH)
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.leaf_blue);
-            else if (currentNode.getDepth() == 2 * Constants.PADDING_FOR_DEPTH)
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.leaf_green);
-            else if (currentNode.getDepth() == 3 * Constants.PADDING_FOR_DEPTH)
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.leaf_red);
-            else
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.other_leaf);
+            nodeHolder.expandCollapseButton.setImageResource(R.drawable.leaf);
         } else if (currentNode.getStatus().equalsIgnoreCase(Constants.STATUS.EXPAND.toString())) {
-            if (currentNode.getDepth() == 1 * Constants.PADDING_FOR_DEPTH)
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.blue_expand);
-            else if (currentNode.getDepth() == 2 * Constants.PADDING_FOR_DEPTH)
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.green_expand);
-            else if (currentNode.getDepth() == 3 * Constants.PADDING_FOR_DEPTH)
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.red_expand);
-            else
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.other_expand);
+            nodeHolder.expandCollapseButton.setImageResource(R.drawable.expand);
         } else {
-            if (currentNode.getParentId().equals(""))
-                return;
-            if (currentNode.getDepth() == 1 * Constants.PADDING_FOR_DEPTH)
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.blue_collapse);
-            else if (currentNode.getDepth() == 2 * Constants.PADDING_FOR_DEPTH)
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.green_collapse);
-            else if (currentNode.getDepth() == 3 * Constants.PADDING_FOR_DEPTH)
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.red_collapse);
-            else
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.other_collapse);
+            nodeHolder.expandCollapseButton.setImageResource(R.drawable.collapse);
         }
     }
 
@@ -258,8 +235,6 @@ public class CustomAdapterHelper {
     }
 
     public ArrayList<UINode> collapse(int position, UINode currentNode) {
-        if (position == 0)
-            return nodeList;
         int nodeIndex = position + 1;
         while (nodeIndex < nodeList.size()) {
             if (nodeList.get(nodeIndex).getDepth() > currentNode.getDepth()) {

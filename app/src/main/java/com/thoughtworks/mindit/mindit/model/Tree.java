@@ -67,8 +67,8 @@ public class Tree implements Serializable, ISubject {
 
     public void fillRootChildSubtree() {
         Node root = this.getRoot();
-        ArrayList<String> temp = (ArrayList<String>) root.getRight().clone();
-        temp.addAll(root.getLeft());
+        ArrayList<String> temp = (ArrayList<String>) root.getLeft().clone();
+        temp.addAll(root.getRight());
         root.setChildSubTree(temp);
     }
 
