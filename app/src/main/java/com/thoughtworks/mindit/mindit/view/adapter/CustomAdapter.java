@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -120,21 +121,27 @@ public class CustomAdapter extends BaseAdapter {
         customAdapterHelper.addPadding(position, rowView);
         customAdapterHelper.setImageForExpandCollapse(nodeHolder, rowView, currentNode);
         customAdapterHelper.setEventToExpandCollapse(position, nodeHolder, currentNode);
-        rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND));
+       rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND));
         if (position == newNodePosition) {
             customAdapterHelper.addNode(nodeHolder, currentNode);
         }
+        if(position==0){
+            nodeHolder.expandCollapseButton.setVisibility(View.INVISIBLE);
+  //          Typeface myTypeface=Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
+//            nodeHolder.textViewForName.
 
+
+        }
         if (selectedNodePosition == position) {
             rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND_ON_SELECTION));
-            nodeHolder.textViewForName.setTextColor(Color.parseColor(Colors.NODE_NAME));
-            nodeHolder.editText.setTextColor(Color.parseColor(Colors.EDIT_TEXT));
+            nodeHolder.textViewForName.setTextColor(Color.parseColor("#000000"));
+            nodeHolder.editText.setTextColor(Color.parseColor("#000000"));
             if (currentNode.getChildSubTree().size() == 0) {
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.selected_leaf);
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.other_fiilled_leaf);
             } else if (currentNode.getStatus().equalsIgnoreCase(Constants.STATUS.EXPAND.toString())) {
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.selectedexpand);
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.other_filled_expand);
             } else {
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.selectedcollapse);
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.other_filled_collapse);
             }
 
         }
