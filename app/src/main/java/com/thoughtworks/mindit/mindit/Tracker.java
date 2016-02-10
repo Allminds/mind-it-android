@@ -73,6 +73,7 @@ public class Tracker implements MeteorCallback, ITracker {
             this.tree = null;
         }
         instance = null;
+        meteor.disconnect();
     }
 
     public void subscribe(String rootId) {
@@ -230,13 +231,17 @@ public class Tracker implements MeteorCallback, ITracker {
             JSONObject jsonFields = JsonParserService.rawParse(updatedValuesJson);
             if (jsonFields.has(Fields.NAME)) {
                 updateNodeName(node, jsonFields);
-            } else if (jsonFields.has(Fields.CHILD_SUBTREE)) {
+            }
+            if (jsonFields.has(Fields.CHILD_SUBTREE)) {
                 updateChildSubTree(node, jsonFields);
-            } else if (jsonFields.has(Fields.LEFT)) {
+            }
+            if (jsonFields.has(Fields.LEFT)) {
                 updateLeftTree(node, jsonFields);
-            } else if (jsonFields.has(Fields.RIGHT)) {
+            }
+            if (jsonFields.has(Fields.RIGHT)) {
                 updateRightTree(node, jsonFields);
-            } else if (jsonFields.has(Fields.PARENT_ID)) {
+            }
+            if (jsonFields.has(Fields.PARENT_ID)) {
                 updateParentId(node, jsonFields);
             }
         } catch (JSONException e) {
