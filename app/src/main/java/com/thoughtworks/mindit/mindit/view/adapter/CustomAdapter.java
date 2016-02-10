@@ -176,12 +176,16 @@ public class CustomAdapter extends BaseAdapter {
 
     public void setSeperatosition(){
         UINode leftFirstUINode =presenter.getLeftfirstNode();
-        for (int i = 0; i <nodeList.size() ; i++) {
-            if(nodeList.get(i).equals(leftFirstUINode)){
-                seperatorPosition =i-1;
-                break;
-            }
-        }
+        if(leftFirstUINode == null)
+            seperatorPosition = 0;
+        else
+            seperatorPosition = nodeList.indexOf(leftFirstUINode) - 1;
+//        for (int i = 0; i <nodeList.size() ; i++) {
+//            if(nodeList.get(i).equals(leftFirstUINode)){
+//                seperatorPosition =i-1;
+//                break;
+//            }
+//        }
 
     }
 
