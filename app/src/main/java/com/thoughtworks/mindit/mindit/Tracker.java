@@ -73,6 +73,7 @@ public class Tracker implements MeteorCallback, ITracker {
             this.tree = null;
         }
         instance = null;
+        meteor.disconnect();
     }
 
     public void subscribe(String rootId) {

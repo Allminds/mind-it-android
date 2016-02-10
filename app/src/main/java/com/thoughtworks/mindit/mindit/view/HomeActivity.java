@@ -24,7 +24,7 @@ import com.thoughtworks.mindit.mindit.constant.Constants;
 public class HomeActivity extends AppCompatActivity {
     private Button importMindmap;
     private Tracker tracker;
-
+    private boolean isNewIntent;
     @Override
     protected void onNewIntent(Intent intent) {
         if (intent == null)
@@ -33,6 +33,7 @@ public class HomeActivity extends AppCompatActivity {
         if (data != null) {
             String[] url = data.toString().split("/");
             if (tracker != null) {
+                isNewIntent = true;
                 tracker.resetTree();
             }
             tracker = Tracker.getInstance(this, url[url.length - 1]);
@@ -50,8 +51,6 @@ public class HomeActivity extends AppCompatActivity {
         Uri data = intent.getData();
         if (data != null) {
             String[] url = data.toString().split("/");
-            if (tracker != null)
-                tracker.resetTree();
             tracker = Tracker.getInstance(this, url[url.length - 1]);
         }
 
@@ -143,6 +142,8 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        if(tracker != null && isNewIntent == false)
+            tracker.resetTree();
     }
 
 }
