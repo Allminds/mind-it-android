@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:isScrollContainer="false"
         android:fitsSystemWindows="true"
+        android:divider="@null"
         android:id="@+id/listView"></ListView>
 
 </RelativeLayout>

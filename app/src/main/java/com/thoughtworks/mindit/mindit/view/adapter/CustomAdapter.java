@@ -25,7 +25,7 @@ public class CustomAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<UINode> nodeList;
     private LayoutInflater layoutInflater;
-    private  int seperatorPosition =-1;
+    private int seperatorPosition = -1;
 
     public int getNewNodePosition() {
         return newNodePosition;
@@ -112,32 +112,34 @@ public class CustomAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         final NodeHolder nodeHolder = new NodeHolder();
-        if(nodeList.size() <= position)
-        {
-            System.out.println("In CustomAdapter:"+nodeList);
+        if (nodeList.size() <= position) {
+            System.out.println("In CustomAdapter:" + nodeList);
         }
         final UINode currentNode = nodeList.get(position);
         final View rowView = layoutInflater.inflate(R.layout.layout_node, null);
-        nodeHolder.seperator=(LinearLayout)rowView.findViewById(R.id.seperator);
+        nodeHolder.seperator = (LinearLayout) rowView.findViewById(R.id.seperator);
+        nodeHolder.seperator.setVisibility(View.INVISIBLE);
+
         customAdapterHelper.initializeTextView(nodeHolder, rowView, currentNode);
         customAdapterHelper.addPadding(position, rowView);
         customAdapterHelper.setImageForExpandCollapse(nodeHolder, rowView, currentNode);
         customAdapterHelper.setEventToExpandCollapse(position, nodeHolder, currentNode);
-       rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND));
+        rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND));
         if (position == newNodePosition) {
             customAdapterHelper.addNode(nodeHolder, currentNode);
         }
-        if(position==0){
+        if (position == 0) {
             nodeHolder.expandCollapseButton.setVisibility(View.INVISIBLE);
-            Typeface myTypeface=Typeface.createFromAsset(context.getAssets(), "DroidSerif-Bold.ttf");
+            Typeface myTypeface = Typeface.createFromAsset(context.getAssets(), "DroidSerif-Bold.ttf");
             nodeHolder.textViewForName.setTypeface(myTypeface);
             nodeHolder.textViewForName.setTextSize(18);
 
 
         }
         this.setSeperatosition();
-        if(position== seperatorPosition) {
-            nodeHolder.seperator.setBackgroundColor(Color.parseColor(Colors.EDIT_TEXT));
+        if (position == seperatorPosition) {
+            nodeHolder.seperator.setVisibility(View.VISIBLE);
+            nodeHolder.seperator.setBackgroundColor(Color.parseColor("#f1f1f1"));
             resetSeperatorPosition();
         }
         if (selectedNodePosition == position) {
@@ -156,6 +158,7 @@ public class CustomAdapter extends BaseAdapter {
 
         return rowView;
     }
+
     public void updateChildSubTree(UINode existingParent) {
         if (nodeList.indexOf(existingParent) != -1) {
 //            this.collapse(nodeList.indexOf(existingParent), existingParent);
@@ -163,7 +166,7 @@ public class CustomAdapter extends BaseAdapter {
             ArrayList<UINode> expandedChildSubTree = new ArrayList<UINode>();
             existingParent.getAllExpandedChildren(expandedChildSubTree);
             int childPosition = nodeList.indexOf(existingParent) + 1;
-            for(int i = nodeList.indexOf(existingParent) +1 ;i < nodeList.size() && existingParent.getDepth() < nodeList.get(i).getDepth();)
+            for (int i = nodeList.indexOf(existingParent) + 1; i < nodeList.size() && existingParent.getDepth() < nodeList.get(i).getDepth(); )
                 nodeList.remove(i);
             for (UINode child : expandedChildSubTree) {
                 nodeList.add(childPosition, child);
@@ -174,16 +177,16 @@ public class CustomAdapter extends BaseAdapter {
         }
     }
 
-    public void setSeperatosition(){
-        UINode leftFirstUINode =presenter.getLeftfirstNode();
-        if(leftFirstUINode == null)
+    public void setSeperatosition() {
+        UINode leftFirstUINode = presenter.getLeftfirstNode();
+        if (leftFirstUINode == null)
             seperatorPosition = 0;
         else
             seperatorPosition = nodeList.indexOf(leftFirstUINode) - 1;
     }
 
-    public void resetSeperatorPosition(){
-        seperatorPosition =-1;
+    public void resetSeperatorPosition() {
+        seperatorPosition = -1;
     }
 }
 
