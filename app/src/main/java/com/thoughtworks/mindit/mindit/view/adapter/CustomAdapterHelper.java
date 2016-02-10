@@ -207,18 +207,18 @@ public class CustomAdapterHelper {
     }
 
     void addPadding(int position, View rowView) {
-        LinearLayout linearLayout = (LinearLayout) rowView.findViewById(R.id.layout);
+        LinearLayout linearLayout = (LinearLayout) rowView.findViewById(R.id.layout_text);
         linearLayout.setPadding(nodeList.get(position).getDepth(), 0, 0, 0);
     }
 
     void setImageForExpandCollapse(NodeHolder nodeHolder, View rowView, UINode currentNode) {
         nodeHolder.expandCollapseButton = (ImageView) rowView.findViewById(R.id.expandCollapse);
         if (currentNode.getChildSubTree().size() == 0) {
-            nodeHolder.expandCollapseButton.setImageResource(R.drawable.leaf);
+            nodeHolder.expandCollapseButton.setImageResource(R.drawable.other_leaf);
         } else if (currentNode.getStatus().equalsIgnoreCase(Constants.STATUS.EXPAND.toString())) {
-            nodeHolder.expandCollapseButton.setImageResource(R.drawable.expand);
+            nodeHolder.expandCollapseButton.setImageResource(R.drawable.other_expand);
         } else {
-            nodeHolder.expandCollapseButton.setImageResource(R.drawable.collapse);
+            nodeHolder.expandCollapseButton.setImageResource(R.drawable.other_collapse);
         }
     }
 

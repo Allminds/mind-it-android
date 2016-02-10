@@ -210,6 +210,7 @@ public class Tracker implements MeteorCallback, ITracker {
     @Override
     public void onAdded(String collectionName, String documentID, String fieldsJson) {
         Node node = JsonParserService.parseNode(fieldsJson);
+        System.out.println("on added::   " + documentID + "    " + node.getName());
         node.set_id(documentID);
         if (tree != null && !tree.isAlreadyExists(node)) {
             tree.addNodeFromWeb(node);
@@ -219,7 +220,7 @@ public class Tracker implements MeteorCallback, ITracker {
     @Override
     public void onChanged(String collectionName, String documentID, String updatedValuesJson, String removedValuesJson) {
         Node node = tree.getNode(documentID);
-
+        System.out.println("****** on changed:  " + documentID + "     " + node.getName() + "      " + updatedValuesJson);
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
@@ -293,10 +294,19 @@ public class Tracker implements MeteorCallback, ITracker {
             ArrayList<String> clonedChildSubTree = (ArrayList<String>) newChildSubTree.clone();
             clonedChildSubTree.removeAll(oldChildSubTree);
             String newNodeId = clonedChildSubTree.get(0);
-            if (tree.getNode(newNodeId) == null) {
-                Node newNode = new Node(newNodeId, Constants.EMPTY_STRING, parent, parent.getRootId(), newChildSubTree.indexOf(newNodeId));
-                tree.addNodeFromWeb(newNode);
+//            if (tree.getNode(newNodeId) == null) {
+//                Node newNode = new Node(newNodeId, Constants.EMPTY_STRING, parent, parent.getRootId(), newChildSubTree.indexOf(newNodeId));
+//                tree.addNodeFromWeb(newNode);
+//            }
+            while (tree.getNode(newNodeId)==null){
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+            Node newNode=tree.getNode(newNodeId);
+            tree.addNodeFromWeb(newNode);
         }
         if (newChildSubTree.equals(oldChildSubTree)) {
             return;
@@ -366,7 +376,7 @@ public class Tracker implements MeteorCallback, ITracker {
                 @Override
                 public void run() {
 
-                    progressDialog.setTitle(NetworkMessage.DOWNLOAD);
+                    progressDialog.setMessage(NetworkMessage.DOWNLOAD);
                 }
             });
 

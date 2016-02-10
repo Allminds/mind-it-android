@@ -49,7 +49,7 @@
             android:layout_marginRight="50dp"
             android:background="?android:attr/selectableItemBackground"
             android:gravity="center"
-            android:text="import"
+            android:text="open mindmap"
             android:textColor="#595858"
 
             />
