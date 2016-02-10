@@ -16,7 +16,7 @@ import java.util.List;
 public class JsonParserService {
 
 
-    static boolean isErrorOccurred = false;
+    private static boolean isErrorOccurred = false;
 
     public static void resetErrorOccurredFlag() {
         JsonParserService.isErrorOccurred = false;
@@ -47,13 +47,13 @@ public class JsonParserService {
 
     public static Node parseNode(String json) throws JsonSyntaxException {
         Gson gson = new Gson();
-        Node node = null;
+        Node node;
         node = gson.fromJson(json, Node.class);
         return node;
     }
 
     private static Tree convertToTree(List<Node> nodes) {
-        HashMap<String, Node> nodeMap = new HashMap<String, Node>();
+        HashMap<String, Node> nodeMap = new HashMap<>();
         for (Node node : nodes) {
             nodeMap.put(node.getId(), node);
         }
@@ -61,7 +61,6 @@ public class JsonParserService {
     }
 
     public static JSONObject rawParse(String json) throws JSONException {
-        JSONObject jsonObject = new JSONObject(json);
-        return jsonObject;
+        return new JSONObject(json);
     }
 }

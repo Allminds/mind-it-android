@@ -21,14 +21,14 @@ public class Presenter implements IObserver {
 
     public Presenter(IMindmapView mView) {
         this.mView = mView;
-        nodeTree = new HashMap<String, UINode>();
+        nodeTree = new HashMap<>();
         tracker = Tracker.getInstance();
         tracker.registerThisToTree(this);
         uiNode = null;
     }
 
     public Presenter(Tracker tracker) {
-        nodeTree = new HashMap<String, UINode>();
+        nodeTree = new HashMap<>();
         this.tracker = tracker;
         //    tree.register(this);
         uiNode = null;
@@ -65,7 +65,7 @@ public class Presenter implements IObserver {
     public ArrayList<UINode> buildNodeListFromTree() {
 
         UINode rootNode = convertModelNodeToUINode(this.tracker.getTree().getRoot());
-        ArrayList<UINode> nodeList = new ArrayList<UINode>();
+        ArrayList<UINode> nodeList = new ArrayList<>();
         if (nodeList.size() != 0)
             nodeList.clear();
         //---get expanded tree for the first time---//
@@ -79,7 +79,7 @@ public class Presenter implements IObserver {
 
     public void updateUIChildSubtree(Node node, UINode uiNode) {
         ArrayList<String> keys = node.getChildSubTree();
-        ArrayList<UINode> childSubTree = new ArrayList<UINode>();
+        ArrayList<UINode> childSubTree = new ArrayList<>();
 
         for (int i = 0; i < keys.size(); i++) {
             Node node1 = tracker.getTree().getNode(keys.get(i));
@@ -121,7 +121,7 @@ public class Presenter implements IObserver {
 
     private ArrayList<UINode> addNewNodeFromWebToParent(Node parent) {
         ArrayList<String> temp = parent.getChildSubTree();
-        ArrayList<UINode> childSubTree = new ArrayList<UINode>();
+        ArrayList<UINode> childSubTree = new ArrayList<>();
         for (int i = 0; i < temp.size(); i++) {
             UINode uiNode = nodeTree.get(temp.get(i));
             childSubTree.add(uiNode);
@@ -152,21 +152,18 @@ public class Presenter implements IObserver {
                 UINode lastUpdatedNode = nodeTree.get(tracker.getTree().getLastUpdatedNode().getId());
                 switch (updateParameter) {
                     case Fields.NAME:
-                        UINode tempUINode = lastUpdatedNode;
-                        tempUINode.setName(tracker.getTree().getLastUpdatedNode().getName());
+                        lastUpdatedNode.setName(tracker.getTree().getLastUpdatedNode().getName());
                         break;
                     case Fields.CHILD_SUBTREE:
-                        UINode existingParent = lastUpdatedNode;
-                        existingParent.setChildSubTree(this.addNewNodeFromWebToParent(tracker.getTree().getLastUpdatedNode()));
-                        mView.updateChildTree(existingParent);
+                        lastUpdatedNode.setChildSubTree(this.addNewNodeFromWebToParent(tracker.getTree().getLastUpdatedNode()));
+                        mView.updateChildTree(lastUpdatedNode);
                         break;
                     case Fields.LEFT:
                     case Fields.RIGHT:
-                        UINode root = lastUpdatedNode;
                         ArrayList<UINode> childSubTree = this.addNewNodeFromWebToParent(tracker.getTree().getLastUpdatedNode());
-                        if (!(root.getChildSubTree().equals(childSubTree))) {
-                            root.setChildSubTree(childSubTree);
-                            mView.updateChildTree(root);
+                        if (!(lastUpdatedNode.getChildSubTree().equals(childSubTree))) {
+                            lastUpdatedNode.setChildSubTree(childSubTree);
+                            mView.updateChildTree(lastUpdatedNode);
                         }
                         break;
                     case Fields.PARENT_ID:
@@ -194,7 +191,7 @@ public class Presenter implements IObserver {
         }
     }
 
-    public UINode getLeftfirstNode(){
+    public UINode getLeftFirstNode(){
         Tree tree=tracker.getTree();
         Node rootNode=tree.getRoot();
 

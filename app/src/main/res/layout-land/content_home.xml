@@ -23,6 +23,7 @@
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
         android:layout_weight="3"
+        android:contentDescription="@string/logo"
         android:src="@drawable/logo_land" />
 
     <LinearLayout
@@ -41,7 +42,7 @@
             android:background="@drawable/buttonshape"
             android:fontFamily="sans-serif"
             android:shadowColor="#A8A8A8"
-            android:text="   Import MindMap    "
+            android:text="   Open MindMap   "
             android:textAllCaps="false"
             android:textColor="#FFFFFFFF"
             android:textSize="18sp"

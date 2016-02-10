@@ -19,6 +19,6 @@
         android:isScrollContainer="false"
         android:fitsSystemWindows="true"
         android:divider="@null"
-        android:id="@+id/listView"></ListView>
+        android:id="@+id/listView"/>
 
 </RelativeLayout>

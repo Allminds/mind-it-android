@@ -16,8 +16,8 @@ import static org.junit.Assert.assertEquals;
 
 
 public class PresenterTest {
-    Presenter presenter;
-    Node root;
+    private Presenter presenter;
+    private Node root;
     private UINode uiNode;
     private Tracker tracker;
 

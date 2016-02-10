@@ -24,7 +24,7 @@ public class Tree implements Serializable, ISubject {
         this.nodes = nodes;
         this.setRoot();
         lastUpdatedNode = null;
-        observers = new ArrayList<IObserver>();
+        observers = new ArrayList<>();
         updateParameter = Fields.CHILD_SUBTREE;
     }
 
@@ -192,8 +192,8 @@ public class Tree implements Serializable, ISubject {
 
     @Override
     public void notifyObservers() {
-        List<IObserver> observersLocal = null;
-        observersLocal = new ArrayList<IObserver>(this.observers);
+        List<IObserver> observersLocal;
+        observersLocal = new ArrayList<>(this.observers);
         for (IObserver obj : observersLocal) {
             obj.update(updateOption, updateParameter);
         }

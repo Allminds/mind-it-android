@@ -4,9 +4,8 @@ package com.thoughtworks.mindit.constant;
 public class Colors {
     public static final String IMPORT_DIALOG_BACKGROUND_COLOR_ON_FOCUS = "#F39C38";
     public static final String IMPORT_DIALOG_BACKGROUND_COLOR_ON_FOCUS_CHANGED = "#F39C38";
-    public static final String NODE_BACKGROUND = "#f1f1f1";
+    public static final String SEPARATOR_COLOR = "#F1F1F1";
     public static final String NODE_BACKGROUND_ON_SELECTION = "#FDD7AF";
-    public static final String NODE_NAME = "#AD5D02";
-    public static final String EDIT_TEXT = "#AD5D02";
-    public static final String BLACK = "#000000";
+    public static final String NODE_BACKGROUND = "#FFFFFF";
+    public static final String SELECTED_NODE_TEXT_COLOR = "#000000";
 }

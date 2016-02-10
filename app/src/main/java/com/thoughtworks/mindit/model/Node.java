@@ -23,14 +23,14 @@ public class Node implements Serializable {
     public Node(String id, String text, Node parent, String rootId, int index) {
         this._id = id;
         this.name = text;
-        this.left = new ArrayList<String>();
-        this.right = new ArrayList<String>();
-        this.childSubTree = new ArrayList<String>();
+        this.left = new ArrayList<>();
+        this.right = new ArrayList<>();
+        this.childSubTree = new ArrayList<>();
         this.parentId = (parent != null) ? parent.getId() : null;
         this.rootId = rootId;
         this.depth = (parent != null) ? parent.getDepth() + 1 : 0;
         this.index = index;
-        this.position = (parent != null) ? ((this.rootId == this.parentId) ? this.getFirstLevelChildPosition() : parent.getPosition()) : null;
+        this.position = (parent != null) ? ((this.rootId.equals(this.parentId) ? this.getFirstLevelChildPosition() : parent.getPosition())) : null;
     }
 
     //Getters-setters start

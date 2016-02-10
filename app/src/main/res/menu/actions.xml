@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/add"
-        android:title="add"
+        android:title="@string/add"
         android:icon="@drawable/add"
         android:visible="false"
         android:showAsAction="always"/>
     <item
-        android:title="delete"
+        android:title="@string/delete"
         android:icon="@drawable/delete"
         android:showAsAction="always"
         android:visible="false"

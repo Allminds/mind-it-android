@@ -18,7 +18,7 @@ public class UINode {
         this.depth = depth;
         this.status = Constants.STATUS.COLLAPSE.toString();
         this.parentId = parentId;
-        childSubTree = new ArrayList<UINode>();
+        childSubTree = new ArrayList<>();
     }
 
     public String getParentId() {

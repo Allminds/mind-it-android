@@ -21,7 +21,6 @@ import com.thoughtworks.mindit.constant.Colors;
 import com.thoughtworks.mindit.constant.Constants;
 
 public class HomeActivity extends AppCompatActivity {
-    private Button importMindmap;
     private Tracker tracker;
     private boolean isNewIntent;
 
@@ -47,8 +46,10 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setIcon(R.drawable.mindit_logo);
-        getSupportActionBar().setTitle(Constants.EMPTY_STRING);
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setIcon(R.drawable.mindit_logo);
+            getSupportActionBar().setTitle(Constants.EMPTY_STRING);
+        }
         Intent intent = getIntent();
         Uri data = intent.getData();
         if (data != null) {
@@ -56,7 +57,7 @@ public class HomeActivity extends AppCompatActivity {
             tracker = Tracker.getInstance(this, url[url.length - 1]);
         }
 
-        importMindmap = (Button) findViewById(R.id.importMindmap);
+        Button importMindmap = (Button) findViewById(R.id.importMindmap);
         importMindmap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,7 +67,7 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    public void importMindMap() {
+    private void importMindMap() {
         final Dialog importDialog = new Dialog(this);
         importDialog.setTitle(Constants.IMPORT_DIALOG_TITLE);
         importDialog.setContentView(R.layout.import_dialog);
@@ -128,18 +129,15 @@ public class HomeActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
         //noinspection SimplifiableIfStatement
 
-        if (id == R.id.imports) {
-        }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        if (tracker != null && isNewIntent == false)
+        if (tracker != null && !isNewIntent)
             tracker.resetTree();
     }
 

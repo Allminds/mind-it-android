@@ -25,7 +25,7 @@ public class CustomAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<UINode> nodeList;
     private LayoutInflater layoutInflater;
-    private int seperatorPosition = -1;
+    private int separatorPosition = -1;
     private int newNodePosition = -1;
     private Presenter presenter;
     private int selectedNodePosition = 0;
@@ -113,8 +113,8 @@ public class CustomAdapter extends BaseAdapter {
         final NodeHolder nodeHolder = new NodeHolder();
         final UINode currentNode = nodeList.get(position);
         final View rowView = layoutInflater.inflate(R.layout.layout_node, null);
-        nodeHolder.seperator = (LinearLayout) rowView.findViewById(R.id.seperator);
-        nodeHolder.seperator.setVisibility(View.INVISIBLE);
+        nodeHolder.separator = (LinearLayout) rowView.findViewById(R.id.separator);
+        nodeHolder.separator.setVisibility(View.INVISIBLE);
 
         customAdapterHelper.initializeTextView(nodeHolder, rowView, currentNode);
         customAdapterHelper.addPadding(position, rowView);
@@ -132,16 +132,16 @@ public class CustomAdapter extends BaseAdapter {
 
 
         }
-        this.setSeperatosition();
-        if (position == seperatorPosition) {
-            nodeHolder.seperator.setVisibility(View.VISIBLE);
-            nodeHolder.seperator.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND));
-            resetSeperatorPosition();
+        this.setSeparatorPosition();
+        if (position == separatorPosition) {
+            nodeHolder.separator.setVisibility(View.VISIBLE);
+            nodeHolder.separator.setBackgroundColor(Color.parseColor(Colors.SEPARATOR_COLOR));
+            resetSeparatorPosition();
         }
         if (selectedNodePosition == position) {
             rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND_ON_SELECTION));
-            nodeHolder.textViewForName.setTextColor(Color.parseColor(Colors.BLACK));
-            nodeHolder.editText.setTextColor(Color.parseColor(Colors.BLACK));
+            nodeHolder.textViewForName.setTextColor(Color.parseColor(Colors.SELECTED_NODE_TEXT_COLOR));
+            nodeHolder.editText.setTextColor(Color.parseColor(Colors.SELECTED_NODE_TEXT_COLOR));
             if (currentNode.getChildSubTree().size() == 0) {
                 nodeHolder.expandCollapseButton.setImageResource(R.drawable.selected_leaf);
             } else if (currentNode.getStatus().equalsIgnoreCase(Constants.STATUS.EXPAND.toString())) {
@@ -157,7 +157,7 @@ public class CustomAdapter extends BaseAdapter {
 
     public void updateChildSubTree(UINode existingParent) {
         if (nodeList.indexOf(existingParent) != -1) {
-            ArrayList<UINode> expandedChildSubTree = new ArrayList<UINode>();
+            ArrayList<UINode> expandedChildSubTree = new ArrayList<>();
             existingParent.getAllExpandedChildren(expandedChildSubTree);
             int childPosition = nodeList.indexOf(existingParent) + 1;
             for (int i = nodeList.indexOf(existingParent) + 1; i < nodeList.size() && existingParent.getDepth() < nodeList.get(i).getDepth(); )
@@ -171,16 +171,16 @@ public class CustomAdapter extends BaseAdapter {
         }
     }
 
-    public void setSeperatosition() {
-        UINode leftFirstUINode = presenter.getLeftfirstNode();
+    private void setSeparatorPosition() {
+        UINode leftFirstUINode = presenter.getLeftFirstNode();
         if (leftFirstUINode == null)
-            seperatorPosition = 0;
+            separatorPosition = 0;
         else
-            seperatorPosition = nodeList.indexOf(leftFirstUINode) - 1;
+            separatorPosition = nodeList.indexOf(leftFirstUINode) - 1;
     }
 
-    public void resetSeperatorPosition() {
-        seperatorPosition = -1;
+    private void resetSeparatorPosition() {
+        separatorPosition = -1;
     }
 }
 

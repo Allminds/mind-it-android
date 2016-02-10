@@ -6,10 +6,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
-public class NodeHolder {
+class NodeHolder {
     ViewSwitcher switcher;
     ImageView expandCollapseButton;
     TextView textViewForName;
     EditText editText;
-    LinearLayout seperator;
+    LinearLayout separator;
 }

@@ -17,8 +17,8 @@ import com.thoughtworks.mindit.view.model.UINode;
 
 import java.util.ArrayList;
 
-public class CustomAdapterHelper {
-    final InputMethodManager lManager;
+class CustomAdapterHelper {
+    private final InputMethodManager lManager;
     private final CustomAdapter customAdapter;
     private ArrayList<UINode> nodeList;
     private int mode = Constants.EDIT_MODE;
@@ -29,19 +29,7 @@ public class CustomAdapterHelper {
         lManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
-    public ArrayList<UINode> getNodeList() {
-        return nodeList;
-    }
-
-    public void setNodeList(ArrayList<UINode> nodeList) {
-        this.nodeList = nodeList;
-    }
-
-    public void resetMode() {
-        mode = Constants.SELECTION_MODE;
-    }
-
-    void updateText(NodeHolder nodeHolder, UINode currentNode) {
+    private void updateText(NodeHolder nodeHolder, UINode currentNode) {
         nodeHolder.textViewForName.setText(nodeHolder.editText.getText());
         currentNode.setName(Constants.EMPTY_STRING + nodeHolder.editText.getText());
     }
@@ -54,7 +42,7 @@ public class CustomAdapterHelper {
         this.editText(nodeHolder, currentNode, rowView);
     }
 
-    void editText(final NodeHolder nodeHolder, final UINode currentNode, final View rowView) {
+    private void editText(final NodeHolder nodeHolder, final UINode currentNode, final View rowView) {
         LinearLayout linearLayout = (LinearLayout) rowView.findViewById(R.id.layout_node);
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,7 +90,9 @@ public class CustomAdapterHelper {
                 break;
             }
         }
-        parent.getChildSubTree().remove(child);
+        if( parent != null) {
+            parent.getChildSubTree().remove(child);
+        }
     }
 
     private void editTextOfNode(final NodeHolder nodeHolder, final UINode currentNode) {

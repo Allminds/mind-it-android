@@ -22,8 +22,6 @@ import java.util.ArrayList;
 
 public class MindmapActivity extends AppCompatActivity implements IMindmapView {
 
-    private Menu myMenu;
-    private ListView listView;
     private CustomAdapter adapter;
     private Presenter presenter;
     private UINode clipboard;
@@ -36,10 +34,11 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         setContentView(R.layout.activity_mindmap);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setIcon(R.drawable.mindit_logo);
-        getSupportActionBar().setTitle(Constants.EMPTY_STRING);
-
-        listView = (ListView) findViewById(R.id.listView);
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setIcon(R.drawable.mindit_logo);
+            getSupportActionBar().setTitle(Constants.EMPTY_STRING);
+        }
+        ListView listView = (ListView) findViewById(R.id.listView);
         registerForContextMenu(listView);
         presenter = new Presenter(this);
         adapter = new CustomAdapter(this, presenter, presenter.buildNodeListFromTree());
@@ -53,14 +52,13 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         // Inflate the menu; this adds items to the action bar if it is present.
 
         getMenuInflater().inflate(R.menu.actions, menu);
-        myMenu = menu;
         if (Config.FEATURE_ADD) {
-            MenuItem add = myMenu.getItem(Constants.ADD);
+            MenuItem add = menu.getItem(Constants.ADD);
             add.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
             add.setVisible(true);
         }
         if (Config.FEATURE_DELETE) {
-            MenuItem delete = myMenu.getItem(Constants.DELETE);
+            MenuItem delete = menu.getItem(Constants.DELETE);
             delete.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
             delete.setVisible(true);
         }
@@ -105,8 +103,7 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
     }
 
     private void cutNode(int position) {
-        UINode node = nodeList.get(position);
-        clipboard = node;
+        clipboard = nodeList.get(position);
         deleteNode(position);
         clipboard.setId(Constants.EMPTY_STRING);
         clipboard.setStatus(Constants.STATUS.COLLAPSE.toString());

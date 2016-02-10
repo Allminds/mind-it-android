@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">MindIt</string>
-    <string name="action_settings">Feedback</string>
     <string name="title_activity_mindmap">MindmapActivity</string>
-    <string name="title_activity_timepass">TimepassActivity</string>
-    <string name="title_activity_home">HomeActivity</string>
-
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="imports">imports</string>
-    <string name="cancel">cancel</string>
+    <string name="enter_url_hint">Enter URL here</string>
+    <string name="default_url">iA36Jd5xuBGmp75Mw</string>
+    <string name="open">Open</string>
+    <string name="some_value">some_value</string>
+    <string name="add">add</string>
+    <string name="delete">delete</string>
+    <string name="logo">MindIt logo on landing page</string>
+    <string name="icon">expand, collapse, leaf icons</string>
 </resources>

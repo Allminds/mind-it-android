@@ -8,6 +8,5 @@ public class MindIt {
     public static final String FIND_TREE = "findTree";
     public static final String COLLECTION = "Mindmaps";
     public static final String ID = "_id";
-    public static final String TITLE = "MindIt";
     public static final java.lang.String WEBSOCKET = "ws://www.mindit.xyz/websocket";
 }

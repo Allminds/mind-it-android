@@ -84,7 +84,7 @@ public class Tracker implements MeteorCallback, ITracker {
         return meteor.isConnected();
     }
 
-    public void findTree(String rootId) {
+    private void findTree(String rootId) {
         meteor.call(MindIt.FIND_TREE, new String[]{rootId}, new ResultListener() {
             @Override
             public void onSuccess(String jsonResponse) {
@@ -128,7 +128,7 @@ public class Tracker implements MeteorCallback, ITracker {
     }
 
     public void updateNode(final Node node) {
-        Map<String, Object> updateQuery = new HashMap<String, Object>();
+        Map<String, Object> updateQuery = new HashMap<>();
         updateQuery.put(MindIt.ID, node.getId());
         Map<String, Object> updateValues = getValueMap(node);
         meteor.update(MindIt.COLLECTION, updateQuery, updateValues, null, new ResultListener() {
@@ -146,7 +146,7 @@ public class Tracker implements MeteorCallback, ITracker {
 
     private void updateParentInDB(Node node) {
         Node parent = tree.getNode(node.getParentId());
-        Map<String, Object> updateQuery = new HashMap<String, Object>();
+        Map<String, Object> updateQuery = new HashMap<>();
         updateQuery.put(MindIt.ID, parent.getId());
         Map<String, Object> updateValues = getValueMap(parent);
         meteor.update(MindIt.COLLECTION, updateQuery, updateValues, null, new ResultListener() {
@@ -162,7 +162,7 @@ public class Tracker implements MeteorCallback, ITracker {
 
     @NonNull
     private Map<String, Object> getValueMap(Node node) {
-        Map<String, Object> addValues = new HashMap<String, Object>();
+        Map<String, Object> addValues = new HashMap<>();
         addValues.put(Fields.NAME, node.getName());
         addValues.put(Fields.LEFT, node.getLeft());
         addValues.put(Fields.RIGHT, node.getRight());
@@ -254,7 +254,7 @@ public class Tracker implements MeteorCallback, ITracker {
 
     private void updateRightTree(Node node, JSONObject jsonFields) throws JSONException {
         JSONArray jsonRightTree = (JSONArray) jsonFields.get(Fields.RIGHT);
-        ArrayList<String> rightTree = new ArrayList<String>();
+        ArrayList<String> rightTree = new ArrayList<>();
         Node root = tree.getRoot();
         for (int i = 0; i < jsonRightTree.length(); i++) {
             rightTree.add(jsonRightTree.getString(i));
@@ -271,7 +271,7 @@ public class Tracker implements MeteorCallback, ITracker {
     private void updateLeftTree(Node node, JSONObject jsonFields) throws JSONException {
         Node root = tree.getRoot();
         JSONArray jsonLeftTree = (JSONArray) jsonFields.get(Fields.LEFT);
-        ArrayList<String> leftTree = new ArrayList<String>();
+        ArrayList<String> leftTree = new ArrayList<>();
         for (int i = 0; i < jsonLeftTree.length(); i++) {
             leftTree.add(jsonLeftTree.getString(i));
             String newNodeId = jsonLeftTree.getString(i);
@@ -285,10 +285,9 @@ public class Tracker implements MeteorCallback, ITracker {
     }
 
     private void updateChildSubTree(Node node, JSONObject jsonFields) throws JSONException {
-        Node parent = node;
-        ArrayList<String> oldChildSubTree = parent.getChildSubTree();
+        ArrayList<String> oldChildSubTree = node.getChildSubTree();
         JSONArray jsonChildSubTree = (JSONArray) jsonFields.get(Fields.CHILD_SUBTREE);
-        ArrayList<String> newChildSubTree = new ArrayList<String>();
+        ArrayList<String> newChildSubTree = new ArrayList<>();
         for (int i = 0; i < jsonChildSubTree.length(); i++) {
             newChildSubTree.add(jsonChildSubTree.getString(i));
         }
@@ -298,7 +297,7 @@ public class Tracker implements MeteorCallback, ITracker {
             clonedChildSubTree.removeAll(oldChildSubTree);
             String newNodeId = clonedChildSubTree.get(0);
             if (tree.getNode(newNodeId) == null) {
-                Node newNode = new Node(newNodeId, Constants.EMPTY_STRING, parent, parent.getRootId(), newChildSubTree.indexOf(newNodeId));
+                Node newNode = new Node(newNodeId, Constants.EMPTY_STRING, node, node.getRootId(), newChildSubTree.indexOf(newNodeId));
                 tree.addNodeFromWeb(newNode);
             }
 
@@ -355,8 +354,7 @@ public class Tracker implements MeteorCallback, ITracker {
                     e.printStackTrace();
                 }
 
-                String message = NetworkMessage.CONNECTION_ERROR;
-                return message;
+                return NetworkMessage.CONNECTION_ERROR;
             }
         }
 
@@ -393,21 +391,23 @@ public class Tracker implements MeteorCallback, ITracker {
                 toast.setGravity(Gravity.CENTER, 0, 100);
                 toast.show();
 
-            } else if (JsonParserService.isErrorOccurred()) {
-                resetTree();
-                JsonParserService.resetErrorOccurredFlag();
-                final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-                alertDialog.setMessage(MindIt.INVALID_ID_ERROR);
-                alertDialog.setButton(Constants.OK, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        alertDialog.dismiss();
-                    }
-                });
-                alertDialog.show();
             } else {
-                Intent intent = new Intent(context, MindmapActivity.class);
-                context.startActivity(intent);
+                if (JsonParserService.isErrorOccurred()) {
+                    resetTree();
+                    JsonParserService.resetErrorOccurredFlag();
+                    final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+                    alertDialog.setMessage(MindIt.INVALID_ID_ERROR);
+                    alertDialog.setButton(Constants.OK, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+                    alertDialog.show();
+                } else {
+                    Intent intent = new Intent(context, MindmapActivity.class);
+                    context.startActivity(intent);
+                }
             }
 
         }
