@@ -219,7 +219,7 @@ class CustomAdapterHelper {
 
     public ArrayList<UINode> expand(int position, UINode currentNode) {
         int childPosition = position + 1;
-
+        customAdapter.setSelectedNodePosition(position);
         ArrayList<UINode> childSubTree = currentNode.getChildSubTree();
         for (int nodeIndex = 0; nodeIndex < childSubTree.size(); nodeIndex++) {
             nodeList.add(childPosition++, childSubTree.get(nodeIndex));
@@ -231,6 +231,7 @@ class CustomAdapterHelper {
 
     public ArrayList<UINode> collapse(int position, UINode currentNode) {
         int nodeIndex = position + 1;
+        customAdapter.setSelectedNodePosition(position);
         while (nodeIndex < nodeList.size()) {
             if (nodeList.get(nodeIndex).getDepth() > currentNode.getDepth()) {
                 if (nodeList.get(nodeIndex).getStatus().equals(Constants.STATUS.EXPAND.toString()))
