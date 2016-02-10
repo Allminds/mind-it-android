@@ -4,10 +4,12 @@
         android:id="@+id/add"
         android:title="add"
         android:icon="@drawable/add"
+        android:visible="false"
         android:showAsAction="always"/>
     <item
         android:title="delete"
         android:icon="@drawable/delete"
         android:showAsAction="always"
+        android:visible="false"
         android:id="@+id/delete"/>
 </menu>

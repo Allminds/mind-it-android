@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 
 import com.thoughtworks.mindit.mindit.R;
 import com.thoughtworks.mindit.mindit.constant.Colors;
@@ -24,6 +25,7 @@ public class CustomAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<UINode> nodeList;
     private LayoutInflater layoutInflater;
+    private  int seperatorPosition =0;
 
     public int getNewNodePosition() {
         return newNodePosition;
@@ -116,7 +118,7 @@ public class CustomAdapter extends BaseAdapter {
         }
         final UINode currentNode = nodeList.get(position);
         final View rowView = layoutInflater.inflate(R.layout.layout_node, null);
-
+        nodeHolder.seperator=(LinearLayout)rowView.findViewById(R.id.seperator);
         customAdapterHelper.initializeTextView(nodeHolder, rowView, currentNode);
         customAdapterHelper.addPadding(position, rowView);
         customAdapterHelper.setImageForExpandCollapse(nodeHolder, rowView, currentNode);
@@ -127,21 +129,27 @@ public class CustomAdapter extends BaseAdapter {
         }
         if(position==0){
             nodeHolder.expandCollapseButton.setVisibility(View.INVISIBLE);
-  //          Typeface myTypeface=Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
-//            nodeHolder.textViewForName.
+            Typeface myTypeface=Typeface.createFromAsset(context.getAssets(), "DroidSerif-Bold.ttf");
+            nodeHolder.textViewForName.setTypeface(myTypeface);
+            nodeHolder.textViewForName.setTextSize(18);
 
 
+        }
+        this.setSeperatosition();
+        if(position== seperatorPosition) {
+            nodeHolder.seperator.setBackgroundColor(Color.parseColor(Colors.EDIT_TEXT));
+            resetSeperatorPosition();
         }
         if (selectedNodePosition == position) {
             rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND_ON_SELECTION));
             nodeHolder.textViewForName.setTextColor(Color.parseColor("#000000"));
             nodeHolder.editText.setTextColor(Color.parseColor("#000000"));
             if (currentNode.getChildSubTree().size() == 0) {
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.other_fiilled_leaf);
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.selected_leaf);
             } else if (currentNode.getStatus().equalsIgnoreCase(Constants.STATUS.EXPAND.toString())) {
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.other_filled_expand);
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.selected_expand);
             } else {
-                nodeHolder.expandCollapseButton.setImageResource(R.drawable.other_filled_collapse);
+                nodeHolder.expandCollapseButton.setImageResource(R.drawable.selected_collapse);
             }
 
         }
@@ -164,6 +172,21 @@ public class CustomAdapter extends BaseAdapter {
             }
             existingParent.setStatus(Constants.STATUS.EXPAND.toString());
         }
+    }
+
+    public void setSeperatosition(){
+        UINode leftFirstUINode =presenter.getLeftfirstNode();
+        for (int i = 0; i <nodeList.size() ; i++) {
+            if(nodeList.get(i).equals(leftFirstUINode)){
+                seperatorPosition =i-1;
+                break;
+            }
+        }
+
+    }
+
+    public void resetSeperatorPosition(){
+        seperatorPosition =0;
     }
 }
 

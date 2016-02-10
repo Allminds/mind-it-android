@@ -219,11 +219,12 @@ public class CustomAdapterHelper {
     void setImageForExpandCollapse(NodeHolder nodeHolder, View rowView, UINode currentNode) {
         nodeHolder.expandCollapseButton = (ImageView) rowView.findViewById(R.id.expandCollapse);
         if (currentNode.getChildSubTree().size() == 0) {
-            nodeHolder.expandCollapseButton.setImageResource(R.drawable.leaf);
+            nodeHolder.expandCollapseButton.setImageResource(R.drawable.simple_leaf);
         } else if (currentNode.getStatus().equalsIgnoreCase(Constants.STATUS.EXPAND.toString())) {
-            nodeHolder.expandCollapseButton.setImageResource(R.drawable.expand);
+            nodeHolder.expandCollapseButton.setImageResource(R.drawable.simple_expand);
         } else {
-            nodeHolder.expandCollapseButton.setImageResource(R.drawable.collapse);
+            nodeHolder.expandCollapseButton.setImageResource(R.drawable.simple_collapse);
+
         }
     }
 

@@ -5,6 +5,7 @@ import com.thoughtworks.mindit.mindit.Tracker;
 import com.thoughtworks.mindit.mindit.constant.Constants;
 import com.thoughtworks.mindit.mindit.constant.Fields;
 import com.thoughtworks.mindit.mindit.model.Node;
+import com.thoughtworks.mindit.mindit.model.Tree;
 import com.thoughtworks.mindit.mindit.view.IMindmapView;
 import com.thoughtworks.mindit.mindit.view.model.UINode;
 
@@ -191,5 +192,12 @@ public class Presenter implements IObserver {
         for (UINode child : node.getChildSubTree()) {
             updateDepthOfAllChildrenInUINode(child, depth + Constants.PADDING_FOR_DEPTH);
         }
+    }
+
+    public UINode getLeftfirstNode(){
+        Tree tree=tracker.getTree();
+        Node rootNode=tree.getRoot();
+        UINode leftFirstNode=nodeTree.get(rootNode.getLeft().get(0));
+        return leftFirstNode;
     }
 }
