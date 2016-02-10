@@ -46,7 +46,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setIcon(R.drawable.minditlogo);
+        getSupportActionBar().setIcon(R.drawable.mindit_logo);
         Intent intent = getIntent();
         Uri data = intent.getData();
         if (data != null) {
@@ -68,7 +68,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public void importMindMap() {
         final Dialog importDialog = new Dialog(this);
-        importDialog.setTitle(Html.fromHtml(Constants.IMPORT_DIALOG_TITLE));
+        importDialog.setTitle("Enter URL");
         importDialog.setContentView(R.layout.import_dialog);
         importDialog.show();
         final EditText editUrl = (EditText) importDialog.findViewById(R.id.editUrl);

@@ -299,19 +299,19 @@ public class Tracker implements MeteorCallback, ITracker {
             ArrayList<String> clonedChildSubTree = (ArrayList<String>) newChildSubTree.clone();
             clonedChildSubTree.removeAll(oldChildSubTree);
             String newNodeId = clonedChildSubTree.get(0);
-//            if (tree.getNode(newNodeId) == null) {
-//                Node newNode = new Node(newNodeId, Constants.EMPTY_STRING, parent, parent.getRootId(), newChildSubTree.indexOf(newNodeId));
-//                tree.addNodeFromWeb(newNode);
-//            }
-            while (tree.getNode(newNodeId)==null){
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            if (tree.getNode(newNodeId) == null) {
+                Node newNode = new Node(newNodeId, Constants.EMPTY_STRING, parent, parent.getRootId(), newChildSubTree.indexOf(newNodeId));
+                tree.addNodeFromWeb(newNode);
             }
-            Node newNode=tree.getNode(newNodeId);
-            tree.addNodeFromWeb(newNode);
+//            while (tree.getNode(newNodeId)==null){
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            Node newNode=tree.getNode(newNodeId);
+//            tree.addNodeFromWeb(newNode);
         }
         if (newChildSubTree.equals(oldChildSubTree)) {
             return;

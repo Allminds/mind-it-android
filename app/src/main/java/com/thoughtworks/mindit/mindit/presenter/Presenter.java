@@ -191,7 +191,9 @@ public class Presenter implements IObserver {
     public UINode getLeftfirstNode(){
         Tree tree=tracker.getTree();
         Node rootNode=tree.getRoot();
-        UINode leftFirstNode=nodeTree.get(rootNode.getLeft().get(0));
+        UINode leftFirstNode=null;
+        if(rootNode.getLeft().size()!=0)
+            leftFirstNode=nodeTree.get(rootNode.getLeft().get(0));
         return leftFirstNode;
     }
 }

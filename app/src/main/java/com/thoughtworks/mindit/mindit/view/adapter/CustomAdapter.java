@@ -25,7 +25,7 @@ public class CustomAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<UINode> nodeList;
     private LayoutInflater layoutInflater;
-    private  int seperatorPosition =0;
+    private  int seperatorPosition =-1;
 
     public int getNewNodePosition() {
         return newNodePosition;
@@ -176,6 +176,8 @@ public class CustomAdapter extends BaseAdapter {
 
     public void setSeperatosition(){
         UINode leftFirstUINode =presenter.getLeftfirstNode();
+        if(leftFirstUINode==null)
+            return;
         for (int i = 0; i <nodeList.size() ; i++) {
             if(nodeList.get(i).equals(leftFirstUINode)){
                 seperatorPosition =i-1;
@@ -186,7 +188,7 @@ public class CustomAdapter extends BaseAdapter {
     }
 
     public void resetSeperatorPosition(){
-        seperatorPosition =0;
+        seperatorPosition =-1;
     }
 }
 
