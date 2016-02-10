@@ -17,6 +17,7 @@
             android:src="@drawable/collapse"
             android:tag="expand"
             android:id="@+id/expandCollapse"
+            android:paddingLeft="8dp"
             android:onClick="toggle"
             android:layout_gravity="center_vertical"/>
 
