@@ -97,7 +97,16 @@ public class UINode {
         parentChildSubTree.add(this.getChildSubTree().size(), uiNode);
         return parentChildSubTree.contains(uiNode);
     }
-
+    public void getAllExpandedChildren(ArrayList<UINode> childSubTree)
+    {
+        for (UINode child : this.childSubTree) {
+            childSubTree.add(child);
+            if(child.getStatus().equals(Constants.STATUS.EXPAND.toString()))
+            {
+                child.getAllExpandedChildren(childSubTree);
+            }
+        }
+    }
     @Override
     public String toString() {
         return "UINode{" +
