@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.thoughtworks.mindit.mindit">
+    package="com.thoughtworks.mindit">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".view.MindmapActivity"
+            android:name="com.thoughtworks.mindit.view.MindmapActivity"
             android:label="@string/title_activity_mindmap"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan"
@@ -22,8 +22,8 @@
         </activity>
 
         <activity
-            android:name=".view.HomeActivity"
-            android:label=""
+            android:name="com.thoughtworks.mindit.view.HomeActivity"
+            android:label="MindIt"
             android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="singleTask"
             >
