@@ -134,7 +134,13 @@ public class Presenter implements IObserver {
         switch (updateOption) {
             case 1:
                 if (uiNode == null) {
-                    uiNode = convertModelNodeToUINode(tracker.getTree().getLastUpdatedNode());
+                    Node newNode = tracker.getTree().getLastUpdatedNode();
+                    if(nodeTree.get(newNode.getId()) == null)
+                        uiNode = convertModelNodeToUINode(newNode);
+                    else {
+                        uiNode = nodeTree.get(newNode.getId());
+                        uiNode.setName(newNode.getName());
+                    }
                 } else {
                     this.uiNode.setId(tracker.getTree().getLastUpdatedNode().getId());
                     nodeTree.put(uiNode.getId(), uiNode);

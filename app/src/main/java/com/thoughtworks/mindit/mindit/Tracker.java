@@ -46,7 +46,7 @@ public class Tracker implements MeteorCallback, ITracker {
     private Tracker(Context context, String rootId) {
         this.rootId = rootId;
         this.context = context;
-        //Meteor.setLoggingEnabled(true);
+        Meteor.setLoggingEnabled(true);
         new WaitForTree().execute(this.tree);
         meteor = new Meteor(context, "ws://www.mindit.xyz/websocket", this);
         meteor.setCallback(this);
@@ -186,6 +186,7 @@ public class Tracker implements MeteorCallback, ITracker {
 
     @Override
     public void onDisconnect() {
+        System.out.println("in onDisconnect");
     }
 
     @Override
@@ -299,19 +300,10 @@ public class Tracker implements MeteorCallback, ITracker {
             ArrayList<String> clonedChildSubTree = (ArrayList<String>) newChildSubTree.clone();
             clonedChildSubTree.removeAll(oldChildSubTree);
             String newNodeId = clonedChildSubTree.get(0);
-//            if (tree.getNode(newNodeId) == null) {
-//                Node newNode = new Node(newNodeId, Constants.EMPTY_STRING, parent, parent.getRootId(), newChildSubTree.indexOf(newNodeId));
-//                tree.addNodeFromWeb(newNode);
-//            }
-            while (tree.getNode(newNodeId)==null){
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            if (tree.getNode(newNodeId) == null) {
+                Node newNode = new Node(newNodeId, Constants.EMPTY_STRING, parent, parent.getRootId(), newChildSubTree.indexOf(newNodeId));
+                tree.addNodeFromWeb(newNode);
             }
-            Node newNode=tree.getNode(newNodeId);
-            tree.addNodeFromWeb(newNode);
         }
         if (newChildSubTree.equals(oldChildSubTree)) {
             return;
