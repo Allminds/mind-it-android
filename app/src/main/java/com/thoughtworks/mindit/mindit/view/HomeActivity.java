@@ -58,8 +58,6 @@ public class HomeActivity extends AppCompatActivity {
         importMindmap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (tracker != null)
-                    tracker.resetTree();
                 importMindMap();
 
             }
