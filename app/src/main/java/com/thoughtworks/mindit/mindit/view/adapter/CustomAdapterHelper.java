@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import com.thoughtworks.mindit.mindit.Config;
 import com.thoughtworks.mindit.mindit.R;
 import com.thoughtworks.mindit.mindit.constant.Constants;
 import com.thoughtworks.mindit.mindit.view.model.UINode;
@@ -56,7 +57,7 @@ public class CustomAdapterHelper {
     }
 
     void editText(final NodeHolder nodeHolder, final UINode currentNode, final View rowView) {
-        LinearLayout linearLayout = (LinearLayout) rowView.findViewById(R.id.layout_text);
+        LinearLayout linearLayout = (LinearLayout) rowView.findViewById(R.id.layout_node);
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,11 +83,15 @@ public class CustomAdapterHelper {
             if(lManager.isActive())
                 lManager.hideSoftInputFromWindow(nodeHolder.editText.getWindowToken(), 0);
             customAdapter.setSelectedNodePosition(nodeList.indexOf(currentNode));
-            mode = Constants.EDIT_MODE;
+            if(Config.FEATURE_EDIT) {
+                mode = Constants.EDIT_MODE;
+            }
             customAdapter.notifyDataSetChanged();
         } else {
-            editTextOfNode(nodeHolder, currentNode);
-            mode = Constants.SELECTION_MODE;
+            if(Config.FEATURE_EDIT) {
+                editTextOfNode(nodeHolder, currentNode);
+                mode = Constants.SELECTION_MODE;
+            }
         }
     }
 
@@ -219,6 +224,7 @@ public class CustomAdapterHelper {
             nodeHolder.expandCollapseButton.setImageResource(R.drawable.simple_expand);
         } else {
             nodeHolder.expandCollapseButton.setImageResource(R.drawable.simple_collapse);
+
         }
     }
 

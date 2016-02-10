@@ -156,11 +156,20 @@ public class CustomAdapter extends BaseAdapter {
 
         return rowView;
     }
-
     public void updateChildSubTree(UINode existingParent) {
         if (nodeList.indexOf(existingParent) != -1) {
-            this.collapse(nodeList.indexOf(existingParent), existingParent);
-            this.expand(nodeList.indexOf(existingParent), existingParent);
+//            this.collapse(nodeList.indexOf(existingParent), existingParent);
+//            this.expand(nodeList.indexOf(existingParent), existingParent);
+            ArrayList<UINode> expandedChildSubTree = new ArrayList<UINode>();
+            existingParent.getAllExpandedChildren(expandedChildSubTree);
+            int childPosition = nodeList.indexOf(existingParent) + 1;
+            for(int i = nodeList.indexOf(existingParent) +1 ;i < nodeList.size() && existingParent.getDepth() < nodeList.get(i).getDepth();)
+                nodeList.remove(i);
+            for (UINode child : expandedChildSubTree) {
+                nodeList.add(childPosition, child);
+                childPosition++;
+
+            }
             existingParent.setStatus(Constants.STATUS.EXPAND.toString());
         }
     }
