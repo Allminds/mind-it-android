@@ -17,7 +17,7 @@
         android:inputType="textUri"
         android:paddingStart="10dp"
         android:singleLine="true"
-        android:text="@string/default_url"
+        android:text="iA36Jd5xuBGmp75Mw"
         android:textColor="#595858"
         android:textSize="17sp" />
 

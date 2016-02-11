@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import dmax.dialog.SpotsDialog;
 import im.delight.android.ddp.MeteorCallback;
 import im.delight.android.ddp.ResultListener;
 
@@ -46,7 +48,7 @@ public class Tracker implements MeteorCallback, ITracker {
     private Tracker(Context context, String rootId) {
         this.rootId = rootId;
         this.context = context;
-        Meteor.setLoggingEnabled(true);
+     //   Meteor.setLoggingEnabled(true);
         new WaitForTree().execute(this.tree);
         meteor = new Meteor(context, MindIt.WEBSOCKET, this);
         meteor.setCallback(this);
@@ -212,6 +214,7 @@ public class Tracker implements MeteorCallback, ITracker {
     public void onAdded(String collectionName, String documentID, String fieldsJson) {
         Node node = JsonParserService.parseNode(fieldsJson);
         node.set_id(documentID);
+        Log.v("In onAdded:", node.toString());
         if (tree != null && !tree.isAlreadyExists(node)) {
             tree.addNodeFromWeb(node);
         }
@@ -221,7 +224,7 @@ public class Tracker implements MeteorCallback, ITracker {
     public void onChanged(String collectionName, String documentID, String updatedValuesJson, String removedValuesJson) {
         Node node = tree.getNode(documentID);
         try {
-            Thread.sleep(200);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -323,13 +326,11 @@ public class Tracker implements MeteorCallback, ITracker {
     }
 
     class WaitForTree extends AsyncTask<Tree, Void, String> {
-        ProgressDialog progressDialog;
+        AlertDialog progressDialog;
 
         @Override
         protected void onPreExecute() {
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setTitle(NetworkMessage.WAIT);
-            progressDialog.setMessage(NetworkMessage.CONNECTION_CHECK);
+            progressDialog = new SpotsDialog(context, NetworkMessage.DOWNLOAD);
             progressDialog.setCancelable(false);
             ((HomeActivity) context).runOnUiThread(new Runnable() {
                 @Override
@@ -360,15 +361,6 @@ public class Tracker implements MeteorCallback, ITracker {
 
         @NonNull
         private String downLoadMindmap() {
-
-            ((HomeActivity) context).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-
-                    progressDialog.setMessage(NetworkMessage.DOWNLOAD);
-                }
-            });
-
 
             while (tree == null) {
                 if (JsonParserService.isErrorOccurred())

@@ -1,5 +1,7 @@
 package com.thoughtworks.mindit.model;
 
+import android.util.Log;
+
 import com.thoughtworks.mindit.PublishSubscribe.IObserver;
 import com.thoughtworks.mindit.PublishSubscribe.ISubject;
 import com.thoughtworks.mindit.constant.Constants;
@@ -61,8 +63,17 @@ public class Tree implements Serializable, ISubject {
         return (this.getNode(nodeId) == null);
     }
 
-    public boolean isAlreadyExists(Node node) {
-        return (this.getNode(node.getId()) != null);
+    public boolean isAlreadyExists(Node newNode) {
+        boolean flag =false;
+        Node node = this.getNode(newNode.getId());
+        if(node != null)
+        {
+            flag = true;
+            if(!node.getName().equals(newNode.getName())) {
+                updateNode(node, Fields.NAME, newNode.getName());
+            }
+        }
+        return flag;
     }
 
     public void fillRootChildSubtree() {
@@ -115,7 +126,6 @@ public class Tree implements Serializable, ISubject {
         updateOption = Constants.TREE_UPDATE_OPTIONS.ADD.getValue();
         //if(!nodes.containsKey(node.getId()))
         nodes.put(node.getId(), node);
-
         Node parent = this.getNode(node.getParentId());
         node.setDepth(parent.getDepth() + 1);
 

@@ -2,7 +2,6 @@
     <string name="app_name">MindIt</string>
     <string name="title_activity_mindmap">MindmapActivity</string>
     <string name="enter_url_hint">Enter URL here</string>
-    <string name="default_url">iA36Jd5xuBGmp75Mw</string>
     <string name="open">Open</string>
     <string name="some_value">some_value</string>
     <string name="add">add</string>

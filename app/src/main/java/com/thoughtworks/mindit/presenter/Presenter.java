@@ -1,5 +1,7 @@
 package com.thoughtworks.mindit.presenter;
 
+import android.util.Log;
+
 import com.thoughtworks.mindit.constant.Fields;
 import com.thoughtworks.mindit.PublishSubscribe.IObserver;
 import com.thoughtworks.mindit.Tracker;
@@ -134,11 +136,13 @@ public class Presenter implements IObserver {
     public void update(int updateOption, String updateParameter) {
         switch (updateOption) {
             case 1:
+                Log.v("In Update:" , ""+tracker.getTree().getLastUpdatedNode());
                 if (uiNode == null) {
                     Node newNode = tracker.getTree().getLastUpdatedNode();
                     if(nodeTree.get(newNode.getId()) == null)
                         uiNode = convertModelNodeToUINode(newNode);
                     else {
+                        Log.v("In Update:", nodeTree.get(newNode.getId()).toString());
                         uiNode = nodeTree.get(newNode.getId());
                         uiNode.setName(newNode.getName());
                     }

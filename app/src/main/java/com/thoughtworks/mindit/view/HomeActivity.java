@@ -9,6 +9,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,12 +25,15 @@ import com.thoughtworks.mindit.constant.Constants;
 public class HomeActivity extends AppCompatActivity {
     private Tracker tracker;
     private boolean isNewIntent;
+    private Dialog importDialog;
 
     @Override
     protected void onNewIntent(Intent intent) {
         if (intent == null) {
             return;
         }
+        if(importDialog.isShowing())
+            importDialog.dismiss();
         Uri data = intent.getData();
         if (data != null) {
             String[] url = data.toString().split("/");
@@ -68,14 +73,48 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void importMindMap() {
-        final Dialog importDialog = new Dialog(this);
+        importDialog = new Dialog(this);
         importDialog.setTitle(Constants.IMPORT_DIALOG_TITLE);
         importDialog.setContentView(R.layout.import_dialog);
+        final Button imports = (Button) importDialog.findViewById(R.id.imports);
+        imports.setFocusable(true);
         importDialog.show();
         final EditText editUrl = (EditText) importDialog.findViewById(R.id.editUrl);
         editUrl.setSelection(editUrl.getText().length());
-        final Button imports = (Button) importDialog.findViewById(R.id.imports);
-        imports.setFocusable(true);
+        editUrl.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().equals("")) {
+                    imports.setEnabled(false);
+                    imports.setTextColor(Color.parseColor(Colors.IMPORT_BUTTON_TEXT_COLOR_WHEN_DISABLED));
+                }
+                else {
+                    imports.setEnabled(true);
+                    imports.setTextColor(Color.parseColor(Colors.IMPORT_BUTTON_TEXT_COLOR_WHEN_ENABLED));
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
+        if(editUrl.getText().toString().equals("")) {
+            imports.setEnabled(false);
+            imports.setTextColor(Color.parseColor(Colors.IMPORT_BUTTON_TEXT_COLOR_WHEN_DISABLED));
+        }
+        else
+        {
+            imports.setEnabled(true);
+            imports.setTextColor(Color.parseColor("#595858"));
+        }
         if (imports.isFocused()) {
             imports.setBackgroundColor(Color.parseColor(Colors.IMPORT_DIALOG_BACKGROUND_COLOR_ON_FOCUS));
         }

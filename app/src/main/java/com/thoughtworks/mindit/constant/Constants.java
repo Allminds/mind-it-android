@@ -1,7 +1,7 @@
 package com.thoughtworks.mindit.constant;
 
 public class Constants {
-    public static final int PADDING_FOR_DEPTH = 20;
+    public static final int PADDING_FOR_DEPTH = 30;
     public static final int SELECTION_MODE = 25;
     public static final int EDIT_MODE = 30;
     public static final int ADD = 0;
