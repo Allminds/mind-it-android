@@ -1,9 +1,11 @@
 package com.thoughtworks.mindit.view;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -14,6 +16,7 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -73,12 +76,17 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void importMindMap() {
-        importDialog = new Dialog(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            importDialog = new Dialog(this, android.R.style.Theme_Material_Light_Dialog_Alert);
+        } else {
+            importDialog = new Dialog(this);
+        }
         importDialog.setTitle(Constants.IMPORT_DIALOG_TITLE);
         importDialog.setContentView(R.layout.import_dialog);
+        importDialog.show();
         final Button imports = (Button) importDialog.findViewById(R.id.imports);
         imports.setFocusable(true);
-        importDialog.show();
+
         final EditText editUrl = (EditText) importDialog.findViewById(R.id.editUrl);
         editUrl.setSelection(editUrl.getText().length());
         editUrl.addTextChangedListener(new TextWatcher() {
