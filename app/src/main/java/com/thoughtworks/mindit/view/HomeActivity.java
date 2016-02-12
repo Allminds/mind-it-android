@@ -3,6 +3,7 @@ package com.thoughtworks.mindit.view;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -13,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -64,7 +66,6 @@ public class HomeActivity extends AppCompatActivity {
             String[] url = data.toString().split("/");
             tracker = Tracker.getInstance(this, url[url.length - 1]);
         }
-
         Button importMindmap = (Button) findViewById(R.id.importMindmap);
         importMindmap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +75,14 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
     }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig)
+    {
+        super.onConfigurationChanged(newConfig);
+      //  setContentView(R.layout.activity_home);
 
+
+    }
     private void importMindMap() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             importDialog = new Dialog(this, android.R.style.Theme_Material_Light_Dialog_Alert);

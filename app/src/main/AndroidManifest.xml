@@ -15,6 +15,7 @@
         <activity
             android:name="com.thoughtworks.mindit.view.MindmapActivity"
             android:label="@string/title_activity_mindmap"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan"
             android:launchMode="singleTask"
@@ -24,6 +25,7 @@
         <activity
             android:name="com.thoughtworks.mindit.view.HomeActivity"
             android:label="MindIt"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="singleTask"
             >
