@@ -29,13 +29,13 @@ public class Presenter implements IObserver {
         uiNode = null;
     }
 
-    public Presenter(Tracker tracker) {
+    public Presenter(Tracker tracker,IMindmapView iMindmapView) {
         nodeTree = new HashMap<>();
         this.tracker = tracker;
-        //    tree.register(this);
+// tree.register(this);
+        mView=iMindmapView;
         uiNode = null;
     }
-
 
     public UINode convertModelNodeToUINode(Node node) {
         int depth = node.getDepth() * Constants.PADDING_FOR_DEPTH;

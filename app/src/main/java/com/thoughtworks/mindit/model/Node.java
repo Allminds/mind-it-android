@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Node implements Serializable {
+
     private static boolean directionToggler = true;
     private String _id;
     private String name;
@@ -37,6 +38,10 @@ public class Node implements Serializable {
     public String getPosition() {
         return position;
     }
+    public static void setDirectionToggler(boolean directionToggler) {
+        Node.directionToggler = directionToggler;
+    }
+
 
     public void setPosition(String position) {
         this.position = position;
