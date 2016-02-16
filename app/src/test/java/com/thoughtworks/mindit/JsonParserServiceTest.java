@@ -12,7 +12,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
 
 public class JsonParserServiceTest {
-    JsonParserService jsonParserService;
+    private JsonParserService jsonParserService;
 
     @Before
     public void initialize() {
@@ -22,7 +22,7 @@ public class JsonParserServiceTest {
     @Test(expected = JsonSyntaxException.class)
     public void shouldThrowExceptionForInvalidJsonInput() {
         String json = "{\"nodes\":{\"0\":{\"childSubTree\":[],\"depth\":,\"id\":\"0\",\"index\":0,\"name\":\"node0\"},\"1\":{\"childSubTree\":[],\"depth\":0,\"id\":\"1\",\"index\":1,\"name\":\"node1\"}}}";
-        Tree tree = JsonParserService.parse(json);
+        JsonParserService.parse(json);
     }
 
     @Test

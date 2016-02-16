@@ -38,7 +38,7 @@ private BroadcastReceiver broadcastReceiver;
                         doWhenDisconnected(context);
 
                     }
-                    if (ni != null && ni.getState() == NetworkInfo.State.CONNECTED && networkFlag == true) {
+                    if (ni != null && ni.getState() == NetworkInfo.State.CONNECTED && networkFlag) {
                         doWhenConnected(context, rootId);
                     }
                 }
@@ -66,7 +66,7 @@ private BroadcastReceiver broadcastReceiver;
                         e.printStackTrace();
                     }
                 }
-                presenter.registerforTree();
+                presenter.registerForTree();
                 ArrayList<UINode> nodes = presenter.buildNodeListFromTree();
                 UINode root = nodes.get(0);
                 adapter.getNodeList().clear();

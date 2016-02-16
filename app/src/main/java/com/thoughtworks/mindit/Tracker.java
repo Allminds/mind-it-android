@@ -49,12 +49,12 @@ public class Tracker implements MeteorCallback, ITracker {
         this.rootId = rootId;
         this.context = context;
      //   Meteor.setLoggingEnabled(true);
-        startAsynkTask();
-        meteor = new Meteor(context, MindIt.WEBSOCKET, this);
+        startAsyncTask();
+        meteor = new Meteor(context, MindIt.WEB_SOCKET, this);
         meteor.setCallback(this);
     }
 
-    private void startAsynkTask() {
+    private void startAsyncTask() {
         if(Looper.myLooper()== Looper.getMainLooper()) {
             new WaitForTree().execute(this.tree);
         }

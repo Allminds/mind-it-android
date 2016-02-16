@@ -73,12 +73,8 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
     @Override
-    public void onConfigurationChanged(Configuration newConfig)
-    {
+    public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-      //  setContentView(R.layout.activity_home);
-
-
     }
     private void importMindMap() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

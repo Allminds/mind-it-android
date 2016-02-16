@@ -1,7 +1,7 @@
 package com.thoughtworks.mindit.view.adapter;
 
 import com.thoughtworks.mindit.constant.Constants;
-import com.thoughtworks.mindit.view.MindmapActivity;
+
 import com.thoughtworks.mindit.view.model.UINode;
 
 import org.junit.Before;
@@ -13,12 +13,11 @@ import java.util.ArrayList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 
 public class CustomAdapterHelperTest {
-    UINode root;
-    CustomAdapterHelper customAdapterHelper;
-    CustomAdapter customAdapter;
+    private UINode root;
+    private CustomAdapterHelper customAdapterHelper;
+    private CustomAdapter customAdapter;
 
     @Before
     public void setUp() throws Exception {

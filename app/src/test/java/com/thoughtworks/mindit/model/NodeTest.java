@@ -7,18 +7,15 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 
 public class NodeTest {
-    private Node root, child1, child2;
+    private Node root;
+    private Node child1;
 
     @Before
     public void initialize() {
         root = new Node("123", "node1", null, "123", 0);
         child1 = new Node("child1Id", "child1", root, root.getId(), 0);
-        child2 = new Node("child2Id", "child2", root, root.getId(), 1);
     }
 
     @Test

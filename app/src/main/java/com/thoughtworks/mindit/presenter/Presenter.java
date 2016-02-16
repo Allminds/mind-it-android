@@ -212,7 +212,7 @@ public class Presenter implements IObserver {
         return leftFirstNode;
     }
 
-    public void registerforTree() {
+    public void registerForTree() {
         tracker = Tracker.getInstance();
         tracker.registerThisToTree(this);
     }

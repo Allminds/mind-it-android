@@ -21,7 +21,6 @@ class CustomAdapterHelper {
     private InputMethodManager lManager;
     private final CustomAdapter customAdapter;
     private ArrayList<UINode> nodeList;
-    private int mode = Constants.EDIT_MODE;
 
     public CustomAdapterHelper(CustomAdapter customAdapter) {
         this.customAdapter = customAdapter;
@@ -65,6 +64,7 @@ class CustomAdapterHelper {
     }
 
     private void handleSelectionMode(UINode currentNode, NodeHolder nodeHolder) {
+        int mode = Constants.EDIT_MODE;
         if (mode == Constants.SELECTION_MODE || nodeList.indexOf(currentNode) != customAdapter.getSelectedNodePosition()) {
             int lastFocusedNode = customAdapter.getSelectedNodePosition();
             if (nodeList.get(lastFocusedNode).getName().equals("") && lastFocusedNode == customAdapter.getNewNodePosition()) {

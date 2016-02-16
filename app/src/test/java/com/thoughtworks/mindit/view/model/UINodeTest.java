@@ -12,15 +12,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class UINodeTest {
-    UINode uiNode;
-    UINode root;
+    private UINode uiNode;
+    private UINode root;
 
     @Before
     public void initialize() {
         root = new UINode("root", 0, null);
         uiNode = new UINode("node", 1, root.getId());
 
-        ArrayList<UINode> childSubTree = new ArrayList<UINode>();
+        ArrayList<UINode> childSubTree = new ArrayList<>();
         childSubTree.add(0, uiNode);
         root.setChildSubTree(childSubTree);
     }
@@ -43,7 +43,7 @@ public class UINodeTest {
     }
 
     @Test
-    public void shouldReturnFalseOnTryingToRemoveNonExistantChild() {
+    public void shouldReturnFalseOnTryingToRemoveNonExistentChild() {
         root.removeChild(uiNode);
         assertFalse(root.removeChild(uiNode));
     }
