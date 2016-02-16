@@ -45,6 +45,10 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
             getSupportActionBar().setTitle(Constants.EMPTY_STRING);
         }
         ListView listView = (ListView) findViewById(R.id.listView);
+
+        listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+        listView.setStackFromBottom(true);
+
         registerForContextMenu(listView);
         presenter = new Presenter(this);
         adapter = new CustomAdapter(this, presenter, presenter.buildNodeListFromTree());

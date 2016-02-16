@@ -109,7 +109,6 @@ public class Presenter implements IObserver {
 
     public void addNode(UINode uiNode) {
         Node parent = tracker.getTree().getNode(uiNode.getParentId());
-
         String rootId = parent.getRootId();
         if (parent.isARoot())
             rootId = parent.getId();

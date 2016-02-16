@@ -20,5 +20,4 @@
         android:fitsSystemWindows="true"
         android:divider="@null"
         android:id="@+id/listView"/>
-
 </RelativeLayout>

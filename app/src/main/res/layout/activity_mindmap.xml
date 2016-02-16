@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context="com.thoughtworks.mindit.view.MindmapActivity">
-
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,6 +18,8 @@
             android:background="?attr/colorPrimary"
             android:isScrollContainer="false"
             android:fitsSystemWindows="true"
+            app:contentInsetEnd="0dp"
+            app:contentInsetStart="0dp"
             app:popupTheme="@style/AppTheme.PopupOverlay"
 
             />
