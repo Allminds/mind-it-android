@@ -1,7 +1,6 @@
 package com.thoughtworks.mindit;
 
 
-import com.thoughtworks.mindit.Tracker;
 import com.thoughtworks.mindit.model.Node;
 import com.thoughtworks.mindit.presenter.Presenter;
 import com.thoughtworks.mindit.view.model.UINode;

@@ -1,7 +1,6 @@
 package com.thoughtworks.mindit.view.model;
 
 import com.thoughtworks.mindit.constant.Constants;
-import com.thoughtworks.mindit.view.model.UINode;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +16,7 @@ public class UINodeTest {
     UINode root;
 
     @Before
-    public void initilaize() {
+    public void initialize() {
         root = new UINode("root", 0, null);
         uiNode = new UINode("node", 1, root.getId());
 
