@@ -214,4 +214,8 @@ public class Tree implements Serializable, ISubject {
         lastUpdatedNode = null;
         root = null;
     }
+
+    public static void reset() {
+        instance = null;
+    }
 }

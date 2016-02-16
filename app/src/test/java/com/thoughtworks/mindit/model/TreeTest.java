@@ -2,7 +2,9 @@ package com.thoughtworks.mindit.model;
 
 import com.thoughtworks.mindit.exception.NodeAlreadyDeletedException;
 
+import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -11,21 +13,30 @@ import java.util.HashMap;
 import static org.junit.Assert.assertEquals;
 
 public class TreeTest {
-    private Node root;
-    private Node child1;
-    private Node child2;
+    private static Node root;
+    private static Node child1;
+    private static Node child2;
     private Tree tree;
+    private static HashMap nodes;
 
-    @Before
-    public void initialize() {
+    @BeforeClass
+    public static void setUp(){
         root = new Node("rootId", "root", null, null, 0);
         child1 = new Node("child1Id", "child1", root, root.getId(), 0);
         child2 = new Node("child2Id", "child2", root, root.getId(), 1);
-        HashMap nodes = new HashMap<>();
+        nodes = new HashMap<>();
         nodes.put("rootId", root);
+    }
+    @Before
+    public void initialize() {
+        Tree.reset();
         tree = Tree.getInstance(nodes);
     }
-
+    @After
+    public void reset(){
+        tree.reset();
+        tree = null;
+    }
     @Test
     public void shouldNodeToBeAdded() {
         tree.addNode(child1);
