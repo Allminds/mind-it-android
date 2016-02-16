@@ -156,18 +156,21 @@ public class CustomAdapter extends BaseAdapter {
     }
 
     public void updateChildSubTree(UINode existingParent) {
-        if (nodeList.indexOf(existingParent) != -1) {
-            ArrayList<UINode> expandedChildSubTree = new ArrayList<>();
-            existingParent.getAllExpandedChildren(expandedChildSubTree);
-            int childPosition = nodeList.indexOf(existingParent) + 1;
-            for (int i = nodeList.indexOf(existingParent) + 1; i < nodeList.size() && existingParent.getDepth() < nodeList.get(i).getDepth(); )
-                nodeList.remove(i);
-            for (UINode child : expandedChildSubTree) {
-                nodeList.add(childPosition, child);
-                childPosition++;
-
-            }
+        if (nodeList.indexOf(existingParent) != -1)
             existingParent.setStatus(Constants.STATUS.EXPAND.toString());
+        UINode root = nodeList.get(0);
+        nodeList.clear();
+        nodeList.add(root);
+        updateNodeList(root);
+    }
+
+    public void updateNodeList(UINode root) {
+        for (UINode child : root.getChildSubTree() ) {
+            nodeList.add(child);
+            if(child.getStatus().equals(Constants.STATUS.EXPAND.toString()))
+            {
+                updateNodeList(child);
+            }
         }
     }
 

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Gravity;
@@ -49,9 +50,15 @@ public class Tracker implements MeteorCallback, ITracker {
         this.rootId = rootId;
         this.context = context;
      //   Meteor.setLoggingEnabled(true);
-        new WaitForTree().execute(this.tree);
+        startAsynkTask();
         meteor = new Meteor(context, MindIt.WEBSOCKET, this);
         meteor.setCallback(this);
+    }
+
+    private void startAsynkTask() {
+        if(Looper.myLooper()== Looper.getMainLooper()) {
+            new WaitForTree().execute(this.tree);
+        }
     }
 
     public static Tracker getInstance(Context context, String rootId) {
@@ -325,11 +332,16 @@ public class Tracker implements MeteorCallback, ITracker {
         tree.register(presenter);
     }
 
+    public String getRootId() {
+        return rootId;
+    }
+
     class WaitForTree extends AsyncTask<Tree, Void, String> {
         AlertDialog progressDialog;
 
         @Override
         protected void onPreExecute() {
+
             progressDialog = new SpotsDialog(context, NetworkMessage.DOWNLOAD);
             progressDialog.setCancelable(false);
             ((HomeActivity) context).runOnUiThread(new Runnable() {

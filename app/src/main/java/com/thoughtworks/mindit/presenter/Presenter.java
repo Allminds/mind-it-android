@@ -41,6 +41,9 @@ public class Presenter implements IObserver {
         int depth = node.getDepth() * Constants.PADDING_FOR_DEPTH;
         UINode uiNode = new UINode(node.getName(), depth, node.getParentId());
         uiNode.setId(node.getId());
+        UINode uiNode1=nodeTree.get(node.getId());
+        if(uiNode1!=null)
+            uiNode.setStatus(uiNode1.getStatus());
         nodeTree.put(node.getId(), uiNode);
         updateUIChildSubtree(node, uiNode);
         return uiNode;
@@ -94,6 +97,10 @@ public class Presenter implements IObserver {
             }
 
             childSubTree.add(i, uiNode1);
+            if(nodeTree.get(uiNode1.getId()) != null){
+                String status=nodeTree.get(uiNode1.getId()).getStatus();
+                uiNode1.setStatus(status);
+            }
             nodeTree.put(uiNode1.getId(), uiNode1);
         }
 
@@ -203,5 +210,10 @@ public class Presenter implements IObserver {
         if(rootNode.getLeft().size() != 0)
              leftFirstNode=nodeTree.get(rootNode.getLeft().get(0));
         return leftFirstNode;
+    }
+
+    public void registerforTree() {
+        tracker = Tracker.getInstance();
+        tracker.registerThisToTree(this);
     }
 }

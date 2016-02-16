@@ -1,5 +1,7 @@
 package com.thoughtworks.mindit.view;
 
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +14,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.thoughtworks.mindit.Config;
+import com.thoughtworks.mindit.NetworkReciever;
 import com.thoughtworks.mindit.R;
 import com.thoughtworks.mindit.constant.Constants;
 import com.thoughtworks.mindit.presenter.Presenter;
@@ -27,6 +30,9 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
     private UINode clipboard;
     private ArrayList<UINode> nodeList;
     private Toolbar toolbar;
+    private NetworkReciever  networkReciever;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +51,21 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         listView.setAdapter(adapter);
         nodeList = adapter.getNodeList();
 
+        networkReciever=new NetworkReciever(presenter,adapter);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(networkReciever.getBroadcastReceiver());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkReciever.getBroadcastReceiver(), filter);
     }
 
     @Override
