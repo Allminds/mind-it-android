@@ -107,13 +107,6 @@ public class Node implements Serializable {
         this.depth = depth;
     }
 
-    public Node updateParent(Node newParent, Node oldParent, int index) throws Exception {
-        oldParent.removeThisChild(this);
-        newParent.addThisChild(this, index);
-        this.setParentId(newParent.getId());
-        return this;
-    }
-
     private String getFirstLevelChildPosition() {
         if (directionToggler) {
             directionToggler = false;

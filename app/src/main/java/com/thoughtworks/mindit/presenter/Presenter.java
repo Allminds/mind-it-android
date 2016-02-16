@@ -2,10 +2,10 @@ package com.thoughtworks.mindit.presenter;
 
 import android.util.Log;
 
-import com.thoughtworks.mindit.constant.Fields;
 import com.thoughtworks.mindit.PublishSubscribe.IObserver;
 import com.thoughtworks.mindit.Tracker;
 import com.thoughtworks.mindit.constant.Constants;
+import com.thoughtworks.mindit.constant.Fields;
 import com.thoughtworks.mindit.model.Node;
 import com.thoughtworks.mindit.model.Tree;
 import com.thoughtworks.mindit.view.IMindmapView;

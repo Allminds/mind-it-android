@@ -16,24 +16,27 @@ package com.thoughtworks.mindit.helper;
  * limitations under the License.
  */
 
-import java.net.URI;
-import android.content.SharedPreferences;
 import android.content.Context;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.Queue;
-import java.util.Iterator;
-import org.codehaus.jackson.map.ObjectMapper;
-import java.util.UUID;
-import java.util.Arrays;
-import java.io.IOException;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.JsonNode;
-import java.util.HashMap;
-import java.util.Map;
+import android.content.SharedPreferences;
+
 import com.firebase.tubesock.WebSocket;
 import com.firebase.tubesock.WebSocketEventHandler;
-import com.firebase.tubesock.WebSocketMessage;
 import com.firebase.tubesock.WebSocketException;
+import com.firebase.tubesock.WebSocketMessage;
+
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.map.ObjectMapper;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Queue;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import im.delight.android.ddp.CallbackProxy;
 import im.delight.android.ddp.Listener;

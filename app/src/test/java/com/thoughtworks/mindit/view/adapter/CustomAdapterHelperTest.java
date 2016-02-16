@@ -1,8 +1,7 @@
 package com.thoughtworks.mindit.view.adapter;
 
 import com.thoughtworks.mindit.constant.Constants;
-import com.thoughtworks.mindit.view.adapter.CustomAdapter;
-import com.thoughtworks.mindit.view.adapter.CustomAdapterHelper;
+import com.thoughtworks.mindit.view.MindmapActivity;
 import com.thoughtworks.mindit.view.model.UINode;
 
 import org.junit.Before;
@@ -14,9 +13,10 @@ import java.util.ArrayList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 public class CustomAdapterHelperTest {
-    UINode root, node;
+    UINode root;
     CustomAdapterHelper customAdapterHelper;
     CustomAdapter customAdapter;
 
@@ -25,9 +25,7 @@ public class CustomAdapterHelperTest {
         customAdapter = Mockito.mock(CustomAdapter.class);
         customAdapterHelper = new CustomAdapterHelper(customAdapter);
         root = new UINode("root", 0, null);
-
         customAdapterHelper.getNodeList().add(root);
-        customAdapterHelper.setNodeList(customAdapterHelper.getNodeList());
     }
 
     @Test
@@ -36,7 +34,7 @@ public class CustomAdapterHelperTest {
     }
 
     @Test
-    public void shouldExpandNodeAndAddAllChildrenToNodelist() {
+    public void shouldExpandNodeAndAddAllChildrenToNodeList() {
         UINode node = customAdapterHelper.addChild(0, root);
         ArrayList<UINode> nodeList = customAdapterHelper.expand(0, root);
         assertTrue(nodeList.contains(node));
@@ -44,7 +42,7 @@ public class CustomAdapterHelperTest {
     }
 
     @Test
-    public void shouldCollapseNodeAndRemoveAllChildrenToNodelist() {
+    public void shouldCollapseNodeAndRemoveAllChildrenToNodeList() {
         UINode node = customAdapterHelper.addChild(0, root);
         ArrayList<UINode> nodeList = customAdapterHelper.collapse(0, root);
         assertFalse(nodeList.contains(node));

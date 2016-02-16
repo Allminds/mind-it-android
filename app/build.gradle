@@ -16,6 +16,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'
@@ -38,4 +41,5 @@ dependencies {
     compile 'com.bluecatcode.mockito:mockito-1.10.19-extended:1.0.4'
     compile 'com.github.d-max:spots-dialog:0.4@aar'
     androidTestCompile 'junit:junit:4.12'
+    testCompile 'junit:junit:4.12'
 }

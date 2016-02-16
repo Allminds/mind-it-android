@@ -1,7 +1,5 @@
 package com.thoughtworks.mindit.model;
 
-import android.util.Log;
-
 import com.thoughtworks.mindit.PublishSubscribe.IObserver;
 import com.thoughtworks.mindit.PublishSubscribe.ISubject;
 import com.thoughtworks.mindit.constant.Constants;

@@ -18,7 +18,7 @@ import com.thoughtworks.mindit.view.model.UINode;
 import java.util.ArrayList;
 
 class CustomAdapterHelper {
-    private final InputMethodManager lManager;
+    private InputMethodManager lManager;
     private final CustomAdapter customAdapter;
     private ArrayList<UINode> nodeList;
     private int mode = Constants.EDIT_MODE;
@@ -26,7 +26,13 @@ class CustomAdapterHelper {
     public CustomAdapterHelper(CustomAdapter customAdapter) {
         this.customAdapter = customAdapter;
         this.nodeList = customAdapter.getNodeList();
-        lManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        initializeInputMethodManager(customAdapter);
+    }
+
+    private void initializeInputMethodManager(CustomAdapter customAdapter) {
+        if(customAdapter.getContext() != null) {
+            lManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        }
     }
 
     private void updateText(NodeHolder nodeHolder, UINode currentNode) {
@@ -242,6 +248,10 @@ class CustomAdapterHelper {
             }
         }
         currentNode.setStatus(Constants.STATUS.COLLAPSE.toString());
+        return nodeList;
+    }
+
+    public ArrayList<UINode> getNodeList() {
         return nodeList;
     }
 }

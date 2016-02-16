@@ -2,12 +2,13 @@ package com.thoughtworks.mindit.model;
 
 import com.thoughtworks.mindit.constant.Constants;
 import com.thoughtworks.mindit.exception.NodeDoesNotExistException;
-import com.thoughtworks.mindit.model.Node;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 public class NodeTest {

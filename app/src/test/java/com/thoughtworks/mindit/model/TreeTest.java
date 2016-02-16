@@ -1,8 +1,6 @@
 package com.thoughtworks.mindit.model;
 
 import com.thoughtworks.mindit.exception.NodeAlreadyDeletedException;
-import com.thoughtworks.mindit.model.Node;
-import com.thoughtworks.mindit.model.Tree;
 
 import org.junit.Before;
 import org.junit.Test;

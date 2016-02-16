@@ -7,26 +7,21 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.widget.Toast;
 
-import com.thoughtworks.mindit.constant.Constants;
 import com.thoughtworks.mindit.presenter.Presenter;
-import com.thoughtworks.mindit.view.IMindmapView;
 import com.thoughtworks.mindit.view.MindmapActivity;
 import com.thoughtworks.mindit.view.adapter.CustomAdapter;
 import com.thoughtworks.mindit.view.model.UINode;
 
 import java.util.ArrayList;
 
-public class NetworkReciever {
-
-
-
-    private BroadcastReceiver broadcastReceiver;
+public class NetworkReceiver {
+private BroadcastReceiver broadcastReceiver;
     private Tracker tracker;
-    private boolean networkflag = false;
+    private boolean networkFlag = false;
     private Presenter presenter;
     private CustomAdapter adapter;
 
-    public NetworkReciever(Presenter presenter, CustomAdapter adapter) {
+    public NetworkReceiver(Presenter presenter, CustomAdapter adapter) {
         this.presenter = presenter;
         this.adapter=adapter;
         this.tracker = Tracker.getInstance();
@@ -43,7 +38,7 @@ public class NetworkReciever {
                         doWhenDisconnected(context);
 
                     }
-                    if (ni != null && ni.getState() == NetworkInfo.State.CONNECTED && networkflag == true) {
+                    if (ni != null && ni.getState() == NetworkInfo.State.CONNECTED && networkFlag == true) {
                         doWhenConnected(context, rootId);
                     }
                 }
@@ -87,26 +82,14 @@ public class NetworkReciever {
             }
         });
         inConnected.start();
-        networkflag=false;
+        networkFlag =false;
         Toast.makeText(context, "please refresh...", Toast.LENGTH_SHORT).show();
 
     }
 
-    private void updateList(UINode parent, ArrayList<UINode> nodes) {
-        System.out.println("In updateList" + parent.getName());
-        for (UINode uiNode :
-                parent.getChildSubTree()) {
-            nodes.add(uiNode);
-            if (uiNode.getStatus().equals(Constants.STATUS.EXPAND.toString())) {
-                updateList(uiNode, nodes);
-            }
-//            updateList(uiNode, nodes);
-        }
-    }
-
     private void doWhenDisconnected(Context context) {
         System.out.println("*********on disconnected");
-        networkflag = true;
+        networkFlag = true;
         Toast.makeText(context, "No Network connection", Toast.LENGTH_SHORT).show();
     }
 }

@@ -3,7 +3,6 @@ package com.thoughtworks.mindit.presenter;
 import com.thoughtworks.mindit.Tracker;
 import com.thoughtworks.mindit.model.Node;
 import com.thoughtworks.mindit.model.Tree;
-import com.thoughtworks.mindit.presenter.Presenter;
 import com.thoughtworks.mindit.view.model.UINode;
 
 import org.junit.Before;
@@ -32,7 +31,7 @@ public class PresenterTest {
         HashMap<String, Node> nodes = new HashMap<String, Node>();
         nodes.put(root.getId(), root);
         tree = Tree.getInstance(nodes);
-        presenter = new Presenter(tracker, tree);
+        presenter = new Presenter(tracker);
     }
 
 

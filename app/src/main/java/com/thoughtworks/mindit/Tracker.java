@@ -1,7 +1,6 @@
 package com.thoughtworks.mindit;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -388,6 +387,7 @@ public class Tracker implements MeteorCallback, ITracker {
 
         @Override
         protected void onPostExecute(String result) {
+
             progressDialog.dismiss();
             if (result.equals(NetworkMessage.CONNECTION_ERROR)) {
                 resetTree();
