@@ -91,7 +91,18 @@ public class UINode {
             this.setStatus(Constants.STATUS.EXPAND.toString());
         return result;
     }
-
+    public ArrayList<String> expandedChildrenCount(ArrayList<String> descendent)
+    {
+        for (UINode child :
+                this.getChildSubTree()) {
+            descendent.add(descendent.size(),child.getId());
+            if(child.getStatus().equals(Constants.STATUS.EXPAND.toString()))
+            {
+               descendent = child.expandedChildrenCount(descendent);
+            }
+        }
+        return descendent;
+    }
     public boolean addChild(UINode uiNode) {
         ArrayList<UINode> parentChildSubTree = this.getChildSubTree();
         parentChildSubTree.add(this.getChildSubTree().size(), uiNode);

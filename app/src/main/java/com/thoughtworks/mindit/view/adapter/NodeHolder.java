@@ -12,4 +12,5 @@ class NodeHolder {
     TextView textViewForName;
     EditText editText;
     LinearLayout separator;
+    LinearLayout verticalLine;
 }

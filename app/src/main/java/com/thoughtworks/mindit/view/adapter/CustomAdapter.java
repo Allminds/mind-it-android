@@ -1,5 +1,6 @@
 package com.thoughtworks.mindit.view.adapter;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
@@ -11,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
+import android.widget.RelativeLayout;
 
 import com.thoughtworks.mindit.R;
 import com.thoughtworks.mindit.constant.Colors;
@@ -19,6 +22,8 @@ import com.thoughtworks.mindit.presenter.Presenter;
 import com.thoughtworks.mindit.view.model.UINode;
 
 import java.util.ArrayList;
+
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 public class CustomAdapter extends BaseAdapter {
     private final CustomAdapterHelper customAdapterHelper;
@@ -29,6 +34,8 @@ public class CustomAdapter extends BaseAdapter {
     private int newNodePosition = -1;
     private Presenter presenter;
     private int selectedNodePosition = 0;
+    private UINode selectedNode=null;
+    private ArrayList<String> descendents=new ArrayList<>();
 
     public CustomAdapter(Context context, Presenter presenter, ArrayList<UINode> uiNodes) {
         this.context = context;
@@ -56,6 +63,8 @@ public class CustomAdapter extends BaseAdapter {
     }
 
     public void setSelectedNodePosition(int selectedNodePosition) {
+        if(this.selectedNodePosition!=selectedNodePosition)
+            descendents.clear();
         this.selectedNodePosition = selectedNodePosition;
     }
 
@@ -114,12 +123,15 @@ public class CustomAdapter extends BaseAdapter {
         final UINode currentNode = nodeList.get(position);
         final View rowView = layoutInflater.inflate(R.layout.layout_node, null);
         nodeHolder.separator = (LinearLayout) rowView.findViewById(R.id.separator);
-        nodeHolder.separator.setVisibility(View.INVISIBLE);
+        nodeHolder.separator.setVisibility(View.GONE);
+
+        nodeHolder.verticalLine=(LinearLayout)rowView.findViewById(R.id.verticle_line);
+        nodeHolder.verticalLine.setVisibility(View.INVISIBLE);
 
         customAdapterHelper.initializeTextView(nodeHolder, rowView, currentNode);
-        customAdapterHelper.addPadding(position, rowView);
         customAdapterHelper.setImageForExpandCollapse(nodeHolder, rowView, currentNode);
         customAdapterHelper.setEventToExpandCollapse(position, nodeHolder, currentNode);
+
         rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND));
         if (position == newNodePosition) {
             customAdapterHelper.addNode(nodeHolder, currentNode);
@@ -139,7 +151,11 @@ public class CustomAdapter extends BaseAdapter {
             resetSeparatorPosition();
         }
         if (selectedNodePosition == position) {
+            selectedNode=currentNode;
+            if(currentNode.getStatus().equals(Constants.STATUS.EXPAND.toString())&&position!=0)
+                 descendents=currentNode.expandedChildrenCount(descendents);
             rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND_ON_SELECTION));
+            nodeHolder.verticalLine.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND_ON_SELECTION));
             nodeHolder.textViewForName.setTextColor(Color.parseColor(Colors.SELECTED_NODE_TEXT_COLOR));
             nodeHolder.editText.setTextColor(Color.parseColor(Colors.SELECTED_NODE_TEXT_COLOR));
             if (currentNode.getChildSubTree().size() == 0) {
@@ -150,6 +166,12 @@ public class CustomAdapter extends BaseAdapter {
                 nodeHolder.expandCollapseButton.setImageResource(R.drawable.selected_collapse);
             }
 
+        }
+        customAdapterHelper.addPadding(position, rowView,nodeHolder,selectedNode);
+
+        if(descendents.contains(currentNode.getId())){
+            nodeHolder.verticalLine.setBackgroundColor(Color.parseColor("#FCAA35"));
+                nodeHolder.verticalLine.setVisibility(View.VISIBLE);
         }
 
         return rowView;
