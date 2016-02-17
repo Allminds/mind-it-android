@@ -1,12 +1,14 @@
 package com.thoughtworks.mindit.view.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
@@ -14,6 +16,7 @@ import com.thoughtworks.mindit.Config;
 import com.thoughtworks.mindit.R;
 import com.thoughtworks.mindit.constant.Constants;
 import com.thoughtworks.mindit.constant.UpdateOption;
+import com.thoughtworks.mindit.view.MindmapActivity;
 import com.thoughtworks.mindit.view.model.UINode;
 
 import java.util.ArrayList;
@@ -34,6 +37,7 @@ class CustomAdapterHelper {
             lManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         }
     }
+
 
     private void updateText(NodeHolder nodeHolder, UINode currentNode) {
         nodeHolder.textViewForName.setText(nodeHolder.editText.getText());
@@ -71,7 +75,6 @@ class CustomAdapterHelper {
             if (nodeList.get(lastFocusedNode).getName().equals("") && lastFocusedNode == customAdapter.getWorkingNodePosition()) {
                 removeFromParentChildSubTree(lastFocusedNode);
                 nodeList.remove(lastFocusedNode);
-                customAdapter.resetWorkingNodePosition();
             }
             if (lManager.isActive())
                 lManager.hideSoftInputFromWindow(nodeHolder.editText.getWindowToken(), 0);
@@ -79,6 +82,7 @@ class CustomAdapterHelper {
             if (Config.FEATURE_EDIT) {
                 mode = Constants.EDIT_MODE;
             }
+            customAdapter.resetWorkingNodePosition();
             customAdapter.notifyDataSetChanged();
         } else {
             if (Config.FEATURE_EDIT) {
@@ -134,12 +138,12 @@ class CustomAdapterHelper {
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                    if(operation == UpdateOption.ADD) {
+                Log.v("KeyCode:", "" + keyCode);
+                if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.ACTION_DOWN || keyCode == KeyEvent.KEYCODE_BACK) {
+                    if (operation == UpdateOption.ADD) {
                         updateTextOfNewNode(nodeHolder, currentNode, lManager);
-                    }
-                    else if (operation == UpdateOption.UPDATE){
-                        updateTextOfCurrentNode(nodeHolder,currentNode,lManager);
+                    } else if (operation == UpdateOption.UPDATE) {
+                        updateTextOfCurrentNode(nodeHolder, currentNode, lManager);
                     }
                     return true;
                 }
@@ -152,7 +156,8 @@ class CustomAdapterHelper {
         nodeHolder.editText.requestFocus();
         nodeHolder.editText.post(new Runnable() {
             public void run() {
-                lManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_IMPLICIT);
+                lManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_FORCED);
+                nodeHolder.editText.requestFocus();
             }
         });
     }
@@ -162,6 +167,12 @@ class CustomAdapterHelper {
         if (inputMethodManager != null) {
             inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
         }
+
+
+        /*listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+        listView.setStackFromBottom(true);*/
+
+
         customAdapter.resetWorkingNodePosition();
         customAdapter.getPresenter().addNode(currentNode);
         nodeHolder.switcher.showPrevious();

@@ -124,6 +124,7 @@ public class CustomAdapter extends BaseAdapter {
         customAdapterHelper.setEventToExpandCollapse(position, nodeHolder, currentNode);
         rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND));
         if (position == workingNodePosition) {
+
                 customAdapterHelper.doOperation(nodeHolder, currentNode,operation);
         }
         if (position == 0) {

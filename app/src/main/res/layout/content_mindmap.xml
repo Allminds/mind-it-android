@@ -12,7 +12,8 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.thoughtworks.mindit.view.MindmapActivity"
     tools:showIn="@layout/activity_mindmap"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true">.
+
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
