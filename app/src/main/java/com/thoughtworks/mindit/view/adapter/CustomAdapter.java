@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import com.thoughtworks.mindit.R;
 import com.thoughtworks.mindit.constant.Colors;
 import com.thoughtworks.mindit.constant.Constants;
+import com.thoughtworks.mindit.constant.UpdateOption;
 import com.thoughtworks.mindit.presenter.Presenter;
 import com.thoughtworks.mindit.view.model.UINode;
 
@@ -31,11 +32,12 @@ public class CustomAdapter extends BaseAdapter {
     private ArrayList<UINode> nodeList;
     private LayoutInflater layoutInflater;
     private int separatorPosition = -1;
-    private int newNodePosition = -1;
+    private int workingNodePosition = -1;
     private Presenter presenter;
     private int selectedNodePosition = 0;
     private UINode selectedNode=null;
     private ArrayList<String> descendents=new ArrayList<>();
+    private UpdateOption operation = UpdateOption.ADD;
 
     public CustomAdapter(Context context, Presenter presenter, ArrayList<UINode> uiNodes) {
         this.context = context;
@@ -50,12 +52,12 @@ public class CustomAdapter extends BaseAdapter {
         display.getSize(size);
     }
 
-    public int getNewNodePosition() {
-        return newNodePosition;
+    public int getWorkingNodePosition() {
+        return workingNodePosition;
     }
 
-    public void setNewNodePosition(int newNodePosition) {
-        this.newNodePosition = newNodePosition;
+    public void setWorkingNodePosition(int workingNodePosition) {
+        this.workingNodePosition = workingNodePosition;
     }
 
     public int getSelectedNodePosition() {
@@ -93,8 +95,8 @@ public class CustomAdapter extends BaseAdapter {
 
     }
 
-    public void resetNewNodePosition() {
-        this.newNodePosition = -1;
+    public void resetWorkingNodePosition() {
+        this.workingNodePosition = -1;
     }
 
     @Override
@@ -133,8 +135,9 @@ public class CustomAdapter extends BaseAdapter {
         customAdapterHelper.setEventToExpandCollapse(position, nodeHolder, currentNode);
 
         rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND));
-        if (position == newNodePosition) {
-            customAdapterHelper.addNode(nodeHolder, currentNode);
+        if (position == workingNodePosition) {
+
+                customAdapterHelper.doOperation(nodeHolder, currentNode,operation);
         }
         if (position == 0) {
             nodeHolder.expandCollapseButton.setVisibility(View.INVISIBLE);
@@ -206,6 +209,10 @@ public class CustomAdapter extends BaseAdapter {
 
     private void resetSeparatorPosition() {
         separatorPosition = -1;
+    }
+
+    public void setOperation(UpdateOption operation) {
+        this.operation = operation;
     }
 }
 

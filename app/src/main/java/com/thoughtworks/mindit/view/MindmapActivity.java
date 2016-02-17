@@ -1,5 +1,7 @@
 package com.thoughtworks.mindit.view;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
@@ -31,7 +33,7 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
     private ArrayList<UINode> nodeList;
     private Toolbar toolbar;
     private NetworkReceiver networkReceiver;
-
+    private ListView listView;
 
 
     @Override
@@ -44,7 +46,11 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
             getSupportActionBar().setIcon(R.drawable.mindit_logo);
             getSupportActionBar().setTitle(Constants.EMPTY_STRING);
         }
-        ListView listView = (ListView) findViewById(R.id.listView);
+        listView = (ListView) findViewById(R.id.listView);
+
+//        listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+//        listView.setStackFromBottom(true);
+
         registerForContextMenu(listView);
         presenter = new Presenter(this);
         adapter = new CustomAdapter(this, presenter, presenter.buildNodeListFromTree());
@@ -54,6 +60,27 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         networkReceiver =new NetworkReceiver(presenter,adapter);
 
     }
+    @Override
+    public void onBackPressed() {
+        final AlertDialog.Builder alertExit = new AlertDialog.Builder(this);
+        alertExit.setTitle("Alert");
+        alertExit.setMessage("do you want to exit?");
+        alertExit.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                Toast.makeText(getApplicationContext(), "Mindmap saved successfully", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
+
+        alertExit.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+            }
+        });
+
+        alertExit.show();
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -93,6 +120,7 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         switch (item.getItemId()) {
             case R.id.add:
                 newSelectionPosition = addNode(positionOfSelectedNode);
+
                 break;
             case R.id.delete:
                 newSelectionPosition = deleteSelectedNode(positionOfSelectedNode);
@@ -103,6 +131,8 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         adapter.setSelectedNodePosition(newSelectionPosition);
         toolbar.setVisibility(View.VISIBLE);
         adapter.notifyDataSetChanged();
+        listView.setSelection(newSelectionPosition);
+        listView.requestFocus();
         return true;
     }
 
@@ -115,6 +145,7 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
 
     private int addNode(int positionOfSelectedNode) {
         int newSelectionPosition;
+        listView.setSelection(positionOfSelectedNode);
         UINode parent = nodeList.get(positionOfSelectedNode);
         adapter.collapse(nodeList.indexOf(parent), parent);
         adapter.expand(nodeList.indexOf(parent), parent);

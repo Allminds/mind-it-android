@@ -4,6 +4,7 @@ import com.thoughtworks.mindit.PublishSubscribe.IObserver;
 import com.thoughtworks.mindit.PublishSubscribe.ISubject;
 import com.thoughtworks.mindit.constant.Constants;
 import com.thoughtworks.mindit.constant.Fields;
+import com.thoughtworks.mindit.constant.UpdateOption;
 import com.thoughtworks.mindit.exception.NodeAlreadyDeletedException;
 
 import java.io.Serializable;
@@ -62,12 +63,11 @@ public class Tree implements Serializable, ISubject {
     }
 
     public boolean isAlreadyExists(Node newNode) {
-        boolean flag =false;
+        boolean flag = false;
         Node node = this.getNode(newNode.getId());
-        if(node != null)
-        {
+        if (node != null) {
             flag = true;
-            if(!node.getName().equals(newNode.getName())) {
+            if (!node.getName().equals(newNode.getName())) {
                 updateNode(node, Fields.NAME, newNode.getName());
             }
         }
@@ -106,7 +106,7 @@ public class Tree implements Serializable, ISubject {
 
     public Tree addNode(Node node) {
         lastUpdatedNode = node;
-        updateOption = Constants.TREE_UPDATE_OPTIONS.ADD.getValue();
+        updateOption = UpdateOption.ADD.getValue();
 
         Node parent = this.getNode(node.getParentId());
         node.setDepth(parent.getDepth() + 1);
@@ -121,7 +121,7 @@ public class Tree implements Serializable, ISubject {
 
     public Tree addNodeFromWeb(Node node) {
         lastUpdatedNode = node;
-        updateOption = Constants.TREE_UPDATE_OPTIONS.ADD.getValue();
+        updateOption = UpdateOption.ADD.getValue();
         //if(!nodes.containsKey(node.getId()))
         nodes.put(node.getId(), node);
         Node parent = this.getNode(node.getParentId());
@@ -132,7 +132,7 @@ public class Tree implements Serializable, ISubject {
     }
 
     public Tree updateNode(Node node, String attribute, Object data) {
-        updateOption = Constants.TREE_UPDATE_OPTIONS.UPDATE.getValue();
+        updateOption = UpdateOption.UPDATE.getValue();
         updateParameter = attribute;
         switch (attribute) {
             case Fields.NAME:
@@ -163,7 +163,7 @@ public class Tree implements Serializable, ISubject {
     }
 
     public Tree deleteNode(Node node) throws Exception {
-        updateOption = Constants.TREE_UPDATE_OPTIONS.DELETE.getValue();
+        updateOption = UpdateOption.DELETE.getValue();
 
         String nodeId = node.getId();
         if (isNodeAlreadyDeleted(nodeId)) {

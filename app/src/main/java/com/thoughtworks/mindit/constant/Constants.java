@@ -43,19 +43,5 @@ public class Constants {
         }
     }
 
-    public enum TREE_UPDATE_OPTIONS {
-        ADD(1),
-        UPDATE(2),
-        DELETE(3);
 
-        private final int value;
-
-        TREE_UPDATE_OPTIONS(int value) {
-            this.value = value;
-        }
-
-        public int getValue() {
-            return this.value;
-        }
-    }
 }
