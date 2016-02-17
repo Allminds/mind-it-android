@@ -37,7 +37,7 @@ public class CustomAdapter extends BaseAdapter {
     private int selectedNodePosition = 0;
     private UINode selectedNode=null;
     private ArrayList<String> descendents=new ArrayList<>();
-    private UpdateOption operation = UpdateOption.ADD;
+    private String operation = UpdateOption.ADD;
 
     public CustomAdapter(Context context, Presenter presenter, ArrayList<UINode> uiNodes) {
         this.context = context;
@@ -128,7 +128,6 @@ public class CustomAdapter extends BaseAdapter {
         nodeHolder.separator.setVisibility(View.GONE);
 
         nodeHolder.verticalLine=(LinearLayout)rowView.findViewById(R.id.verticle_line);
-        nodeHolder.verticalLine.setVisibility(View.INVISIBLE);
 
         customAdapterHelper.initializeTextView(nodeHolder, rowView, currentNode);
         customAdapterHelper.setImageForExpandCollapse(nodeHolder, rowView, currentNode);
@@ -181,12 +180,21 @@ public class CustomAdapter extends BaseAdapter {
     }
 
     public void updateChildSubTree(UINode existingParent) {
+        UINode uiNode = nodeList.get(this.getSelectedNodePosition());
+
         if (nodeList.indexOf(existingParent) != -1)
             existingParent.setStatus(Constants.STATUS.EXPAND.toString());
         UINode root = nodeList.get(0);
         nodeList.clear();
         nodeList.add(root);
         updateNodeList(root);
+        if(nodeList.indexOf(uiNode)!=-1){
+
+            this.setSelectedNodePosition(nodeList.indexOf(uiNode));
+            this.setWorkingNodePosition(nodeList.indexOf(uiNode));
+        }
+        else
+            this.setSelectedNodePosition(this.getSelectedNodePosition()-1);
     }
 
     public void updateNodeList(UINode root) {
@@ -211,7 +219,7 @@ public class CustomAdapter extends BaseAdapter {
         separatorPosition = -1;
     }
 
-    public void setOperation(UpdateOption operation) {
+    public void setOperation(String operation) {
         this.operation = operation;
     }
 }

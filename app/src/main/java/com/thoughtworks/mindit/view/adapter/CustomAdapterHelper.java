@@ -130,7 +130,7 @@ class CustomAdapterHelper {
         });
     }
 
-    public void doOperation(final NodeHolder nodeHolder, final UINode currentNode, final UpdateOption operation) {
+    public void doOperation(final NodeHolder nodeHolder, final UINode currentNode, final String operation) {
         nodeHolder.switcher.showNext();
         nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
         showKeypad(nodeHolder, lManager);
@@ -139,9 +139,9 @@ class CustomAdapterHelper {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 Log.v("KeyCode:", "" + keyCode);
                 if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.ACTION_DOWN || keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (operation == UpdateOption.ADD) {
+                    if (operation.equals(UpdateOption.ADD)) {
                         updateTextOfNewNode(nodeHolder, currentNode, lManager);
-                    } else if (operation == UpdateOption.UPDATE) {
+                    } else if (operation.equals(UpdateOption.UPDATE)) {
                         updateTextOfCurrentNode(nodeHolder, currentNode, lManager);
                     }
                     return true;
@@ -219,7 +219,9 @@ class CustomAdapterHelper {
 
         LinearLayout.LayoutParams layoutParams= (LinearLayout.LayoutParams) nodeHolder.verticalLine.getLayoutParams();
         layoutParams.setMargins(selectedNode.getDepth() + 40, 0, 0, 0);
-        nodeHolder.verticalLine.setBackgroundColor(Color.parseColor("#FCAA35"));
+        nodeHolder.verticalLine.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        nodeHolder.verticalLine.setVisibility(View.INVISIBLE);
+
         LinearLayout linearLayout = (LinearLayout) rowView.findViewById(R.id.layout_text);
         LinearLayout.LayoutParams layoutParams1= (LinearLayout.LayoutParams) linearLayout.getLayoutParams();
         layoutParams1.setMarginStart(nodeList.get(position).getDepth()-selectedNode.getDepth()-35);
