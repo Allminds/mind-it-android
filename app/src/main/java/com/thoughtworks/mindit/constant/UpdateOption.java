@@ -1,17 +1,25 @@
 package com.thoughtworks.mindit.constant;
 
-public enum UpdateOption {
-    ADD(1),
-    UPDATE(2),
-    DELETE(3);
+public class UpdateOption {
 
-    private final int value;
+    public final static String ADD = "add";
+    public final static String UPDATE = "update";
+    public final static String DELETE = "delete";
 
-    UpdateOption(int value) {
-        this.value = value;
-    }
-
-    public int getValue() {
-        return this.value;
-    }
+//    public enum UPDATE_OPITON {
+//        ADD("ADD"),
+//        UPDATE("UPDATE"),
+//        DELETE("DELETE");
+//
+//        private final String value;
+//
+//        UPDATE_OPITON(String value) {
+//            this.value = value;
+//        }
+//
+//        public String getValue() {
+//            return this.value;
+//        }
+//    }
 }
+

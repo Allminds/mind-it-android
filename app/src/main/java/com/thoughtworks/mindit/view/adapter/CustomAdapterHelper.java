@@ -1,6 +1,7 @@
 package com.thoughtworks.mindit.view.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -119,7 +120,7 @@ class CustomAdapterHelper {
         });
     }
 
-    public void doOperation(final NodeHolder nodeHolder, final UINode currentNode, final UpdateOption operation) {
+    public void doOperation(final NodeHolder nodeHolder, final UINode currentNode, final String operation) {
         nodeHolder.switcher.showNext();
         nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
         if (operation == UpdateOption.ADD )
@@ -195,11 +196,17 @@ class CustomAdapterHelper {
         return position + childCount;
     }
 
-    void addPadding(int position, View rowView) {
-        LinearLayout linearLayout = (LinearLayout) rowView.findViewById(R.id.layout_text);
-        linearLayout.setPadding(nodeList.get(position).getDepth(), 0, 0, 0);
-    }
+    void addPadding(int position, View rowView, NodeHolder nodeHolder,UINode selectedNode) {
 
+        LinearLayout.LayoutParams layoutParams= (LinearLayout.LayoutParams) nodeHolder.verticalLine.getLayoutParams();
+        layoutParams.setMargins(selectedNode.getDepth() + 40, 0, 0, 0);
+        nodeHolder.verticalLine.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        nodeHolder.verticalLine.setVisibility(View.INVISIBLE);
+
+        LinearLayout linearLayout = (LinearLayout) rowView.findViewById(R.id.layout_text);
+        LinearLayout.LayoutParams layoutParams1= (LinearLayout.LayoutParams) linearLayout.getLayoutParams();
+        layoutParams1.setMargins(nodeList.get(position).getDepth()-selectedNode.getDepth()-35,0,0,0);
+    }
     void setImageForExpandCollapse(NodeHolder nodeHolder, View rowView, UINode currentNode) {
         nodeHolder.expandCollapseButton = (ImageView) rowView.findViewById(R.id.expandCollapse);
         if (currentNode.getChildSubTree().size() == 0) {
@@ -243,4 +250,6 @@ class CustomAdapterHelper {
     public ArrayList<UINode> getNodeList() {
         return nodeList;
     }
+
+
 }

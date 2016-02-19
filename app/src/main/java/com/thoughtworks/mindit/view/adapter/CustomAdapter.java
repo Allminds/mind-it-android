@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-
 import com.thoughtworks.mindit.R;
 import com.thoughtworks.mindit.constant.Colors;
 import com.thoughtworks.mindit.constant.Constants;
@@ -23,6 +22,8 @@ import com.thoughtworks.mindit.view.model.UINode;
 
 import java.util.ArrayList;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+
 public class CustomAdapter extends BaseAdapter {
     private final CustomAdapterHelper customAdapterHelper;
     private Context context;
@@ -32,8 +33,11 @@ public class CustomAdapter extends BaseAdapter {
     private int workingNodePosition = -1;
     private Presenter presenter;
     private int selectedNodePosition = 0;
-    private UpdateOption operation = UpdateOption.ADD;
     ListView listView;
+    private UINode selectedNode=null;
+    private ArrayList<String> descendents=new ArrayList<>();
+    private String operation = UpdateOption.ADD;
+
     public CustomAdapter(Context context, Presenter presenter, ArrayList<UINode> uiNodes) {
         this.context = context;
         this.presenter = presenter;
@@ -60,6 +64,8 @@ public class CustomAdapter extends BaseAdapter {
     }
 
     public void setSelectedNodePosition(int selectedNodePosition) {
+        if(this.selectedNodePosition!=selectedNodePosition)
+            descendents.clear();
         this.selectedNodePosition = selectedNodePosition;
     }
 
@@ -118,12 +124,14 @@ public class CustomAdapter extends BaseAdapter {
         final UINode currentNode = nodeList.get(position);
         final View rowView = layoutInflater.inflate(R.layout.layout_node, null);
         nodeHolder.separator = (LinearLayout) rowView.findViewById(R.id.separator);
-        nodeHolder.separator.setVisibility(View.INVISIBLE);
+        nodeHolder.separator.setVisibility(View.GONE);
+
+        nodeHolder.verticalLine=(LinearLayout)rowView.findViewById(R.id.verticle_line);
 
         customAdapterHelper.initializeTextView(nodeHolder, rowView, currentNode);
-        customAdapterHelper.addPadding(position, rowView);
         customAdapterHelper.setImageForExpandCollapse(nodeHolder, rowView, currentNode);
         customAdapterHelper.setEventToExpandCollapse(position, nodeHolder, currentNode);
+
         rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND));
         if (position == workingNodePosition) {
                 customAdapterHelper.doOperation(nodeHolder, currentNode, operation);
@@ -144,7 +152,11 @@ public class CustomAdapter extends BaseAdapter {
             resetSeparatorPosition();
         }
         if (selectedNodePosition == position) {
+            selectedNode=currentNode;
+            if(currentNode.getStatus().equals(Constants.STATUS.EXPAND.toString())&&position!=0)
+                 descendents=currentNode.expandedChildrenCount(descendents);
             rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND_ON_SELECTION));
+            nodeHolder.verticalLine.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND_ON_SELECTION));
             nodeHolder.textViewForName.setTextColor(Color.parseColor(Colors.SELECTED_NODE_TEXT_COLOR));
             nodeHolder.editText.setTextColor(Color.parseColor(Colors.SELECTED_NODE_TEXT_COLOR));
             if (currentNode.getChildSubTree().size() == 0) {
@@ -155,6 +167,11 @@ public class CustomAdapter extends BaseAdapter {
                 nodeHolder.expandCollapseButton.setImageResource(R.drawable.selected_collapse);
             }
 
+        }
+        customAdapterHelper.addPadding(position, rowView,nodeHolder,selectedNode);
+        if(descendents.contains(currentNode.getId())){
+            nodeHolder.verticalLine.setBackgroundColor(Color.parseColor("#FCAA35"));
+                nodeHolder.verticalLine.setVisibility(View.VISIBLE);
         }
         return rowView;
     }
@@ -200,7 +217,7 @@ public class CustomAdapter extends BaseAdapter {
         separatorPosition = -1;
     }
 
-    public void setOperation(UpdateOption operation) {
+    public void setOperation(String operation) {
         this.operation = operation;
     }
 }

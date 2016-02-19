@@ -7,27 +7,33 @@
     android:id="@+id/layout_node"
     android:layout_marginLeft="15dp">
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         >
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/collapse"
-            android:tag="expand"
-            android:id="@+id/expandCollapse"
-            android:contentDescription="@string/icon"
-            android:paddingLeft="8dp"
-            android:padding="5dp"/>
+        <LinearLayout
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:orientation="horizontal"
+            android:id="@+id/verticle_line"
+            ></LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_gravity="center_vertical"
             android:id="@+id/layout_text">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/collapse"
+                android:tag="expand"
+                android:id="@+id/expandCollapse"
+                android:contentDescription="@string/icon"
+                android:padding="5dp"/>
+
             <ViewSwitcher
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

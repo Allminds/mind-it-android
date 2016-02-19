@@ -13,6 +13,9 @@ import com.thoughtworks.mindit.view.model.UINode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import com.thoughtworks.mindit.constant.UpdateOption;
+
+import static com.thoughtworks.mindit.constant.UpdateOption.*;
 
 
 public class Presenter implements IObserver {
@@ -139,9 +142,9 @@ public class Presenter implements IObserver {
     }
 
     @Override
-    public void update(int updateOption, String updateParameter) {
+    public void update(String updateOption, String updateParameter) {
         switch (updateOption) {
-            case 1:
+            case UpdateOption.ADD:
                 Log.v("In Update:" , ""+tracker.getTree().getLastUpdatedNode());
                 if (uiNode == null) {
                     Node newNode = tracker.getTree().getLastUpdatedNode();
@@ -158,7 +161,7 @@ public class Presenter implements IObserver {
                 }
                 this.uiNode = null;
                 break;
-            case 2:
+            case UpdateOption.UPDATE:
                 UINode lastUpdatedNode = nodeTree.get(tracker.getTree().getLastUpdatedNode().getId());
                 switch (updateParameter) {
                     case Fields.NAME:
@@ -184,7 +187,7 @@ public class Presenter implements IObserver {
                         break;
                 }
                 break;
-            case 3:
+            case UpdateOption.DELETE:
                 break;
 
         }

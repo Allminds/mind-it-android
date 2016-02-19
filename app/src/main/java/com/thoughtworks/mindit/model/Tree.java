@@ -17,7 +17,7 @@ public class Tree implements Serializable, ISubject {
     private HashMap<String, Node> nodes;
     private Node root;
     private List<IObserver> observers;
-    private int updateOption;
+    private String updateOption;
     private Node lastUpdatedNode;
     private String updateParameter;
 
@@ -106,7 +106,7 @@ public class Tree implements Serializable, ISubject {
 
     public Tree addNode(Node node) {
         lastUpdatedNode = node;
-        updateOption = UpdateOption.ADD.getValue();
+        updateOption = UpdateOption.ADD;
 
         Node parent = this.getNode(node.getParentId());
         node.setDepth(parent.getDepth() + 1);
@@ -121,7 +121,7 @@ public class Tree implements Serializable, ISubject {
 
     public Tree addNodeFromWeb(Node node) {
         lastUpdatedNode = node;
-        updateOption = UpdateOption.ADD.getValue();
+        updateOption = UpdateOption.ADD;
         //if(!nodes.containsKey(node.getId()))
         nodes.put(node.getId(), node);
         Node parent = this.getNode(node.getParentId());
@@ -132,7 +132,7 @@ public class Tree implements Serializable, ISubject {
     }
 
     public Tree updateNode(Node node, String attribute, Object data) {
-        updateOption = UpdateOption.UPDATE.getValue();
+        updateOption = UpdateOption.UPDATE;
         updateParameter = attribute;
         switch (attribute) {
             case Fields.NAME:
@@ -163,7 +163,7 @@ public class Tree implements Serializable, ISubject {
     }
 
     public Tree deleteNode(Node node) throws Exception {
-        updateOption = UpdateOption.DELETE.getValue();
+        updateOption = UpdateOption.DELETE;
 
         String nodeId = node.getId();
         if (isNodeAlreadyDeleted(nodeId)) {
