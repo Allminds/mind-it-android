@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,6 +34,11 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
     private ArrayList<UINode> nodeList;
     private Toolbar toolbar;
     private NetworkReceiver networkReceiver;
+
+    public ListView getListView() {
+        return listView;
+    }
+
     private ListView listView;
 
 
@@ -47,10 +53,6 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
             getSupportActionBar().setTitle(Constants.EMPTY_STRING);
         }
         listView = (ListView) findViewById(R.id.listView);
-
-//        listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-//        listView.setStackFromBottom(true);
-
         registerForContextMenu(listView);
         presenter = new Presenter(this);
         adapter = new CustomAdapter(this, presenter, presenter.buildNodeListFromTree());
@@ -131,7 +133,7 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         adapter.setSelectedNodePosition(newSelectionPosition);
         toolbar.setVisibility(View.VISIBLE);
         adapter.notifyDataSetChanged();
-        listView.setSelection(newSelectionPosition);
+        listView.setSelection(adapter.getSelectedNodePosition());
         listView.requestFocus();
         return true;
     }
@@ -143,13 +145,11 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         return newSelectionPosition;
     }
 
-    private int addNode(int positionOfSelectedNode) {
+    private int addNode(int positionOfParent) {
         int newSelectionPosition;
-        listView.setSelection(positionOfSelectedNode);
-        UINode parent = nodeList.get(positionOfSelectedNode);
-        adapter.collapse(nodeList.indexOf(parent), parent);
-        adapter.expand(nodeList.indexOf(parent), parent);
-        UINode newNode = adapter.addChild(positionOfSelectedNode, parent);
+        listView.setSelection(positionOfParent);
+        UINode parent = nodeList.get(positionOfParent);
+        UINode newNode = adapter.addChild(positionOfParent, parent);
         newSelectionPosition = nodeList.indexOf(newNode);
         return newSelectionPosition;
     }

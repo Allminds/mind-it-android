@@ -52,13 +52,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=""
+                    android:hint="Enter Text"
                     android:textColor="@color/text_color"
                     android:textSize="18sp"
                     android:fontFamily="sans-serif-medium"
                     android:layout_gravity="center_vertical"
                     android:inputType="textNoSuggestions"
                     android:textCursorDrawable="@null"
-
+                    android:background="@android:color/transparent"
                     />
 
             </ViewSwitcher>

@@ -11,12 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 
 import com.thoughtworks.mindit.R;
 import com.thoughtworks.mindit.constant.Colors;
 import com.thoughtworks.mindit.constant.Constants;
 import com.thoughtworks.mindit.constant.UpdateOption;
 import com.thoughtworks.mindit.presenter.Presenter;
+import com.thoughtworks.mindit.view.MindmapActivity;
 import com.thoughtworks.mindit.view.model.UINode;
 
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ public class CustomAdapter extends BaseAdapter {
     private Presenter presenter;
     private int selectedNodePosition = 0;
     private UpdateOption operation = UpdateOption.ADD;
-
+    ListView listView;
     public CustomAdapter(Context context, Presenter presenter, ArrayList<UINode> uiNodes) {
         this.context = context;
         this.presenter = presenter;
@@ -40,7 +42,7 @@ public class CustomAdapter extends BaseAdapter {
         customAdapterHelper.expand(0, nodeList.get(0));
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
-
+        listView = ((MindmapActivity)context).getListView();
         Point size = new Point();
         display.getSize(size);
     }
@@ -124,8 +126,8 @@ public class CustomAdapter extends BaseAdapter {
         customAdapterHelper.setEventToExpandCollapse(position, nodeHolder, currentNode);
         rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND));
         if (position == workingNodePosition) {
+                customAdapterHelper.doOperation(nodeHolder, currentNode, operation);
 
-                customAdapterHelper.doOperation(nodeHolder, currentNode,operation);
         }
         if (position == 0) {
             nodeHolder.expandCollapseButton.setVisibility(View.INVISIBLE);
@@ -154,17 +156,26 @@ public class CustomAdapter extends BaseAdapter {
             }
 
         }
-
         return rowView;
     }
 
     public void updateChildSubTree(UINode existingParent) {
+        UINode uiNode = nodeList.get(this.getSelectedNodePosition());
         if (nodeList.indexOf(existingParent) != -1)
             existingParent.setStatus(Constants.STATUS.EXPAND.toString());
         UINode root = nodeList.get(0);
         nodeList.clear();
         nodeList.add(root);
         updateNodeList(root);
+        if(nodeList.indexOf(uiNode)!=-1){
+
+            this.setSelectedNodePosition(nodeList.indexOf(uiNode));
+            this.setWorkingNodePosition(nodeList.indexOf(uiNode));
+        }
+        else {
+            this.setSelectedNodePosition(this.getSelectedNodePosition() - 1);
+            this.resetWorkingNodePosition();
+        }
     }
 
     public void updateNodeList(UINode root) {

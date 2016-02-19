@@ -3,12 +3,12 @@ package com.thoughtworks.mindit.view.adapter;
 import android.content.Context;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
@@ -16,7 +16,6 @@ import com.thoughtworks.mindit.Config;
 import com.thoughtworks.mindit.R;
 import com.thoughtworks.mindit.constant.Constants;
 import com.thoughtworks.mindit.constant.UpdateOption;
-import com.thoughtworks.mindit.view.MindmapActivity;
 import com.thoughtworks.mindit.view.model.UINode;
 
 import java.util.ArrayList;
@@ -25,6 +24,7 @@ class CustomAdapterHelper {
     private InputMethodManager lManager;
     private final CustomAdapter customAdapter;
     private ArrayList<UINode> nodeList;
+    private int mode = Constants.SELECTION_MODE;
 
     public CustomAdapterHelper(CustomAdapter customAdapter) {
         this.customAdapter = customAdapter;
@@ -33,7 +33,7 @@ class CustomAdapterHelper {
     }
 
     private void initializeInputMethodManager(CustomAdapter customAdapter) {
-        if(customAdapter.getContext() != null) {
+        if (customAdapter.getContext() != null) {
             lManager = (InputMethodManager) customAdapter.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         }
     }
@@ -68,28 +68,20 @@ class CustomAdapterHelper {
         });
     }
 
-    private void handleSelectionMode(UINode currentNode, NodeHolder nodeHolder) {
-        int mode = Constants.EDIT_MODE;
-        if (mode == Constants.SELECTION_MODE || nodeList.indexOf(currentNode) != customAdapter.getSelectedNodePosition()) {
-            int lastFocusedNode = customAdapter.getSelectedNodePosition();
-            if (nodeList.get(lastFocusedNode).getName().equals("") && lastFocusedNode == customAdapter.getWorkingNodePosition()) {
-                removeFromParentChildSubTree(lastFocusedNode);
-                nodeList.remove(lastFocusedNode);
-            }
-            if (lManager.isActive())
-                lManager.hideSoftInputFromWindow(nodeHolder.editText.getWindowToken(), 0);
-            customAdapter.setSelectedNodePosition(nodeList.indexOf(currentNode));
-            if (Config.FEATURE_EDIT) {
-                mode = Constants.EDIT_MODE;
-            }
-            customAdapter.resetWorkingNodePosition();
-            customAdapter.notifyDataSetChanged();
-        } else {
-            if (Config.FEATURE_EDIT) {
-                editTextOfNode(nodeHolder, currentNode);
-                mode = Constants.SELECTION_MODE;
-            }
+    public void handleSelectionMode(UINode currentNode, final NodeHolder nodeHolder) {
+        int lastFocusedNode = customAdapter.getSelectedNodePosition();
+        if (nodeList.get(lastFocusedNode).getName().equals("") && lastFocusedNode == customAdapter.getWorkingNodePosition()) {
+            removeFromParentChildSubTree(lastFocusedNode);
+            nodeList.remove(lastFocusedNode);
         }
+        customAdapter.setSelectedNodePosition(nodeList.indexOf(currentNode));
+        customAdapter.resetWorkingNodePosition();
+        customAdapter.notifyDataSetChanged();
+        mode = Constants.SELECTION_MODE;
+        if (Config.FEATURE_EDIT) {
+            editTextOfNode(nodeHolder, currentNode);
+        }
+        lManager.hideSoftInputFromWindow(nodeHolder.editText.getWindowToken(), 0);
     }
 
     private void removeFromParentChildSubTree(int lastFocusedNode) {
@@ -107,12 +99,8 @@ class CustomAdapterHelper {
     }
 
     private void editTextOfNode(final NodeHolder nodeHolder, final UINode currentNode) {
-        nodeHolder.switcher.showNext();
-        nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
-        nodeHolder.editText.setSelection(nodeHolder.editText.getText().length());
         customAdapter.setWorkingNodePosition(nodeList.indexOf(currentNode));
         customAdapter.setOperation(UpdateOption.UPDATE);
-        customAdapter.notifyDataSetChanged();
     }
 
     void setEventToExpandCollapse(final int position, NodeHolder nodeHolder, final UINode currentNode) {
@@ -134,54 +122,49 @@ class CustomAdapterHelper {
     public void doOperation(final NodeHolder nodeHolder, final UINode currentNode, final UpdateOption operation) {
         nodeHolder.switcher.showNext();
         nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
-        showKeypad(nodeHolder, lManager);
+        if (operation == UpdateOption.ADD )
+            nodeHolder.editText.requestFocus();
+        if(operation == UpdateOption.UPDATE && mode == Constants.EDIT_MODE) {
+            nodeHolder.editText.requestFocus();
+            nodeHolder.editText.setCursorVisible(true);
+        }
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 Log.v("KeyCode:", "" + keyCode);
+                customAdapter.resetWorkingNodePosition();
                 if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.ACTION_DOWN || keyCode == KeyEvent.KEYCODE_BACK) {
                     if (operation == UpdateOption.ADD) {
-                        updateTextOfNewNode(nodeHolder, currentNode, lManager);
+                        updateTextOfNewNode(nodeHolder, currentNode);
                     } else if (operation == UpdateOption.UPDATE) {
-                        updateTextOfCurrentNode(nodeHolder, currentNode, lManager);
+                        updateTextOfCurrentNode(nodeHolder, currentNode);
                     }
+                    lManager.hideSoftInputFromWindow(nodeHolder.editText.getWindowToken(), 0);
+                    mode = Constants.SELECTION_MODE;
                     return true;
                 }
                 return false;
             }
         });
-    }
-
-    private void showKeypad(final NodeHolder nodeHolder, final InputMethodManager lManager) {
-        nodeHolder.editText.requestFocus();
-        nodeHolder.editText.post(new Runnable() {
-            public void run() {
-                lManager.showSoftInput(nodeHolder.editText, InputMethodManager.SHOW_FORCED);
-                nodeHolder.editText.requestFocus();
+        nodeHolder.editText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                mode = Constants.EDIT_MODE;
+                return false;
             }
         });
     }
 
-    private void updateTextOfNewNode(NodeHolder nodeHolder, UINode currentNode, InputMethodManager inputMethodManager) {
+
+    private void updateTextOfNewNode(NodeHolder nodeHolder, UINode currentNode) {
         updateText(nodeHolder, currentNode);
-        if (inputMethodManager != null) {
-            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-        }
-
-
-        /*listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-        listView.setStackFromBottom(true);*/
-
-
         customAdapter.resetWorkingNodePosition();
         customAdapter.getPresenter().addNode(currentNode);
         nodeHolder.switcher.showPrevious();
     }
-    private void updateTextOfCurrentNode(NodeHolder nodeHolder, UINode currentNode, InputMethodManager inputMethodManager) {
+
+    private void updateTextOfCurrentNode(NodeHolder nodeHolder, UINode currentNode) {
         updateText(nodeHolder, currentNode);
-        if (inputMethodManager != null) {
-            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-        }
         customAdapter.resetWorkingNodePosition();
         customAdapter.getPresenter().updateNode(currentNode);
         nodeHolder.switcher.showPrevious();
@@ -191,17 +174,13 @@ class CustomAdapterHelper {
         if (parent.getStatus().equals(Constants.STATUS.COLLAPSE.toString())) {
             this.expand(position, parent);
         }
-
-        int newNodePosition = getNewNodePosition(position, parent);
-        customAdapter.setWorkingNodePosition(newNodePosition);
+        int childPosition = getNewNodePosition(position, parent);
+        customAdapter.setWorkingNodePosition(childPosition);
         customAdapter.setOperation(UpdateOption.ADD);
         UINode node = new UINode(Constants.EMPTY_STRING, parent.getDepth() + Constants.PADDING_FOR_DEPTH, parent.getId());
-        nodeList.add(newNodePosition, node);
-
+        nodeList.add(childPosition, node);
         boolean addedInParent = parent.addChild(node);
-
         customAdapter.notifyDataSetChanged();
-
         if (nodeList.contains(node) && addedInParent)
             return node;
         else
