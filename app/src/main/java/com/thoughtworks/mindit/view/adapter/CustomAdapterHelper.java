@@ -71,10 +71,10 @@ class CustomAdapterHelper {
 
     public void handleSelectionMode(UINode currentNode, final NodeHolder nodeHolder) {
         int lastFocusedNode = customAdapter.getSelectedNodePosition();
-        if (nodeList.get(lastFocusedNode).getName().equals("") && lastFocusedNode == customAdapter.getWorkingNodePosition()) {
-            removeFromParentChildSubTree(lastFocusedNode);
-            nodeList.remove(lastFocusedNode);
-        }
+//        if (nodeList.get(lastFocusedNode).getName().equals("") && lastFocusedNode == customAdapter.getWorkingNodePosition()) {
+//            removeFromParentChildSubTree(lastFocusedNode);
+//            nodeList.remove(lastFocusedNode);
+//        }
         customAdapter.setSelectedNodePosition(nodeList.indexOf(currentNode));
         customAdapter.resetWorkingNodePosition();
         customAdapter.notifyDataSetChanged();

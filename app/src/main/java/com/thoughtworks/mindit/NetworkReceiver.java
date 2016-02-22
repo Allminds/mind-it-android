@@ -50,7 +50,6 @@ private BroadcastReceiver broadcastReceiver;
     }
 
     private void doWhenConnected(final Context context, final String rootId) {
-        System.out.println("*********on connected");
         final Thread inConnected = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -83,12 +82,11 @@ private BroadcastReceiver broadcastReceiver;
         });
         inConnected.start();
         networkFlag =false;
-        Toast.makeText(context, "please refresh...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Connected to network", Toast.LENGTH_SHORT).show();
 
     }
 
     private void doWhenDisconnected(Context context) {
-        System.out.println("*********on disconnected");
         networkFlag = true;
         Toast.makeText(context, "No Network connection", Toast.LENGTH_SHORT).show();
     }
