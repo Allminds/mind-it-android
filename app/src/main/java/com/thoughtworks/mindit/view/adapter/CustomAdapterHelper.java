@@ -2,8 +2,10 @@ package com.thoughtworks.mindit.view.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -17,6 +19,7 @@ import com.thoughtworks.mindit.Config;
 import com.thoughtworks.mindit.R;
 import com.thoughtworks.mindit.constant.Constants;
 import com.thoughtworks.mindit.constant.UpdateOption;
+import com.thoughtworks.mindit.view.MindmapActivity;
 import com.thoughtworks.mindit.view.model.UINode;
 
 import java.util.ArrayList;
@@ -41,7 +44,7 @@ class CustomAdapterHelper {
 
 
     private void updateText(NodeHolder nodeHolder, UINode currentNode) {
-        nodeHolder.textViewForName.setText(nodeHolder.editText.getText());
+        nodeHolder.textViewForName.setText(Constants.EMPTY_STRING+nodeHolder.editText.getText());
         currentNode.setName(Constants.EMPTY_STRING + nodeHolder.editText.getText());
     }
 
@@ -79,6 +82,10 @@ class CustomAdapterHelper {
         customAdapter.resetWorkingNodePosition();
         customAdapter.notifyDataSetChanged();
         mode = Constants.SELECTION_MODE;
+        ActionMenuItemView delete= (ActionMenuItemView)((MindmapActivity) customAdapter.getContext()).findViewById(R.id.delete);
+        ActionMenuItemView add= (ActionMenuItemView)((MindmapActivity) customAdapter.getContext()).findViewById(R.id.add);
+        delete.setVisibility(View.VISIBLE);
+        add.setVisibility(View.VISIBLE);
         if (Config.FEATURE_EDIT) {
             editTextOfNode(nodeHolder, currentNode);
         }
@@ -142,6 +149,10 @@ class CustomAdapterHelper {
                     }
                     lManager.hideSoftInputFromWindow(nodeHolder.editText.getWindowToken(), 0);
                     mode = Constants.SELECTION_MODE;
+                    ActionMenuItemView delete= (ActionMenuItemView)((MindmapActivity) customAdapter.getContext()).findViewById(R.id.delete);
+                    ActionMenuItemView add= (ActionMenuItemView)((MindmapActivity) customAdapter.getContext()).findViewById(R.id.add);
+                    delete.setVisibility(View.VISIBLE);
+                    add.setVisibility(View.VISIBLE);
                     return true;
                 }
                 return false;
@@ -151,6 +162,10 @@ class CustomAdapterHelper {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 mode = Constants.EDIT_MODE;
+                ActionMenuItemView add= (ActionMenuItemView)((MindmapActivity) customAdapter.getContext()).findViewById(R.id.add);
+                ActionMenuItemView delete= (ActionMenuItemView)((MindmapActivity) customAdapter.getContext()).findViewById(R.id.delete);
+                delete.setVisibility(View.INVISIBLE);
+                add.setVisibility(View.INVISIBLE);
                 return false;
             }
         });
@@ -158,6 +173,7 @@ class CustomAdapterHelper {
 
 
     private void updateTextOfNewNode(NodeHolder nodeHolder, UINode currentNode) {
+        System.out.println("in new node");
         updateText(nodeHolder, currentNode);
         customAdapter.resetWorkingNodePosition();
         customAdapter.getPresenter().addNode(currentNode);
