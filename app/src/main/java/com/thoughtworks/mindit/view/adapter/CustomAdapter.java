@@ -142,6 +142,8 @@ public class CustomAdapter extends BaseAdapter {
             Typeface myTypeface = Typeface.createFromAsset(context.getAssets(), Constants.FONT_SERIF);
             nodeHolder.textViewForName.setTypeface(myTypeface);
             nodeHolder.textViewForName.setTextSize(18);
+            nodeHolder.editText.setTypeface(myTypeface);
+            nodeHolder.editText.setTextSize(18);
 
 
         }

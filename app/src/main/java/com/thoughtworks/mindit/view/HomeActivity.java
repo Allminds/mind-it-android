@@ -36,7 +36,7 @@ public class HomeActivity extends AppCompatActivity {
         if (intent == null) {
             return;
         }
-        if(importDialog.isShowing())
+        if(importDialog!=null && importDialog.isShowing())
             importDialog.dismiss();
         Uri data = intent.getData();
         if (data != null) {

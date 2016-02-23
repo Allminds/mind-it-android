@@ -215,13 +215,13 @@ class CustomAdapterHelper {
     void addPadding(int position, View rowView, NodeHolder nodeHolder,UINode selectedNode) {
 
         LinearLayout.LayoutParams layoutParams= (LinearLayout.LayoutParams) nodeHolder.verticalLine.getLayoutParams();
-        layoutParams.setMargins(selectedNode.getDepth() + 40, 0, 0, 0);
+        layoutParams.setMargins(selectedNode.getDepth()+10, 0, 0, 0);
         nodeHolder.verticalLine.setBackgroundColor(Color.parseColor("#FFFFFF"));
         nodeHolder.verticalLine.setVisibility(View.INVISIBLE);
 
         LinearLayout linearLayout = (LinearLayout) rowView.findViewById(R.id.layout_text);
         LinearLayout.LayoutParams layoutParams1= (LinearLayout.LayoutParams) linearLayout.getLayoutParams();
-        layoutParams1.setMargins(nodeList.get(position).getDepth()-selectedNode.getDepth()-35,0,0,0);
+        layoutParams1.setMargins(nodeList.get(position).getDepth()-selectedNode.getDepth()-48,0,0,0);
     }
     void setImageForExpandCollapse(NodeHolder nodeHolder, View rowView, UINode currentNode) {
         nodeHolder.expandCollapseButton = (ImageView) rowView.findViewById(R.id.expandCollapse);

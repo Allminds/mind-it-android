@@ -122,8 +122,10 @@ public class Presenter implements IObserver {
 
     public void updateNode(UINode uiNode) {
         Node node = tracker.getTree().getNode(uiNode.getId());
+        if(node!=null) {
             node.setName(uiNode.getName());
             tracker.updateNode(node);
+        }
     }
 
     public void deleteNode(UINode uiNode) {
