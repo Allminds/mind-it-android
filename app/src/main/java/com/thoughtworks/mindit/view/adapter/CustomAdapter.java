@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -154,6 +155,15 @@ public class CustomAdapter extends BaseAdapter {
             resetSeparatorPosition();
         }
         if (selectedNodePosition == position) {
+
+            //to disable delete option for root node
+            if(position==0){
+                ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity)context).findViewById(R.id.delete);
+                if(delete!=null)
+                delete.setVisibility(View.INVISIBLE);
+            }
+
+
             selectedNode=currentNode;
             if(currentNode.getStatus().equals(Constants.STATUS.EXPAND.toString())&&position!=0)
                  descendents=currentNode.expandedChildrenCount(descendents);

@@ -15,7 +15,7 @@
         android:background="@drawable/shape"
         android:hint="@string/enter_url_hint"
         android:inputType="textUri"
-        android:paddingStart="10dp"
+        android:paddingLeft="10dp"
         android:singleLine="true"
         android:text="fMv8xhKL5KM4RpRsH"
         android:textColor="#595858"

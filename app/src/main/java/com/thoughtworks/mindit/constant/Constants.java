@@ -4,8 +4,8 @@ public class Constants {
     public static final int PADDING_FOR_DEPTH = 30;
     public static final int SELECTION_MODE = 25;
     public static final int EDIT_MODE = 30;
-    public static final int ADD = 0;
-    public static final int DELETE = 1;
+    public static final int ADD = 1;
+    public static final int DELETE = 0;
     public static final String EMPTY_STRING = "";
     public static final String OK = "OK";
     public static final java.lang.String IMPORT_DIALOG_TITLE = "Enter URL";

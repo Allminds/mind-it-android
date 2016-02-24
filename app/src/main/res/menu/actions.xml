@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/add"
-        android:title="@string/add"
-        android:icon="@drawable/add"
-        android:visible="false"
-        android:showAsAction="always"/>
+
     <item
         android:title="@string/delete"
         android:icon="@drawable/delete"
         android:showAsAction="always"
         android:visible="false"
         android:id="@+id/delete"/>
+    <item
+        android:id="@+id/add"
+        android:title="@string/add"
+        android:icon="@drawable/add"
+        android:visible="false"
+        android:showAsAction="always"/>
 </menu>

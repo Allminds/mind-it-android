@@ -44,7 +44,7 @@ class CustomAdapterHelper {
 
 
     private void updateText(NodeHolder nodeHolder, UINode currentNode) {
-        nodeHolder.textViewForName.setText(Constants.EMPTY_STRING+nodeHolder.editText.getText());
+        nodeHolder.textViewForName.setText(Constants.EMPTY_STRING + nodeHolder.editText.getText());
         currentNode.setName(Constants.EMPTY_STRING + nodeHolder.editText.getText());
     }
 
@@ -74,16 +74,17 @@ class CustomAdapterHelper {
 
     public void handleSelectionMode(UINode currentNode, final NodeHolder nodeHolder) {
         int lastFocusedNode = customAdapter.getSelectedNodePosition();
-//        if (nodeList.get(lastFocusedNode).getName().equals("") && lastFocusedNode == customAdapter.getWorkingNodePosition()) {
-//            removeFromParentChildSubTree(lastFocusedNode);
-//            nodeList.remove(lastFocusedNode);
-//        }
+        System.out.println("in hn:" + lastFocusedNode);
+        if (lastFocusedNode >= 0 && lastFocusedNode == customAdapter.getWorkingNodePosition() && nodeList.get(lastFocusedNode).getName().equals("")) {
+            removeFromParentChildSubTree(lastFocusedNode);
+            nodeList.remove(lastFocusedNode);
+        }
         customAdapter.setSelectedNodePosition(nodeList.indexOf(currentNode));
         customAdapter.resetWorkingNodePosition();
         customAdapter.notifyDataSetChanged();
         mode = Constants.SELECTION_MODE;
-        ActionMenuItemView delete= (ActionMenuItemView)((MindmapActivity) customAdapter.getContext()).findViewById(R.id.delete);
-        ActionMenuItemView add= (ActionMenuItemView)((MindmapActivity) customAdapter.getContext()).findViewById(R.id.add);
+        ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.delete);
+        ActionMenuItemView add = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.add);
         delete.setVisibility(View.VISIBLE);
         add.setVisibility(View.VISIBLE);
         if (Config.FEATURE_EDIT) {
@@ -101,7 +102,7 @@ class CustomAdapterHelper {
                 break;
             }
         }
-        if( parent != null) {
+        if (parent != null) {
             parent.getChildSubTree().remove(child);
         }
     }
@@ -130,9 +131,9 @@ class CustomAdapterHelper {
     public void doOperation(final NodeHolder nodeHolder, final UINode currentNode, final String operation) {
         nodeHolder.switcher.showNext();
         nodeHolder.editText.setText(nodeHolder.textViewForName.getText());
-        if (operation == UpdateOption.ADD )
+        if (operation == UpdateOption.ADD)
             nodeHolder.editText.requestFocus();
-        if(operation == UpdateOption.UPDATE && mode == Constants.EDIT_MODE) {
+        if (operation == UpdateOption.UPDATE && mode == Constants.EDIT_MODE) {
             nodeHolder.editText.requestFocus();
             nodeHolder.editText.setCursorVisible(true);
         }
@@ -146,11 +147,12 @@ class CustomAdapterHelper {
                         updateTextOfNewNode(nodeHolder, currentNode);
                     } else if (operation == UpdateOption.UPDATE) {
                         updateTextOfCurrentNode(nodeHolder, currentNode);
+
                     }
                     lManager.hideSoftInputFromWindow(nodeHolder.editText.getWindowToken(), 0);
                     mode = Constants.SELECTION_MODE;
-                    ActionMenuItemView delete= (ActionMenuItemView)((MindmapActivity) customAdapter.getContext()).findViewById(R.id.delete);
-                    ActionMenuItemView add= (ActionMenuItemView)((MindmapActivity) customAdapter.getContext()).findViewById(R.id.add);
+                    ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.delete);
+                    ActionMenuItemView add = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.add);
                     delete.setVisibility(View.VISIBLE);
                     add.setVisibility(View.VISIBLE);
                     return true;
@@ -162,8 +164,8 @@ class CustomAdapterHelper {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 mode = Constants.EDIT_MODE;
-                ActionMenuItemView add= (ActionMenuItemView)((MindmapActivity) customAdapter.getContext()).findViewById(R.id.add);
-                ActionMenuItemView delete= (ActionMenuItemView)((MindmapActivity) customAdapter.getContext()).findViewById(R.id.delete);
+                ActionMenuItemView add = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.add);
+                ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.delete);
                 delete.setVisibility(View.INVISIBLE);
                 add.setVisibility(View.INVISIBLE);
                 return false;
@@ -197,6 +199,10 @@ class CustomAdapterHelper {
         UINode node = new UINode(Constants.EMPTY_STRING, parent.getDepth() + Constants.PADDING_FOR_DEPTH, parent.getId());
         nodeList.add(childPosition, node);
         boolean addedInParent = parent.addChild(node);
+        ActionMenuItemView add = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.add);
+        ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.delete);
+        delete.setVisibility(View.INVISIBLE);
+        add.setVisibility(View.INVISIBLE);
         customAdapter.notifyDataSetChanged();
         if (nodeList.contains(node) && addedInParent)
             return node;
@@ -212,17 +218,18 @@ class CustomAdapterHelper {
         return position + childCount;
     }
 
-    void addPadding(int position, View rowView, NodeHolder nodeHolder,UINode selectedNode) {
+    void addPadding(int position, View rowView, NodeHolder nodeHolder, UINode selectedNode) {
 
-        LinearLayout.LayoutParams layoutParams= (LinearLayout.LayoutParams) nodeHolder.verticalLine.getLayoutParams();
-        layoutParams.setMargins(selectedNode.getDepth()+10, 0, 0, 0);
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) nodeHolder.verticalLine.getLayoutParams();
+        layoutParams.setMargins(selectedNode.getDepth() + 10, 0, 0, 0);
         nodeHolder.verticalLine.setBackgroundColor(Color.parseColor("#FFFFFF"));
         nodeHolder.verticalLine.setVisibility(View.INVISIBLE);
 
         LinearLayout linearLayout = (LinearLayout) rowView.findViewById(R.id.layout_text);
-        LinearLayout.LayoutParams layoutParams1= (LinearLayout.LayoutParams) linearLayout.getLayoutParams();
-        layoutParams1.setMargins(nodeList.get(position).getDepth()-selectedNode.getDepth()-48,0,0,0);
+        LinearLayout.LayoutParams layoutParams1 = (LinearLayout.LayoutParams) linearLayout.getLayoutParams();
+        layoutParams1.setMargins(nodeList.get(position).getDepth() - selectedNode.getDepth() - 48, 0, 0, 0);
     }
+
     void setImageForExpandCollapse(NodeHolder nodeHolder, View rowView, UINode currentNode) {
         nodeHolder.expandCollapseButton = (ImageView) rowView.findViewById(R.id.expandCollapse);
         if (currentNode.getChildSubTree().size() == 0) {
