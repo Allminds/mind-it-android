@@ -13,12 +13,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.Target;
 import com.thoughtworks.mindit.Config;
@@ -39,13 +41,16 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
     private ArrayList<UINode> nodeList;
     private Toolbar toolbar;
     private NetworkReceiver networkReceiver;
-    public static final String MyPREFERENCES = "MyPrefs" ;
+    public static final String MyPREFERENCES = "MyPrefs";
     public static final String myFirstTime = "myFirstTime";
     public SharedPreferences sharedPreferences;
+    Menu menu;
+    boolean menuOptionFlag = true;
 
     public ListView getListView() {
         return listView;
     }
+
     private ListView listView;
 
 
@@ -67,10 +72,10 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         listView.setAdapter(adapter);
         nodeList = adapter.getNodeList();
         networkReceiver = new NetworkReceiver(presenter, adapter);
-        if(sharedPreferences==null){
+        if (sharedPreferences == null) {
             sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            if(!sharedPreferences.getAll().containsKey(myFirstTime)) {
+            if (!sharedPreferences.getAll().containsKey(myFirstTime)) {
                 editor.putBoolean(myFirstTime, true);
 
                 editor.commit();
@@ -78,33 +83,29 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         }
 
         //showcase...
-
-        if(sharedPreferences.getBoolean(myFirstTime,false)){
-
+        if (sharedPreferences.getBoolean(myFirstTime, false)) {
             final Target homeTarget = new Target() {
                 @Override
                 public Point getPoint() {
                     int actionBarSize = getSupportActionBar().getHeight();
-                    int x = getResources().getDisplayMetrics().widthPixels - actionBarSize / 2+10;
-                    int y = actionBarSize / 2+45;
+                    int x = getResources().getDisplayMetrics().widthPixels - actionBarSize / 2 + actionBarSize / 10;
+                    int y = actionBarSize - actionBarSize / 10;
                     return new Point(x, y);
                 }
             };
             final ShowcaseView showcaseView1 = new ShowcaseView.Builder(this).build();
             showcaseView1.setTarget(homeTarget);
             showcaseView1.setContentTitle("     ADD ");
-            showcaseView1.setTextAlignment(View.TEXT_ALIGNMENT_GRAVITY);
             showcaseView1.setContentText("     Add child to the selected node on one click.");
             showcaseView1.setStyle(R.style.CustomShowcaseTheme2);
             showcaseView1.setButtonText("Got it..");
-
 
             Target homeTarget1 = new Target() {
                 @Override
                 public Point getPoint() {
                     int actionBarSize = getSupportActionBar().getHeight();
-                    int x = getResources().getDisplayMetrics().widthPixels - actionBarSize / 2-80;
-                    int y = actionBarSize / 2+45;
+                    int x = getResources().getDisplayMetrics().widthPixels - actionBarSize - actionBarSize / 10;
+                    int y = actionBarSize - actionBarSize / 10;
                     return new Point(x, y);
                 }
             };
@@ -120,15 +121,15 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
                 @Override
                 public Point getPoint() {
                     int actionBarSize = getSupportActionBar().getHeight();
-                    int x = getResources().getDisplayMetrics().widthPixels/2-100;
-                    int y = actionBarSize / 2+140;
+                    int x = getResources().getDisplayMetrics().widthPixels / 2 - actionBarSize;
+                    int y = actionBarSize / 2 + actionBarSize + actionBarSize / 3;
                     return new Point(x, y);
                 }
             };
             final ShowcaseView showcaseView3 = new ShowcaseView.Builder(this).build();
             showcaseView3.setTarget(homeTarget2);
-            showcaseView3.setContentTitle("    UPDATE ");
-            showcaseView3.setContentText("     Double click on selected node and rename it.");
+            showcaseView3.setContentTitle("     UPDATE ");
+            showcaseView3.setContentText("      Double click on selected node and rename it.");
             showcaseView3.setStyle(R.style.CustomShowcaseTheme2);
             showcaseView3.setButtonText("Got it..");
             showcaseView3.hide();
@@ -155,6 +156,8 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
                 @Override
                 public void onClick(View v) {
                     showcaseView3.hide();
+                    menuOptionFlag=false;
+                    invalidateOptionsMenu();
                     Config.SHOULD_NOT_SHOW_TUTORIAL = true;
                     adapter.notifyDataSetChanged();
                 }
@@ -164,12 +167,14 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
             editor.putBoolean(myFirstTime, false);
             editor.commit();
 
-            System.out.println("in showcase...."+Config.SHOULD_NOT_SHOW_TUTORIAL);
+        } else {
+            menuOptionFlag=false;
+            invalidateOptionsMenu();
         }
-        else
-            Config.SHOULD_NOT_SHOW_TUTORIAL =true;
+
 
     }
+
     @Override
     public void onBackPressed() {
         final AlertDialog.Builder alertExit = new AlertDialog.Builder(this);
@@ -177,7 +182,6 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         alertExit.setMessage("do you want to exit?");
         alertExit.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                Toast.makeText(getApplicationContext(), "Mindmap saved successfully", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
@@ -211,18 +215,34 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        this.menu = menu;
         getMenuInflater().inflate(R.menu.actions, menu);
         if (Config.FEATURE_ADD) {
             MenuItem add = menu.getItem(Constants.ADD);
             add.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            add.setEnabled(false);
             add.setVisible(true);
         }
         if (Config.FEATURE_DELETE) {
             MenuItem delete = menu.getItem(Constants.DELETE);
             delete.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            delete.setEnabled(false);
             delete.setVisible(true);
         }
+
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if (menuOptionFlag == false) {
+            Log.v("msg", ".......In prepare method.....");
+            menu.getItem(Constants.ADD).setEnabled(true);
+            menu.getItem(Constants.DELETE).setEnabled(true);
+        }
+        return true;
+
     }
 
     @Override
