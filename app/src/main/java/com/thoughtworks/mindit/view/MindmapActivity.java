@@ -1,21 +1,26 @@
 package com.thoughtworks.mindit.view;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
-
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.Target;
 import com.thoughtworks.mindit.Config;
 import com.thoughtworks.mindit.NetworkReceiver;
 import com.thoughtworks.mindit.R;
@@ -34,21 +39,24 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
     private ArrayList<UINode> nodeList;
     private Toolbar toolbar;
     private NetworkReceiver networkReceiver;
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    public static final String myFirstTime = "myFirstTime";
+    public SharedPreferences sharedPreferences;
 
     public ListView getListView() {
         return listView;
     }
-
     private ListView listView;
 
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mindmap);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if(getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setIcon(R.drawable.mindit_logo);
             getSupportActionBar().setTitle(Constants.EMPTY_STRING);
         }
@@ -58,8 +66,108 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         adapter = new CustomAdapter(this, presenter, presenter.buildNodeListFromTree());
         listView.setAdapter(adapter);
         nodeList = adapter.getNodeList();
+        networkReceiver = new NetworkReceiver(presenter, adapter);
+        if(sharedPreferences==null){
+            sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            if(!sharedPreferences.getAll().containsKey(myFirstTime)) {
+                editor.putBoolean(myFirstTime, true);
 
-        networkReceiver =new NetworkReceiver(presenter,adapter);
+                editor.commit();
+            }
+        }
+
+        //showcase...
+
+        if(sharedPreferences.getBoolean(myFirstTime,false)){
+
+            final Target homeTarget = new Target() {
+                @Override
+                public Point getPoint() {
+                    int actionBarSize = getSupportActionBar().getHeight();
+                    int x = getResources().getDisplayMetrics().widthPixels - actionBarSize / 2+10;
+                    int y = actionBarSize / 2+45;
+                    return new Point(x, y);
+                }
+            };
+            final ShowcaseView showcaseView1 = new ShowcaseView.Builder(this).build();
+            showcaseView1.setTarget(homeTarget);
+            showcaseView1.setContentTitle("     ADD ");
+            showcaseView1.setTextAlignment(View.TEXT_ALIGNMENT_GRAVITY);
+            showcaseView1.setContentText("     Add child to the selected node on one click.");
+            showcaseView1.setStyle(R.style.CustomShowcaseTheme2);
+            showcaseView1.setButtonText("Got it..");
+
+
+            Target homeTarget1 = new Target() {
+                @Override
+                public Point getPoint() {
+                    int actionBarSize = getSupportActionBar().getHeight();
+                    int x = getResources().getDisplayMetrics().widthPixels - actionBarSize / 2-80;
+                    int y = actionBarSize / 2+45;
+                    return new Point(x, y);
+                }
+            };
+            final ShowcaseView showcaseView2 = new ShowcaseView.Builder(this).build();
+            showcaseView2.setTarget(homeTarget1);
+            showcaseView2.setContentTitle("     DELETE ");
+            showcaseView2.setContentText("     Delete the selected node.");
+            showcaseView2.setStyle(R.style.CustomShowcaseTheme2);
+            showcaseView2.setButtonText("Got it..");
+            showcaseView2.hide();
+
+            Target homeTarget2 = new Target() {
+                @Override
+                public Point getPoint() {
+                    int actionBarSize = getSupportActionBar().getHeight();
+                    int x = getResources().getDisplayMetrics().widthPixels/2-100;
+                    int y = actionBarSize / 2+140;
+                    return new Point(x, y);
+                }
+            };
+            final ShowcaseView showcaseView3 = new ShowcaseView.Builder(this).build();
+            showcaseView3.setTarget(homeTarget2);
+            showcaseView3.setContentTitle("    UPDATE ");
+            showcaseView3.setContentText("     Double click on selected node and rename it.");
+            showcaseView3.setStyle(R.style.CustomShowcaseTheme2);
+            showcaseView3.setButtonText("Got it..");
+            showcaseView3.hide();
+
+            showcaseView1.overrideButtonClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showcaseView1.hide();
+                    showcaseView2.show();
+
+
+                }
+            });
+            showcaseView2.overrideButtonClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showcaseView2.hide();
+                    showcaseView3.show();
+
+
+                }
+            });
+            showcaseView3.overrideButtonClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showcaseView3.hide();
+                    Config.SHOULD_NOT_SHOW_TUTORIAL = true;
+                    adapter.notifyDataSetChanged();
+                }
+            });
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove(myFirstTime);
+            editor.putBoolean(myFirstTime, false);
+            editor.commit();
+
+            System.out.println("in showcase...."+Config.SHOULD_NOT_SHOW_TUTORIAL);
+        }
+        else
+            Config.SHOULD_NOT_SHOW_TUTORIAL =true;
 
     }
     @Override
@@ -93,14 +201,16 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
     @Override
     protected void onResume() {
         super.onResume();
+
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(networkReceiver.getBroadcastReceiver(), filter);
+
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-
         getMenuInflater().inflate(R.menu.actions, menu);
         if (Config.FEATURE_ADD) {
             MenuItem add = menu.getItem(Constants.ADD);

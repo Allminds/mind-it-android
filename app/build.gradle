@@ -42,4 +42,5 @@ dependencies {
     compile 'com.github.d-max:spots-dialog:0.4@aar'
     androidTestCompile 'junit:junit:4.12'
     testCompile 'junit:junit:4.12'
+    compile 'com.github.amlcurran.showcaseview:library:5.4.1'
 }

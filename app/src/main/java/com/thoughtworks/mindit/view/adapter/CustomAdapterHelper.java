@@ -74,7 +74,6 @@ class CustomAdapterHelper {
 
     public void handleSelectionMode(UINode currentNode, final NodeHolder nodeHolder) {
         int lastFocusedNode = customAdapter.getSelectedNodePosition();
-        System.out.println("in hn:" + lastFocusedNode);
         if (lastFocusedNode >= 0 && lastFocusedNode == customAdapter.getWorkingNodePosition() && nodeList.get(lastFocusedNode).getName().equals("")) {
             removeFromParentChildSubTree(lastFocusedNode);
             nodeList.remove(lastFocusedNode);
@@ -175,7 +174,6 @@ class CustomAdapterHelper {
 
 
     private void updateTextOfNewNode(NodeHolder nodeHolder, UINode currentNode) {
-        System.out.println("in new node");
         updateText(nodeHolder, currentNode);
         customAdapter.resetWorkingNodePosition();
         customAdapter.getPresenter().addNode(currentNode);

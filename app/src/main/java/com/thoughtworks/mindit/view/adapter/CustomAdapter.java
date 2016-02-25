@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+
+import com.thoughtworks.mindit.Config;
 import com.thoughtworks.mindit.R;
 import com.thoughtworks.mindit.constant.Colors;
 import com.thoughtworks.mindit.constant.Constants;
@@ -22,8 +24,6 @@ import com.thoughtworks.mindit.view.MindmapActivity;
 import com.thoughtworks.mindit.view.model.UINode;
 
 import java.util.ArrayList;
-
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 public class CustomAdapter extends BaseAdapter {
     private final CustomAdapterHelper customAdapterHelper;
@@ -159,8 +159,12 @@ public class CustomAdapter extends BaseAdapter {
             //to disable delete option for root node
             if(position==0){
                 ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity)context).findViewById(R.id.delete);
-                if(delete!=null)
-                delete.setVisibility(View.INVISIBLE);
+                if(Config.SHOULD_NOT_SHOW_TUTORIAL){
+                    System.out.println(".......in disaply......"+Config.SHOULD_NOT_SHOW_TUTORIAL);
+                    if(delete!=null)
+                        delete.setVisibility(View.INVISIBLE);
+                }
+
             }
 
 

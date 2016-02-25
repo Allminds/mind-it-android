@@ -156,8 +156,6 @@ public class Meteor {
             @Override
             public void onMessage(final WebSocketMessage message) {
                 log(TAG);
-                log("  onTextMessage by chinmay");
-
                 if (message.isText()) {
                     log("    payload == "+message.getText());
                     handleMessage(message.getText());
@@ -642,7 +640,7 @@ public class Meteor {
      */
     public static void log(final String message) {
         if (mLoggingEnabled) {
-            System.out.println(message);
+            //System.out.println(message);
         }
     }
 
