@@ -14,11 +14,15 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.amlcurran.showcaseview.ShowcaseView;
@@ -156,7 +160,7 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
                 @Override
                 public void onClick(View v) {
                     showcaseView3.hide();
-                    menuOptionFlag=false;
+                    menuOptionFlag = false;
                     invalidateOptionsMenu();
                     Config.SHOULD_NOT_SHOW_TUTORIAL = true;
                     adapter.notifyDataSetChanged();
@@ -168,8 +172,8 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
             editor.commit();
 
         } else {
-            Config.SHOULD_NOT_SHOW_TUTORIAL=true;
-            menuOptionFlag=false;
+            Config.SHOULD_NOT_SHOW_TUTORIAL = true;
+            menuOptionFlag = false;
             invalidateOptionsMenu();
         }
 
@@ -179,7 +183,7 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
     @Override
     public void onBackPressed() {
         final AlertDialog.Builder alertExit = new AlertDialog.Builder(this);
-        alertExit.setTitle("Alert");
+        // alertExit.setTitle("Alert");
         alertExit.setMessage("do you want to exit?");
         alertExit.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
@@ -187,13 +191,16 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
             }
         });
 
-        alertExit.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        alertExit.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-
             }
         });
 
-        alertExit.show();
+        AlertDialog dialog = alertExit.show();
+        TextView messageText = (TextView) dialog.findViewById(android.R.id.message);
+        dialog.show();
+        messageText.setGravity(Gravity.CENTER);
+
     }
 
 
