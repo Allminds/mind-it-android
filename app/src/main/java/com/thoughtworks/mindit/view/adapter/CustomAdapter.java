@@ -160,7 +160,7 @@ public class CustomAdapter extends BaseAdapter {
             if(position==0){
                 ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity)context).findViewById(R.id.delete);
                 if(Config.SHOULD_NOT_SHOW_TUTORIAL){
-                    System.out.println(".......in disaply......"+Config.SHOULD_NOT_SHOW_TUTORIAL);
+
                     if(delete!=null)
                         delete.setVisibility(View.INVISIBLE);
                 }
@@ -171,7 +171,10 @@ public class CustomAdapter extends BaseAdapter {
             selectedNode=currentNode;
             if(currentNode.getStatus().equals(Constants.STATUS.EXPAND.toString())&&position!=0)
                  descendents=currentNode.expandedChildrenCount(descendents);
-            rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND_ON_SELECTION));
+//            rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND_ON_SELECTION));
+
+            nodeHolder.clickableArea = (LinearLayout) rowView.findViewById(R.id.layout_node);
+            nodeHolder.clickableArea.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND_ON_SELECTION));
             nodeHolder.verticalLine.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND_ON_SELECTION));
             nodeHolder.textViewForName.setTextColor(Color.parseColor(Colors.SELECTED_NODE_TEXT_COLOR));
             nodeHolder.editText.setTextColor(Color.parseColor(Colors.SELECTED_NODE_TEXT_COLOR));

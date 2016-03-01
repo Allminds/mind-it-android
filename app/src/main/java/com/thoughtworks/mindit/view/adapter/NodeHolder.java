@@ -13,4 +13,5 @@ class NodeHolder {
     EditText editText;
     LinearLayout separator;
     LinearLayout verticalLine;
+    LinearLayout clickableArea;
 }
