@@ -57,8 +57,8 @@ class CustomAdapterHelper {
     }
 
     private void editText(final NodeHolder nodeHolder, final UINode currentNode, final View rowView) {
-        LinearLayout linearLayout = (LinearLayout) rowView.findViewById(R.id.layout_node);
-        linearLayout.setOnClickListener(new View.OnClickListener() {
+        nodeHolder.clickableArea = (LinearLayout) rowView.findViewById(R.id.layout_node);
+        nodeHolder.clickableArea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 handleSelectionMode(currentNode, nodeHolder);
