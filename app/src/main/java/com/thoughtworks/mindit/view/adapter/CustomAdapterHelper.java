@@ -74,7 +74,7 @@ class CustomAdapterHelper {
 
     public void handleSelectionMode(UINode currentNode, final NodeHolder nodeHolder) {
         int lastFocusedNode = customAdapter.getSelectedNodePosition();
-        if (lastFocusedNode >= 0 && lastFocusedNode == customAdapter.getWorkingNodePosition() && nodeList.get(lastFocusedNode).getName().equals("")) {
+        if (lastFocusedNode >= 0 && lastFocusedNode == customAdapter.getWorkingNodePosition() && nodeList.get(lastFocusedNode).getName().equals("") && nodeList.get(lastFocusedNode).getId().equals("")) {
             removeFromParentChildSubTree(lastFocusedNode);
             nodeList.remove(lastFocusedNode);
         }
@@ -142,8 +142,13 @@ class CustomAdapterHelper {
                 Log.v("KeyCode:", "" + keyCode);
                 customAdapter.resetWorkingNodePosition();
                 if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.ACTION_DOWN || keyCode == KeyEvent.KEYCODE_BACK) {
+                    if (keyCode == KeyEvent.ACTION_DOWN)
+                        System.out.println("Action down");
+                    if (keyCode == KeyEvent.KEYCODE_BACK)
+                        System.out.println("Keycode back");
+
                     if (operation == UpdateOption.ADD) {
-                        updateTextOfNewNode(nodeHolder, currentNode);
+                        updateTextOfNewNode(nodeHolder, currentNode, keyCode);
                     } else if (operation == UpdateOption.UPDATE) {
                         updateTextOfCurrentNode(nodeHolder, currentNode);
 
@@ -173,10 +178,20 @@ class CustomAdapterHelper {
     }
 
 
-    private void updateTextOfNewNode(NodeHolder nodeHolder, UINode currentNode) {
+    private void updateTextOfNewNode(NodeHolder nodeHolder, UINode currentNode, int keyCode) {
         updateText(nodeHolder, currentNode);
         customAdapter.resetWorkingNodePosition();
-        customAdapter.getPresenter().addNode(currentNode);
+        if (keyCode == KeyEvent.KEYCODE_ENTER) {
+
+            customAdapter.getPresenter().addNode(currentNode);
+        }
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+           // int lastFocusedNode == customAdapter.getWorkingNodePosition()
+            removeFromParentChildSubTree(nodeList.indexOf(currentNode));
+            nodeList.remove(nodeList.indexOf(currentNode));
+
+        }
+
         nodeHolder.switcher.showPrevious();
     }
 

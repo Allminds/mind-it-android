@@ -168,6 +168,7 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
             editor.commit();
 
         } else {
+            Config.SHOULD_NOT_SHOW_TUTORIAL=true;
             menuOptionFlag=false;
             invalidateOptionsMenu();
         }
