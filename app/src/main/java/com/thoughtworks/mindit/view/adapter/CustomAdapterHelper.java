@@ -212,10 +212,13 @@ class CustomAdapterHelper {
         UINode node = new UINode(Constants.EMPTY_STRING, parent.getDepth() + Constants.PADDING_FOR_DEPTH, parent.getId());
         nodeList.add(childPosition, node);
         boolean addedInParent = parent.addChild(node);
-        ActionMenuItemView add = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.add);
-        ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.delete);
-        delete.setVisibility(View.INVISIBLE);
-        add.setVisibility(View.INVISIBLE);
+        Context actionMenuContext =  customAdapter.getContext();
+        if(actionMenuContext != null) {
+            ActionMenuItemView add = (ActionMenuItemView) ((MindmapActivity) actionMenuContext).findViewById(R.id.add);
+            add.setVisibility(View.INVISIBLE);
+            ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity) actionMenuContext).findViewById(R.id.delete);
+            delete.setVisibility(View.INVISIBLE);
+        }
         customAdapter.notifyDataSetChanged();
         if (nodeList.contains(node) && addedInParent)
             return node;

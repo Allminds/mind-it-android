@@ -1,10 +1,13 @@
 package com.thoughtworks.mindit.view;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.inputmethodservice.Keyboard;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,7 +17,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,8 +27,10 @@ import com.thoughtworks.mindit.R;
 import com.thoughtworks.mindit.Tracker;
 import com.thoughtworks.mindit.constant.Colors;
 import com.thoughtworks.mindit.constant.Constants;
+import com.thoughtworks.mindit.constant.Setting;
 
 public class HomeActivity extends AppCompatActivity {
+    public SharedPreferences sharedPreferences;
     private Tracker tracker;
     private boolean isNewIntent;
     private Dialog importDialog;
@@ -36,7 +40,7 @@ public class HomeActivity extends AppCompatActivity {
         if (intent == null) {
             return;
         }
-        if(importDialog!=null && importDialog.isShowing())
+        if (importDialog != null && importDialog.isShowing())
             importDialog.dismiss();
         Uri data = intent.getData();
         if (data != null) {
@@ -55,7 +59,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if(getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setIcon(R.drawable.mindit_logo);
             getSupportActionBar().setTitle(Constants.EMPTY_STRING);
         }
@@ -73,12 +77,32 @@ public class HomeActivity extends AppCompatActivity {
 
             }
         });
+        if (sharedPreferences == null) {
+            addVersionSettings();
+        }
+    }
+
+    private void addVersionSettings() {
+        sharedPreferences = getSharedPreferences(Setting.SETTING_PREFERENCES, Context.MODE_PRIVATE);
+        PackageInfo packageInfo = null;
+        try {
+            packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        int versionCode = packageInfo.versionCode;
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if (!sharedPreferences.getAll().containsKey(Setting.VERSION_CODE)) {
+            editor.putInt(Setting.VERSION_CODE, versionCode);
+            editor.commit();
+        }
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
+
     private void importMindMap() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             importDialog = new Dialog(this, android.R.style.Theme_Material_Light_Dialog_Alert);
@@ -104,8 +128,7 @@ public class HomeActivity extends AppCompatActivity {
                 if (s.toString().equals("")) {
                     imports.setEnabled(false);
                     imports.setTextColor(Color.parseColor(Colors.IMPORT_BUTTON_TEXT_COLOR_WHEN_DISABLED));
-                }
-                else {
+                } else {
                     imports.setEnabled(true);
                     imports.setTextColor(Color.parseColor(Colors.IMPORT_BUTTON_TEXT_COLOR_WHEN_ENABLED));
                 }
@@ -118,12 +141,10 @@ public class HomeActivity extends AppCompatActivity {
         });
 
 
-        if(editUrl.getText().toString().equals("")) {
+        if (editUrl.getText().toString().equals("")) {
             imports.setEnabled(false);
             imports.setTextColor(Color.parseColor(Colors.IMPORT_BUTTON_TEXT_COLOR_WHEN_DISABLED));
-        }
-        else
-        {
+        } else {
             imports.setEnabled(true);
             imports.setTextColor(Color.parseColor("#595858"));
         }

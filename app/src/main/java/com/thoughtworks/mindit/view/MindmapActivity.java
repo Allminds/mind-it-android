@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
@@ -27,6 +29,7 @@ import com.thoughtworks.mindit.Config;
 import com.thoughtworks.mindit.NetworkReceiver;
 import com.thoughtworks.mindit.R;
 import com.thoughtworks.mindit.constant.Constants;
+import com.thoughtworks.mindit.constant.Setting;
 import com.thoughtworks.mindit.presenter.Presenter;
 import com.thoughtworks.mindit.view.adapter.CustomAdapter;
 import com.thoughtworks.mindit.view.model.UINode;
@@ -41,8 +44,6 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
     private ArrayList<UINode> nodeList;
     private Toolbar toolbar;
     private NetworkReceiver networkReceiver;
-    public static final String MyPREFERENCES = "MyPrefs";
-    public static final String myFirstTime = "myFirstTime";
     public SharedPreferences sharedPreferences;
     Menu menu;
     boolean menuOptionFlag = true;
@@ -54,7 +55,6 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
     private ListView listView;
 
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,17 +73,25 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         nodeList = adapter.getNodeList();
         networkReceiver = new NetworkReceiver(presenter, adapter);
         if (sharedPreferences == null) {
-            sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+            sharedPreferences = getSharedPreferences(Setting.SETTING_PREFERENCES, Context.MODE_PRIVATE);
+            PackageInfo pInfo = null;
+            try {
+                pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            int version = pInfo.versionCode;
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            if (!sharedPreferences.getAll().containsKey(myFirstTime)) {
-                editor.putBoolean(myFirstTime, true);
+            if(!sharedPreferences.getAll().containsKey(Setting.VERSION_CODE))
+            if (!sharedPreferences.getAll().containsKey(Setting.VERSION_2_FIRST_TIME)) {
+                editor.putBoolean(Setting.VERSION_2_FIRST_TIME, true);
 
                 editor.commit();
             }
         }
 
         //showcase...
-        if (sharedPreferences.getBoolean(myFirstTime, false)) {
+        if (sharedPreferences.getBoolean(Setting.VERSION_2_FIRST_TIME, false)) {
             final Target homeTarget = new Target() {
                 @Override
                 public Point getPoint() {
@@ -163,8 +171,8 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
                 }
             });
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.remove(myFirstTime);
-            editor.putBoolean(myFirstTime, false);
+            editor.remove(Setting.VERSION_2_FIRST_TIME);
+            editor.putBoolean(Setting.VERSION_2_FIRST_TIME, false);
             editor.commit();
 
         } else {
