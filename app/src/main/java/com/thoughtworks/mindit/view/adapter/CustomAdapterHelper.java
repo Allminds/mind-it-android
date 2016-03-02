@@ -142,10 +142,6 @@ class CustomAdapterHelper {
                 Log.v("KeyCode:", "" + keyCode);
                 customAdapter.resetWorkingNodePosition();
                 if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.ACTION_DOWN || keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (keyCode == KeyEvent.ACTION_DOWN)
-
-                    if (keyCode == KeyEvent.KEYCODE_BACK)
-
 
                     if (operation == UpdateOption.ADD) {
                         updateTextOfNewNode(nodeHolder, currentNode, keyCode);

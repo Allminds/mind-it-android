@@ -183,7 +183,7 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
     public void onBackPressed() {
         final AlertDialog.Builder alertExit = new AlertDialog.Builder(this);
         // alertExit.setTitle("Alert");
-        alertExit.setMessage("do you want to exit?");
+        alertExit.setMessage("Do you want to exit?");
         alertExit.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 finish();
