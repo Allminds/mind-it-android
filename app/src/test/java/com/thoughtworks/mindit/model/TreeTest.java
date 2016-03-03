@@ -16,27 +16,30 @@ public class TreeTest {
     private static Node root;
     private static Node child1;
     private static Node child2;
-    private Tree tree;
     private static HashMap nodes;
+    private Tree tree;
 
     @BeforeClass
-    public static void setUp(){
+    public static void setUp() {
         root = new Node("rootId", "root", null, null, 0);
         child1 = new Node("child1Id", "child1", root, root.getId(), 0);
         child2 = new Node("child2Id", "child2", root, root.getId(), 1);
         nodes = new HashMap<>();
         nodes.put("rootId", root);
     }
+
     @Before
     public void initialize() {
         Tree.reset();
         tree = Tree.getInstance(nodes);
     }
+
     @After
-    public void reset(){
+    public void reset() {
         tree.reset();
         tree = null;
     }
+
     @Test
     public void shouldNodeToBeAdded() {
         tree.addNode(child1);
@@ -83,5 +86,66 @@ public class TreeTest {
         tree = tree.addNode(child1);
         tree = tree.deleteNode(child1);
         tree = tree.deleteNode(child1);
+    }
+
+    @Test
+    public void testFillRootChildSubtree() throws Exception {
+        ArrayList<String> left = new ArrayList<>();
+        left.add(child1.getId());
+        ArrayList<String> right = new ArrayList<>();
+        right.add(child2.getId());
+        ArrayList<String> childSubTree = (ArrayList<String>) left.clone();
+        childSubTree.addAll(right);
+        tree.addNode(child1);
+        tree.addNode(child2);
+        tree.fillRootChildSubtree();
+        assertEquals(childSubTree,tree.getRoot().getChildSubTree());
+    }
+
+    @Test
+    public void testUpdateDepthOfAllNodes() throws Exception {
+        tree.addNode(child1);
+        tree.addNode(child2);
+        child1.addThisChild(child2,0);
+        tree.updateDepthOfAllNodes(child1,0);
+        assertEquals(2,child2.getDepth());
+    }
+
+    @Test
+    public void testAddNode() throws Exception {
+        tree.addNode(child1);
+        assertEquals(child1,tree.getNode(child1.getId()));
+    }
+
+    @Test
+    public void testAddNodeFromWeb() throws Exception {
+        tree.addNode(child1);
+        assertEquals(child1,tree.getNode(child1.getId()));
+    }
+
+    @Test
+    public void testUpdateNode() throws Exception {
+        tree.addNode(child1);
+        tree.addNode(child2);
+        root.addThisChild(child1, 0);
+        root.addThisChild(child2, 1);
+        tree.updateNode(child1, "name", "gopinath");
+        assertEquals("gopinath", tree.getNode(child1.getId()).getName());
+
+        tree.updateNode(child2, "parentId", child1.getId());
+        assertEquals(child1.getId(), child2.getParentId());
+
+
+        child1.addThisChild(child2,0);
+        ArrayList<String> childSubTree = new ArrayList<>();
+        childSubTree.add(child2.getId());
+        assertEquals(childSubTree,child1.getChildSubTree());
+    }
+
+    @Test
+    public void testDeleteNode() throws Exception {
+        tree.addNode(child1);
+        tree.deleteNode(child1);
+        assertEquals(null,tree.getNode(child1.getId()));
     }
 }
