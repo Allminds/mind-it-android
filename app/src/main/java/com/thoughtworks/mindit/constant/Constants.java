@@ -6,6 +6,7 @@ public class Constants {
     public static final int EDIT_MODE = 30;
     public static final int ADD = 1;
     public static final int DELETE = 0;
+    public static final int INFO = 2;
     public static final String EMPTY_STRING = "";
     public static final String OK = "OK";
     public static final java.lang.String IMPORT_DIALOG_TITLE = "Enter URL";

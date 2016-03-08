@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.widget.Toast;
 
+import com.thoughtworks.mindit.constant.Operation;
 import com.thoughtworks.mindit.presenter.Presenter;
 import com.thoughtworks.mindit.view.MindmapActivity;
 import com.thoughtworks.mindit.view.adapter.CustomAdapter;
@@ -54,11 +55,11 @@ private BroadcastReceiver broadcastReceiver;
             @Override
             public void run() {
                 Tracker.getInstance().resetTree();
-                Tracker instance = Tracker.getInstance(context, rootId);
+                Tracker instance = Tracker.getInstance(context, rootId, Operation.OPEN);
 
                 while (instance.getTree() == null) {
                     if (!instance.isConnected())
-                        instance = Tracker.getInstance(context, rootId);
+                        instance = Tracker.getInstance(context, rootId,Operation.OPEN);
                     try {
                         Thread.sleep(200);
                     } catch (InterruptedException e) {

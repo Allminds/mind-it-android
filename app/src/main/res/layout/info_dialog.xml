@@ -2,20 +2,29 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="1">
+
 
     <EditText
-        android:id="@+id/editUrl"
+        android:id="@+id/url_link"
         style="@style/myTheme"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="60dp"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/shape"
+        android:clickable="false"
+        android:cursorVisible="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:hint="@string/enter_url_hint"
-        android:inputType="textUri"
+        android:inputType="textUri|textMultiLine"
+        android:maxLines="2"
+        android:minLines="2"
         android:paddingLeft="10dp"
+
         android:singleLine="true"
         android:text="rJPmsKER7Wo7gdbns"
         android:textColor="#595858"
@@ -27,32 +36,43 @@
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
-
         <Button
-            android:id="@+id/cancel"
+            android:id="@+id/cancel_url_dialog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_gravity="center"
-            android:layout_marginStart="50dp"
+            android:layout_toLeftOf="@+id/copy_url"
             android:background="?android:attr/selectableItemBackground"
-            android:text="@android:string/cancel"
+            android:text="Cancel"
             android:textColor="#595858" />
 
         <Button
-            android:id="@+id/imports"
+            android:id="@+id/copy_url"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center"
+            android:layout_toLeftOf="@+id/open_in_browser"
+            android:layout_toStartOf="@+id/open_in_browser"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="Copy"
+            android:textColor="#595858" />
+
+        <Button
+            android:id="@+id/open_in_browser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:layout_marginRight="50dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginRight="25dp"
+
             android:background="?android:attr/selectableItemBackground"
             android:gravity="center"
-            android:text="@string/open"
-            android:textColor="#595858"
-
-            />
+            android:text="Open in Browser"
+            android:textColor="#595858" />
 
     </RelativeLayout>
 

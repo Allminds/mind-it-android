@@ -1,15 +1,15 @@
 package com.thoughtworks.mindit.view;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,7 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,22 +42,20 @@ import java.util.ArrayList;
 
 public class MindmapActivity extends AppCompatActivity implements IMindmapView {
 
+    public SharedPreferences sharedPreferences;
+    Menu menu;
+    boolean menuOptionFlag = true;
     private CustomAdapter adapter;
     private Presenter presenter;
     private UINode clipboard;
     private ArrayList<UINode> nodeList;
     private Toolbar toolbar;
     private NetworkReceiver networkReceiver;
-    public SharedPreferences sharedPreferences;
-    Menu menu;
-    boolean menuOptionFlag = true;
+    private ListView listView;
 
     public ListView getListView() {
         return listView;
     }
-
-    private ListView listView;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -236,7 +234,10 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
             delete.setEnabled(false);
             delete.setVisible(true);
         }
-
+        MenuItem info = menu.getItem(Constants.DELETE);
+        info.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        info.setEnabled(true);
+        info.setVisible(true);
         return true;
     }
 
@@ -247,6 +248,7 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
             Log.v("msg", ".......In prepare method.....");
             menu.getItem(Constants.ADD).setEnabled(true);
             menu.getItem(Constants.DELETE).setEnabled(true);
+            menu.getItem(Constants.INFO).setEnabled(true);
         }
         return true;
 
@@ -264,6 +266,9 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
             case R.id.delete:
                 newSelectionPosition = deleteSelectedNode(positionOfSelectedNode);
                 break;
+            case R.id.info:
+                showInformationDialog();
+
             default:
                 return true;
         }
@@ -273,6 +278,55 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         listView.setSelection(adapter.getSelectedNodePosition());
         listView.requestFocus();
         return true;
+    }
+
+    private void showInformationDialog() {
+        String id = nodeList.get(0).getId();
+        final Dialog information;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            information = new Dialog(this, android.R.style.Theme_Material_Light_Dialog_Alert);
+        } else {
+            information = new Dialog(this);
+        }
+        information.setTitle("Mindmap URL");
+        information.setContentView(R.layout.info_dialog);
+        information.show();
+        final EditText url = (EditText) information.findViewById(R.id.url_link);
+        url.setText("http://www.mindit.xyz/create/" + id);
+        final Button cancelUrlDialog = (Button) information.findViewById(R.id.cancel_url_dialog);
+        cancelUrlDialog.setFocusable(true);
+        cancelUrlDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                information.dismiss();
+            }
+        });
+        final Button openInBrowser = (Button) information.findViewById(R.id.open_in_browser);
+        openInBrowser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String link = url.getText().toString();
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+                startActivity(browserIntent);
+            }
+        });
+        final Button copyUrl = (Button) information.findViewById(R.id.copy_url);
+        copyUrl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+                    android.text.ClipboardManager clipboard = (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                    clipboard.setText(url.getText().toString());
+                } else {
+                    android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                    android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", url.getText().toString());
+                    clipboard.setPrimaryClip(clip);
+                }
+                information.dismiss();
+                Toast.makeText(getApplicationContext(), "URL copied", Toast.LENGTH_SHORT).show();
+            }
+        });
+        information.show();
     }
 
     private int deleteSelectedNode(int positionOfSelectedNode) {

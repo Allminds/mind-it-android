@@ -27,6 +27,7 @@ import com.thoughtworks.mindit.R;
 import com.thoughtworks.mindit.Tracker;
 import com.thoughtworks.mindit.constant.Colors;
 import com.thoughtworks.mindit.constant.Constants;
+import com.thoughtworks.mindit.constant.Operation;
 import com.thoughtworks.mindit.constant.Setting;
 
 public class HomeActivity extends AppCompatActivity {
@@ -34,6 +35,7 @@ public class HomeActivity extends AppCompatActivity {
     private Tracker tracker;
     private boolean isNewIntent;
     private Dialog importDialog;
+    private String root;
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -49,7 +51,7 @@ public class HomeActivity extends AppCompatActivity {
                 isNewIntent = true;
                 tracker.resetTree();
             }
-            tracker = Tracker.getInstance(this, url[url.length - 1]);
+            tracker = Tracker.getInstance(this, url[url.length - 1], Operation.OPEN);
         }
     }
 
@@ -67,19 +69,33 @@ public class HomeActivity extends AppCompatActivity {
         Uri data = intent.getData();
         if (data != null) {
             String[] url = data.toString().split("/");
-            tracker = Tracker.getInstance(this, url[url.length - 1]);
+            tracker = Tracker.getInstance(this, url[url.length - 1],Operation.OPEN);
         }
         Button importMindmap = (Button) findViewById(R.id.importMindmap);
         importMindmap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 importMindMap();
-
             }
         });
         if (sharedPreferences == null) {
             addVersionSettings();
         }
+        final Button createMindmap = (Button) findViewById(R.id.createMindmap);
+        createMindmap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createMindmap();
+            }
+        });
+    }
+
+    private void createMindmap() {
+        if (tracker != null) {
+            isNewIntent = true;
+            tracker.resetTree();
+        }
+        tracker = Tracker.getInstance(this, "", Operation.CREATE);
     }
 
     private void addVersionSettings() {
@@ -166,7 +182,7 @@ public class HomeActivity extends AppCompatActivity {
                 String inputArray[] = input.split("/");
                 String url = inputArray[inputArray.length - 1];
                 url = url.trim();
-                tracker = Tracker.getInstance(HomeActivity.this, url);
+                tracker = Tracker.getInstance(HomeActivity.this, url,Operation.OPEN);
                 importDialog.dismiss();
             }
         });
@@ -213,4 +229,12 @@ public class HomeActivity extends AppCompatActivity {
             tracker.resetTree();
     }
 
+    public void setRoot(String root) {
+        this.root = root;
+        if (tracker != null) {
+            isNewIntent = true;
+            tracker.resetTree();
+        }
+        tracker = Tracker.getInstance(this, root, Operation.OPEN);
+    }
 }

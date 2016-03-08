@@ -13,4 +13,9 @@
         android:icon="@drawable/add"
         android:visible="false"
         android:showAsAction="always"/>
+    <item
+        android:id="@+id/info"
+        android:title="@string/info"
+        android:visible="true"
+        android:showAsAction="ifRoom"/>
 </menu>

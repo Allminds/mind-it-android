@@ -17,6 +17,7 @@ import com.thoughtworks.mindit.constant.Constants;
 import com.thoughtworks.mindit.constant.Fields;
 import com.thoughtworks.mindit.constant.MindIt;
 import com.thoughtworks.mindit.constant.NetworkMessage;
+import com.thoughtworks.mindit.constant.Operation;
 import com.thoughtworks.mindit.helper.ITracker;
 import com.thoughtworks.mindit.helper.JsonParserService;
 import com.thoughtworks.mindit.helper.Meteor;
@@ -48,27 +49,50 @@ public class Tracker implements MeteorCallback, ITracker {
     private Tracker(Context context, String rootId) {
         this.rootId = rootId;
         this.context = context;
-     //   Meteor.setLoggingEnabled(true);
+        //   Meteor.setLoggingEnabled(true);
         startAsyncTask();
         meteor = new Meteor(context, MindIt.WEB_SOCKET, this);
         meteor.setCallback(this);
     }
 
-    private void startAsyncTask() {
-        if(Looper.myLooper()== Looper.getMainLooper()) {
-            new WaitForTree().execute(this.tree);
+    public static Tracker getInstance(Context context, String rootId, Operation operation) {
+        if (instance == null) {
+            if (operation == Operation.OPEN) {
+                instance = new Tracker(context, rootId);
+            }
+            if (operation == Operation.CREATE) {
+                instance = new Tracker(context,null);
+            }
         }
-    }
-
-    public static Tracker getInstance(Context context, String rootId) {
-        if (instance == null)
-            instance = new Tracker(context, rootId);
         return instance;
     }
-
 
     public static Tracker getInstance() {
         return instance;
+    }
+
+    private String createMindMap() {
+        final Node newNode = new Node("", "New Mindmap", null, null, 0);
+        Map<String, Object> addValues = getValueMap(newNode);
+        meteor.insert(MindIt.COLLECTION, addValues, new ResultListener() {
+            @Override
+            public void onSuccess(String s) {
+                //ignore first([) and last character(])
+                s = s.substring(1, s.length() - 1);
+                Node tempNode = JsonParserService.parseNode(s);
+                rootId = tempNode.getId();
+            }
+            @Override
+            public void onError(String s, String s1, String s2) {
+            }
+        });
+        return null;
+    }
+
+    private void startAsyncTask() {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            new WaitForTree().execute(this.tree);
+        }
     }
 
     public Tree getTree() {
@@ -188,8 +212,18 @@ public class Tracker implements MeteorCallback, ITracker {
 
     @Override
     public void onConnect(boolean b) {
-        this.findTree(rootId);
-        meteor.subscribe(MindIt.SUBSCRIPTION_NAME, new String[]{rootId});
+        if (rootId == null) {
+            rootId = createMindMap();
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(rootId == null);
+                System.out.println("ggg-- "+rootId);
+                findTree(rootId);
+                meteor.subscribe(MindIt.SUBSCRIPTION_NAME, new String[]{rootId});
+            }
+        }).start();
     }
 
     @Override
@@ -372,6 +406,17 @@ public class Tracker implements MeteorCallback, ITracker {
 
         @NonNull
         private String downLoadMindmap() {
+
+           /* while (rootId == null){
+                if (JsonParserService.isErrorOccurred())
+                    break;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }*/
+
 
             while (tree == null) {
                 if (JsonParserService.isErrorOccurred())

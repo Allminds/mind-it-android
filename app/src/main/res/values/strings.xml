@@ -8,4 +8,5 @@
     <string name="delete">delete</string>
     <string name="logo">MindIt logo on landing page</string>
     <string name="icon">expand, collapse, leaf icons</string>
+    <string name="info">info</string>
 </resources>

@@ -51,6 +51,22 @@
             android:textStyle="normal"
             android:theme="@style/MyButton"
             android:layout_below="@id/icon" />
+        <Button
+            android:id="@+id/createMindmap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/buttonshape"
+            android:fontFamily="sans-serif"
+            android:shadowColor="#A8A8A8"
+            android:text="   Create MindMap   "
+            android:textAllCaps="false"
+            android:textColor="#FFFFFFFF"
+            android:textSize="18sp"
+            android:textStyle="normal"
+            android:theme="@style/MyButton"
+            android:layout_below="@id/icon" />
 
     </LinearLayout>
 
