@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_id": "allminds-mindit",
+    "project_number": "421056599185",
+    "name": "MindIt"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:421056599185:android:a4d04f2e0a204360",
+        "client_id": "android:com.thoughtworks.mindit",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "com.thoughtworks.mindit",
+          "certificate_hash": []
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "421056599185-1omsfgkbtdrm9ovockukd4q9rjn6643f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thoughtworks.mindit",
+            "certificate_hash": "211EE59440D2F396CCDC2F514D278FDEF105AEF5"
+          }
+        },
+        {
+          "client_id": "421056599185-4f3efkkap6pc64640hpaauotdsv5ces5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 2
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}

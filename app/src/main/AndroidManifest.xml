@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.thoughtworks.mindit">
 
@@ -14,32 +13,32 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="com.thoughtworks.mindit.view.MindmapActivity"
-            android:label="@string/title_activity_mindmap"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize"
+            android:label="@string/title_activity_mindmap"
             android:launchMode="singleTask"
-            >
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"></activity>
 
         <activity
             android:name="com.thoughtworks.mindit.view.HomeActivity"
-            android:label="MindIt"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:label="MindIt"
             android:launchMode="singleTask"
-            >
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-        <intent-filter>
-            <data android:scheme="http" android:host="www.mindit.xyz"/>
-            <action android:name="android.intent.action.VIEW"/>
-            <category android:name="android.intent.category.BROWSABLE"/>
-            <category android:name="android.intent.category.DEFAULT"/>
-        </intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <data
+                    android:host="www.mindit.xyz"
+                    android:scheme="http" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
 
         </activity>
     </application>

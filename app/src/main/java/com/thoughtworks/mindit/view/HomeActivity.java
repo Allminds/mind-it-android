@@ -1,18 +1,24 @@
 package com.thoughtworks.mindit.view;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -22,23 +28,38 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.thoughtworks.mindit.R;
 import com.thoughtworks.mindit.Tracker;
+import com.thoughtworks.mindit.authentication.GoogleAuth;
+import com.thoughtworks.mindit.authentication.OnAuthenticationChanged;
+import com.thoughtworks.mindit.authentication.User;
 import com.thoughtworks.mindit.constant.Colors;
 import com.thoughtworks.mindit.constant.Constants;
 import com.thoughtworks.mindit.constant.Operation;
 import com.thoughtworks.mindit.constant.Setting;
 
-public class HomeActivity extends AppCompatActivity {
+import java.io.InputStream;
+import java.net.URL;
+
+public class HomeActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, OnAuthenticationChanged {
+    private static final String TAG = "SignInActivity";
+    private static final int RC_SIGN_IN = 9001;
     public SharedPreferences sharedPreferences;
     private Tracker tracker;
     private boolean isNewIntent;
     private Dialog importDialog;
     private String root;
-
+    private GoogleAuth googleAuth;
+    private Bitmap bitmap;
+    private ProgressDialog pDialog;
+    private NavigationView navigationView;
     @Override
     protected void onNewIntent(Intent intent) {
+        Toast.makeText(getApplicationContext(), "alo ", Toast.LENGTH_SHORT).show();
         if (intent == null) {
             return;
         }
@@ -61,15 +82,25 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setIcon(R.drawable.mindit_logo);
             getSupportActionBar().setTitle(Constants.EMPTY_STRING);
         }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
         Intent intent = getIntent();
         Uri data = intent.getData();
         if (data != null) {
             String[] url = data.toString().split("/");
-            tracker = Tracker.getInstance(this, url[url.length - 1],Operation.OPEN);
+            tracker = Tracker.getInstance(this, url[url.length - 1], Operation.OPEN);
         }
         Button importMindmap = (Button) findViewById(R.id.importMindmap);
         importMindmap.setOnClickListener(new View.OnClickListener() {
@@ -88,6 +119,8 @@ public class HomeActivity extends AppCompatActivity {
                 createMindmap();
             }
         });
+        googleAuth = new GoogleAuth((AppCompatActivity) this, (Context) this);
+
     }
 
     private void createMindmap() {
@@ -182,7 +215,10 @@ public class HomeActivity extends AppCompatActivity {
                 String inputArray[] = input.split("/");
                 String url = inputArray[inputArray.length - 1];
                 url = url.trim();
-                tracker = Tracker.getInstance(HomeActivity.this, url,Operation.OPEN);
+                if (tracker != null) {
+                    tracker.resetTree();
+                }
+                tracker = Tracker.getInstance(HomeActivity.this, url, Operation.OPEN);
                 importDialog.dismiss();
             }
         });
@@ -193,6 +229,16 @@ public class HomeActivity extends AppCompatActivity {
                 importDialog.dismiss();
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            googleAuth.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
@@ -209,6 +255,12 @@ public class HomeActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.home, menu);
+        if (googleAuth.isSignedIn()){
+            setUserProfile(googleAuth.getUser());
+        }
+        else {
+            setDefaultProfile();
+        }
         return true;
     }
 
@@ -217,9 +269,45 @@ public class HomeActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
         //noinspection SimplifiableIfStatement
+        /*if (id == R.id.action_settings) {
+            return true;
+        }*/
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.login_logout) {
+            Menu menu = navigationView.getMenu();
+            MenuItem loginLogout = menu.getItem(0);
+            if(loginLogout.getTitle().toString().equalsIgnoreCase("login")){
+                googleAuth.signIn();
+            }
+            else {
+                googleAuth.signOut();
+            }
+        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_slideshow) {
+            googleAuth.revokeAccess();
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     @Override
@@ -236,5 +324,67 @@ public class HomeActivity extends AppCompatActivity {
             tracker.resetTree();
         }
         tracker = Tracker.getInstance(this, root, Operation.OPEN);
+    }
+
+    @Override
+    public void onSignedIn(User user) {
+        Toast.makeText(getApplicationContext(), "Signed In As " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+        setUserProfile(googleAuth.getUser());
+       new LoadImage().execute(user.getPhotoUrl());
+    }
+
+    @Override
+    public void onSignedOut() {
+        setDefaultProfile();
+    }
+
+    private void setDefaultProfile() {
+        TextView userName = (TextView) findViewById(R.id.username);
+        userName.setText("");
+        TextView emailId = (TextView) findViewById(R.id.email_id);
+        emailId.setText("");
+        Menu menu = navigationView.getMenu();
+        MenuItem loginLogout = menu.getItem(0);
+        loginLogout.setTitle("Login");
+        Toast.makeText(getApplicationContext(),""+ loginLogout.getTitle(),Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRevokedAccess() {
+
+    }
+
+
+    private class LoadImage extends AsyncTask<String, String, Bitmap> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(HomeActivity.this);
+            pDialog.setMessage("Loading Image ....");
+            // pDialog.show();
+
+        }
+
+        protected Bitmap doInBackground(String... args) {
+            try {
+                bitmap = BitmapFactory.decodeStream((InputStream) new URL(args[0]).getContent());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
+
+        protected void onPostExecute(Bitmap image) {
+        }
+    }
+    public void setUserProfile(User user) {
+        TextView userName = (TextView) findViewById(R.id.username);
+        userName.setText(user.getDisplayName());
+        TextView emailId = (TextView) findViewById(R.id.email_id);
+        emailId.setText(user.getEmail());
+        Menu menu = navigationView.getMenu();
+        MenuItem loginLogout = menu.getItem(0);
+        loginLogout.setTitle("Logout");
+        Toast.makeText(getApplicationContext(),""+ loginLogout.getTitle(),Toast.LENGTH_SHORT).show();
     }
 }

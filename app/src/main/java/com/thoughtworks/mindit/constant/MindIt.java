@@ -9,4 +9,6 @@ public class MindIt {
     public static final String COLLECTION = "Mindmaps";
     public static final String ID = "_id";
     public static final java.lang.String WEB_SOCKET = "ws://www.mindit.xyz/websocket";
+    public static final java.lang.String WEB_SOCKET_LOCAL = "ws://10.131.125.92:3000/websocket";
+
 }
