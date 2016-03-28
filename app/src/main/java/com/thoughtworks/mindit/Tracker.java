@@ -219,7 +219,7 @@ public class Tracker implements MeteorCallback, ITracker {
             @Override
             public void run() {
                 while(rootId == null);
-                System.out.println("ggg-- "+rootId);
+
                 findTree(rootId);
                 meteor.subscribe(MindIt.SUBSCRIPTION_NAME, new String[]{rootId});
             }

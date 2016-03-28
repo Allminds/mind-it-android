@@ -59,7 +59,6 @@ public class HomeActivity extends AppCompatActivity
     private NavigationView navigationView;
     @Override
     protected void onNewIntent(Intent intent) {
-        Toast.makeText(getApplicationContext(), "alo ", Toast.LENGTH_SHORT).show();
         if (intent == null) {
             return;
         }
@@ -330,7 +329,7 @@ public class HomeActivity extends AppCompatActivity
     public void onSignedIn(User user) {
         Toast.makeText(getApplicationContext(), "Signed In As " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
         setUserProfile(googleAuth.getUser());
-       new LoadImage().execute(user.getPhotoUrl());
+        new LoadImage().execute(user.getPhotoUrl());
     }
 
     @Override
@@ -340,18 +339,17 @@ public class HomeActivity extends AppCompatActivity
 
     private void setDefaultProfile() {
         TextView userName = (TextView) findViewById(R.id.username);
-        userName.setText("");
+        userName.setText("MindIt");
         TextView emailId = (TextView) findViewById(R.id.email_id);
-        emailId.setText("");
+        emailId.setText("allminds@mindit.com");
         Menu menu = navigationView.getMenu();
         MenuItem loginLogout = menu.getItem(0);
         loginLogout.setTitle("Login");
-        Toast.makeText(getApplicationContext(),""+ loginLogout.getTitle(),Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onRevokedAccess() {
-
+        setDefaultProfile();
     }
 
 

@@ -125,7 +125,6 @@ public class GoogleAuth implements GoogleApiClient.OnConnectionFailedListener,Me
     }
 
     public boolean isSignedIn() {
-        Toast.makeText(context,""+this.user,Toast.LENGTH_SHORT).show();
         return sessionManager.isLoggedIn();
     }
 
@@ -141,19 +140,17 @@ public class GoogleAuth implements GoogleApiClient.OnConnectionFailedListener,Me
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Toast.makeText(context,"meteor on called",Toast.LENGTH_SHORT).show();
-        System.out.println(userJson);
+
         mMeteor.call("createUserFromAdmin", new Object[]{userJson}, new ResultListener() {
             @Override
             public void onSuccess(String s) {
-                Toast.makeText(context,"alo "+s,Toast.LENGTH_SHORT).show();
-                System.out.println(s);
+
                 mMeteor.disconnect();
             }
 
             @Override
             public void onError(String s, String s1, String s2) {
-                Toast.makeText(context,"gelo "+s+" "+s1+" "+s2,Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"Connection Error",Toast.LENGTH_SHORT).show();
                 mMeteor.disconnect();
             }
         });
