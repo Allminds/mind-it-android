@@ -356,6 +356,7 @@ public class Meteor {
             return;
         }
 
+
         if (data != null) {
             if (data.has(Protocol.Field.MESSAGE)) {
                 final String message = data.get(Protocol.Field.MESSAGE).getTextValue();
@@ -519,6 +520,8 @@ public class Meteor {
                             mCallbackProxy.forResultListener((ResultListener) listener).onError(error.getError(), error.getReason(), error.getDetails());
                         }
                         else {
+
+
                             mCallbackProxy.forResultListener((ResultListener) listener).onSuccess(result);
                         }
                     }
@@ -640,7 +643,7 @@ public class Meteor {
      */
     public static void log(final String message) {
         if (mLoggingEnabled) {
-            //System.out.println(message);
+            //
         }
     }
 

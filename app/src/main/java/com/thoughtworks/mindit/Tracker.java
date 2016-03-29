@@ -49,7 +49,7 @@ public class Tracker implements MeteorCallback, ITracker {
     private Tracker(Context context, String rootId) {
         this.rootId = rootId;
         this.context = context;
-        //   Meteor.setLoggingEnabled(true);
+        Meteor.setLoggingEnabled(true);
         startAsyncTask();
         meteor = new Meteor(context, MindIt.WEB_SOCKET, this);
         meteor.setCallback(this);
@@ -74,16 +74,30 @@ public class Tracker implements MeteorCallback, ITracker {
     private String createMindMap() {
         final Node newNode = new Node("", "New Mindmap", null, null, 0);
         Map<String, Object> addValues = getValueMap(newNode);
-        meteor.insert(MindIt.COLLECTION, addValues, new ResultListener() {
+       /* meteor.insert(MindIt.COLLECTION, addValues, new ResultListener() {
             @Override
             public void onSuccess(String s) {
                 //ignore first([) and last character(])
+
                 s = s.substring(1, s.length() - 1);
                 Node tempNode = JsonParserService.parseNode(s);
                 rootId = tempNode.getId();
             }
             @Override
             public void onError(String s, String s1, String s2) {
+            }
+        });*/
+        meteor.call("createRootNode", new ResultListener() {
+            @Override
+            public void onSuccess(String _id) {
+                Toast.makeText(context, _id, Toast.LENGTH_SHORT).show();
+                _id = _id.substring(1, _id.length() - 1);
+                rootId = _id;
+            }
+
+            @Override
+            public void onError(String s, String s1, String s2) {
+
             }
         });
         return null;
@@ -132,19 +146,17 @@ public class Tracker implements MeteorCallback, ITracker {
 
     public void addChild(final Node node) {
         Map<String, Object> addValues = getValueMap(node);
-        meteor.insert(MindIt.COLLECTION, addValues, new ResultListener() {
+        meteor.call("createNode", new String[]{node.getName(), node.getParentId(), node.getRootId(), node.getPosition()}, new ResultListener() {
             @Override
-            public void onSuccess(String s) {
-                //ignore first([) and last character(])
-                s = s.substring(1, s.length() - 1);
-                Node tempNode = JsonParserService.parseNode(s);
-                node.set_id(tempNode.getId());
+            public void onSuccess(String _id) {
+                _id = _id.substring(1, _id.length() - 1);
+                node.set_id(_id);
                 tree.addNode(node);
                 updateParentInDB(node);
             }
-
             @Override
             public void onError(String s, String s1, String s2) {
+
             }
         });
     }
@@ -163,10 +175,9 @@ public class Tracker implements MeteorCallback, ITracker {
         Map<String, Object> updateQuery = new HashMap<>();
         updateQuery.put(MindIt.ID, node.getId());
         Map<String, Object> updateValues = getValueMap(node);
-        meteor.update(MindIt.COLLECTION, updateQuery, updateValues, null, new ResultListener() {
+        meteor.call("updateNode", new Object[]{node.getId(), updateValues}, new ResultListener() {
             @Override
             public void onSuccess(String s) {
-                tree.updateNode(node, Fields.NAME, node.getName());
             }
 
             @Override
@@ -181,13 +192,17 @@ public class Tracker implements MeteorCallback, ITracker {
         Map<String, Object> updateQuery = new HashMap<>();
         updateQuery.put(MindIt.ID, parent.getId());
         Map<String, Object> updateValues = getValueMap(parent);
-        meteor.update(MindIt.COLLECTION, updateQuery, updateValues, null, new ResultListener() {
+
+        meteor.call("updateNode", new Object[]{node.getParentId(), updateValues}, new ResultListener() {
             @Override
             public void onSuccess(String s) {
+
             }
 
             @Override
             public void onError(String s, String s1, String s2) {
+
+
             }
         });
     }
@@ -206,7 +221,6 @@ public class Tracker implements MeteorCallback, ITracker {
         }
         addValues.put(Fields.PARENT_ID, node.getParentId());
         addValues.put(Fields.ROOT_ID, node.getRootId());
-        addValues.put(Fields.INDEX, node.getIndex());
         return addValues;
     }
 

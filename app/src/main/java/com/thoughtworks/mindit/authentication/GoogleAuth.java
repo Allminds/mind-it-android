@@ -113,8 +113,6 @@ public class GoogleAuth implements GoogleApiClient.OnConnectionFailedListener,Me
             sessionManager.createLoginSession(this.user);
             mMeteor = new Meteor(context, MindIt.WEB_SOCKET_LOCAL);
             mMeteor.setCallback(this);
-            OnAuthenticationChanged authenticationChanged = (OnAuthenticationChanged) context;
-            authenticationChanged.onSignedIn(this.user);
         } else {
             Toast.makeText(context, "Signed Error: " + result.getStatus(), Toast.LENGTH_SHORT).show();
         }
@@ -133,24 +131,25 @@ public class GoogleAuth implements GoogleApiClient.OnConnectionFailedListener,Me
         createUser(this.user);
     }
 
-    private void createUser(User user) {
+    private void createUser(final User user) {
         String userJson = null;
         try {
              userJson = getJson(user);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+        final User loggedInUser = this.user;
         mMeteor.call("createUserFromAdmin", new Object[]{userJson}, new ResultListener() {
             @Override
             public void onSuccess(String s) {
-
                 mMeteor.disconnect();
+                OnAuthenticationChanged authenticationChanged = (OnAuthenticationChanged) context;
+                authenticationChanged.onSignedIn(loggedInUser);
             }
 
             @Override
             public void onError(String s, String s1, String s2) {
-                Toast.makeText(context,"Connection Error",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"Login Failed",Toast.LENGTH_SHORT).show();
                 mMeteor.disconnect();
             }
         });
