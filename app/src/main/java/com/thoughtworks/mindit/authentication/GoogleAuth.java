@@ -45,7 +45,7 @@ public class GoogleAuth implements GoogleApiClient.OnConnectionFailedListener,Me
                 .enableAutoManage(appCompatActivity /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
-        sessionManager = new SessionManager(context);
+        sessionManager = SessionManager.getInstance(context);
         if(sessionManager.isLoggedIn()) {
             this.user = sessionManager.getUserDetails();
         }

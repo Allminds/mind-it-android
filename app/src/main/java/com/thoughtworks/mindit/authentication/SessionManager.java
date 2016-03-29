@@ -13,13 +13,23 @@ public class SessionManager {
     private User currentUser;
     private Context _context;
     private int PRIVATE_MODE = 0;
+    private static SessionManager instance;
 
-    public SessionManager(Context context) {
+    private SessionManager(Context context) {
         this._context = context;
         sessionSharedPreferences = _context.getSharedPreferences(Authentication.SESSION_PREFERENCES, PRIVATE_MODE);
         editor = sessionSharedPreferences.edit();
+        instance = this;
     }
 
+    public static SessionManager getInstance(Context context){
+        if(instance == null){
+            return new SessionManager(context);
+        }
+        else {
+            return instance;
+        }
+    }
     public void createLoginSession(User user) {
         editor.clear();
         editor.commit();

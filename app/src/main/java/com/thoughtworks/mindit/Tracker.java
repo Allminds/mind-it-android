@@ -13,9 +13,11 @@ import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
+import com.thoughtworks.mindit.authentication.SessionManager;
 import com.thoughtworks.mindit.constant.Constants;
 import com.thoughtworks.mindit.constant.Fields;
 import com.thoughtworks.mindit.constant.MindIt;
+import com.thoughtworks.mindit.constant.Mindmap;
 import com.thoughtworks.mindit.constant.NetworkMessage;
 import com.thoughtworks.mindit.constant.Operation;
 import com.thoughtworks.mindit.helper.ITracker;
@@ -45,6 +47,7 @@ public class Tracker implements MeteorCallback, ITracker {
     private String rootId;
     private Tree tree;
     private Context context;
+    private boolean accessDenied = true;
 
     private Tracker(Context context, String rootId) {
         this.rootId = rootId;
@@ -74,20 +77,17 @@ public class Tracker implements MeteorCallback, ITracker {
     private String createMindMap() {
         final Node newNode = new Node("", "New Mindmap", null, null, 0);
         Map<String, Object> addValues = getValueMap(newNode);
-       /* meteor.insert(MindIt.COLLECTION, addValues, new ResultListener() {
-            @Override
-            public void onSuccess(String s) {
-                //ignore first([) and last character(])
 
-                s = s.substring(1, s.length() - 1);
-                Node tempNode = JsonParserService.parseNode(s);
-                rootId = tempNode.getId();
-            }
-            @Override
-            public void onError(String s, String s1, String s2) {
-            }
-        });*/
-        meteor.call("createRootNode", new ResultListener() {
+        String [] data = new String[1];
+        SessionManager sessionManager = SessionManager.getInstance(context);
+
+        if(sessionManager.isLoggedIn()){
+            data[0] = sessionManager.getUserDetails().getEmail();
+        }
+        else {
+            data[0] = "*";
+        }
+        meteor.call("createRootNode", data,new ResultListener() {
             @Override
             public void onSuccess(String _id) {
                 Toast.makeText(context, _id, Toast.LENGTH_SHORT).show();
@@ -131,15 +131,26 @@ public class Tracker implements MeteorCallback, ITracker {
     }
 
     private void findTree(String rootId) {
-        meteor.call(MindIt.FIND_TREE, new String[]{rootId}, new ResultListener() {
+        String []data = new String[3];
+        data[0] = rootId;
+        SessionManager sessionManager = SessionManager.getInstance(context);
+        if(sessionManager.isLoggedIn()){
+            data[1] = sessionManager.getUserDetails().getEmail();
+        }
+        else{
+            data[1] = "*";
+        }
+        meteor.call(MindIt.FIND_TREE, data, new ResultListener() {
             @Override
             public void onSuccess(String jsonResponse) {
+                System.out.println("no error: "+jsonResponse);
                 tree = JsonParserService.parse(jsonResponse);
             }
 
             @Override
             public void onError(String s, String s1, String s2) {
-
+                System.out.println("error oc:- "+s+" "+s1+" "+s2);
+                accessDenied = false;
             }
         });
     }
@@ -233,9 +244,17 @@ public class Tracker implements MeteorCallback, ITracker {
             @Override
             public void run() {
                 while(rootId == null);
-
                 findTree(rootId);
-                meteor.subscribe(MindIt.SUBSCRIPTION_NAME, new String[]{rootId});
+                String [] data = new String[2];
+                data[0] = rootId;
+                SessionManager sessionManager = SessionManager.getInstance(context);
+                if(sessionManager.isLoggedIn()){
+                    data[1] = sessionManager.getUserDetails().getEmail();
+                }
+                else{
+                    data[1] = "*";
+                }
+                meteor.subscribe(MindIt.SUBSCRIPTION_NAME, data);
             }
         }).start();
     }
@@ -421,7 +440,7 @@ public class Tracker implements MeteorCallback, ITracker {
         @NonNull
         private String downLoadMindmap() {
 
-           /* while (rootId == null){
+            while (tree == null && accessDenied ) {
                 if (JsonParserService.isErrorOccurred())
                     break;
                 try {
@@ -429,17 +448,9 @@ public class Tracker implements MeteorCallback, ITracker {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            }*/
-
-
-            while (tree == null) {
-                if (JsonParserService.isErrorOccurred())
-                    break;
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            }
+            if(accessDenied == false) {
+                return Mindmap.ACCESS_DENIED;
             }
             return NetworkMessage.SUCCESS;
         }
@@ -468,8 +479,15 @@ public class Tracker implements MeteorCallback, ITracker {
                     });
                     alertDialog.show();
                 } else {
-                    Intent intent = new Intent(context, MindmapActivity.class);
-                    context.startActivity(intent);
+                    if(result.equalsIgnoreCase(Mindmap.ACCESS_DENIED)){
+                        resetTree();
+                        Toast toast = Toast.makeText(context, result, Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER, 0, 100);
+                        toast.show();
+                    }else {
+                        Intent intent = new Intent(context, MindmapActivity.class);
+                        context.startActivity(intent);
+                    }
                 }
             }
 
