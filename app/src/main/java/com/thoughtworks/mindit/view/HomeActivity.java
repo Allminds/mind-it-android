@@ -38,6 +38,7 @@ import com.thoughtworks.mindit.authentication.OnAuthenticationChanged;
 import com.thoughtworks.mindit.authentication.User;
 import com.thoughtworks.mindit.constant.Colors;
 import com.thoughtworks.mindit.constant.Constants;
+import com.thoughtworks.mindit.constant.MindIt;
 import com.thoughtworks.mindit.constant.Operation;
 import com.thoughtworks.mindit.constant.Setting;
 
@@ -327,7 +328,7 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public void onSignedIn(User user) {
-        Toast.makeText(getApplicationContext(), "Signed In As " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), MindIt.SIGN_IN_AS + user.getDisplayName(), Toast.LENGTH_SHORT).show();
         setUserProfile(googleAuth.getUser());
         new LoadImage().execute(user.getPhotoUrl());
     }
@@ -339,9 +340,9 @@ public class HomeActivity extends AppCompatActivity
 
     private void setDefaultProfile() {
         TextView userName = (TextView) findViewById(R.id.username);
-        userName.setText("MindIt");
+        userName.setText(MindIt.DEFAULT_USER_NAME);
         TextView emailId = (TextView) findViewById(R.id.email_id);
-        emailId.setText("allminds@mindit.com");
+        emailId.setText(MindIt.DEFAULT_EMAIL_ID);
         Menu menu = navigationView.getMenu();
         MenuItem loginLogout = menu.getItem(0);
         loginLogout.setTitle("Login");
@@ -359,7 +360,6 @@ public class HomeActivity extends AppCompatActivity
             super.onPreExecute();
             pDialog = new ProgressDialog(HomeActivity.this);
             pDialog.setMessage("Loading Image ....");
-            // pDialog.show();
 
         }
 
@@ -383,6 +383,5 @@ public class HomeActivity extends AppCompatActivity
         Menu menu = navigationView.getMenu();
         MenuItem loginLogout = menu.getItem(0);
         loginLogout.setTitle("Logout");
-        Toast.makeText(getApplicationContext(),""+ loginLogout.getTitle(),Toast.LENGTH_SHORT).show();
     }
 }

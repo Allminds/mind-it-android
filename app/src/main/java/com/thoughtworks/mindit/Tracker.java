@@ -15,7 +15,9 @@ import android.widget.Toast;
 
 import com.thoughtworks.mindit.authentication.SessionManager;
 import com.thoughtworks.mindit.constant.Constants;
+import com.thoughtworks.mindit.constant.Error;
 import com.thoughtworks.mindit.constant.Fields;
+import com.thoughtworks.mindit.constant.MeteorMethods;
 import com.thoughtworks.mindit.constant.MindIt;
 import com.thoughtworks.mindit.constant.Mindmap;
 import com.thoughtworks.mindit.constant.NetworkMessage;
@@ -87,7 +89,7 @@ public class Tracker implements MeteorCallback, ITracker {
         else {
             data[0] = "*";
         }
-        meteor.call("createRootNode", data,new ResultListener() {
+        meteor.call(MeteorMethods.CREATE_ROOT_NODE, data,new ResultListener() {
             @Override
             public void onSuccess(String _id) {
                 Toast.makeText(context, _id, Toast.LENGTH_SHORT).show();
@@ -140,16 +142,14 @@ public class Tracker implements MeteorCallback, ITracker {
         else{
             data[1] = "*";
         }
-        meteor.call(MindIt.FIND_TREE, data, new ResultListener() {
+        meteor.call(MeteorMethods.FIND_TREE, data, new ResultListener() {
             @Override
             public void onSuccess(String jsonResponse) {
-                System.out.println("no error: "+jsonResponse);
                 tree = JsonParserService.parse(jsonResponse);
             }
 
             @Override
             public void onError(String s, String s1, String s2) {
-                System.out.println("error oc:- "+s+" "+s1+" "+s2);
                 accessDenied = false;
             }
         });
@@ -157,7 +157,7 @@ public class Tracker implements MeteorCallback, ITracker {
 
     public void addChild(final Node node) {
         Map<String, Object> addValues = getValueMap(node);
-        meteor.call("createNode", new String[]{node.getName(), node.getParentId(), node.getRootId(), node.getPosition()}, new ResultListener() {
+        meteor.call(MeteorMethods.CREATE_NODE, new String[]{node.getName(), node.getParentId(), node.getRootId(), node.getPosition()}, new ResultListener() {
             @Override
             public void onSuccess(String _id) {
                 _id = _id.substring(1, _id.length() - 1);
@@ -186,7 +186,7 @@ public class Tracker implements MeteorCallback, ITracker {
         Map<String, Object> updateQuery = new HashMap<>();
         updateQuery.put(MindIt.ID, node.getId());
         Map<String, Object> updateValues = getValueMap(node);
-        meteor.call("updateNode", new Object[]{node.getId(), updateValues}, new ResultListener() {
+        meteor.call(MeteorMethods.UPDATE_NODE, new Object[]{node.getId(), updateValues}, new ResultListener() {
             @Override
             public void onSuccess(String s) {
             }
@@ -204,7 +204,7 @@ public class Tracker implements MeteorCallback, ITracker {
         updateQuery.put(MindIt.ID, parent.getId());
         Map<String, Object> updateValues = getValueMap(parent);
 
-        meteor.call("updateNode", new Object[]{node.getParentId(), updateValues}, new ResultListener() {
+        meteor.call(MeteorMethods.UPDATE_NODE, new Object[]{node.getParentId(), updateValues}, new ResultListener() {
             @Override
             public void onSuccess(String s) {
 
@@ -470,7 +470,7 @@ public class Tracker implements MeteorCallback, ITracker {
                     resetTree();
                     JsonParserService.resetErrorOccurredFlag();
                     final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-                    alertDialog.setMessage(MindIt.INVALID_ID_ERROR);
+                    alertDialog.setMessage(Error.INVALID_ID_ERROR);
                     alertDialog.setButton(Constants.OK, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

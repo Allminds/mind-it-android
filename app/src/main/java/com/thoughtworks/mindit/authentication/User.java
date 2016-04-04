@@ -37,7 +37,14 @@ public class User {
 
     @Override
     public String toString() {
-        return "u " + this.id;
+        String user = "id : "+this.id+
+                        "\nname : "+this.name+
+                        "\nphotoUrl : "+this.photoUrl+
+                        "\nemail : "+this.email+
+                        "\ngrantedScopes : "+this.grantedScopes+
+                        "\nserver auth code : "+this.serverAuthCode+
+                        "\nidToken : "+this.idToken;
+        return user;
     }
 
     public String getId() {

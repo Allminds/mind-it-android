@@ -10,4 +10,10 @@ public class Authentication {
     public static final String USER_ID_PHOTO_URL = "photoUrl";
     public static final String SESSION_PREFERENCES = "USER_PREFERENCE";
     public static final String IS_LOGIN = "IsLoggedIn";
+
+    public static final String PICTURE = "picture";
+    public static final String VERIFIED_EMAIL = "verified_email";
+    public static final String GOOGLE = "google";
+    public static final String PROFILE = "profile";
+    public static final String SERVICES = "services";
 }

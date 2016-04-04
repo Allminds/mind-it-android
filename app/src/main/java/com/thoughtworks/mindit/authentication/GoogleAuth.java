@@ -3,7 +3,6 @@ package com.thoughtworks.mindit.authentication;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -14,6 +13,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.thoughtworks.mindit.constant.Authentication;
+import com.thoughtworks.mindit.constant.Error;
+import com.thoughtworks.mindit.constant.MeteorMethods;
 import com.thoughtworks.mindit.constant.MindIt;
 
 import org.json.JSONException;
@@ -56,7 +58,6 @@ public class GoogleAuth implements GoogleApiClient.OnConnectionFailedListener,Me
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
         Toast.makeText(context, "" + connectionResult, Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
 
     public void signIn() {
@@ -78,7 +79,6 @@ public class GoogleAuth implements GoogleApiClient.OnConnectionFailedListener,Me
                     @Override
                     public void onResult(Status status) {
                         if (status.isSuccess()) {
-//                            Toast.makeText(context, "Logged Out User : "+user.getDisplayName(), Toast.LENGTH_SHORT).show();
                             sessionManager.logoutUser();
                             OnAuthenticationChanged authenticationChanged = (OnAuthenticationChanged) context;
                             authenticationChanged.onSignedOut();
@@ -111,10 +111,10 @@ public class GoogleAuth implements GoogleApiClient.OnConnectionFailedListener,Me
             account = result.getSignInAccount();
             this.user = new User(account);
             sessionManager.createLoginSession(this.user);
-            mMeteor = new Meteor(context, MindIt.WEB_SOCKET_LOCAL);
+            mMeteor = new Meteor(context, MindIt.WEB_SOCKET);
             mMeteor.setCallback(this);
         } else {
-            Toast.makeText(context, "Signed Error: " + result.getStatus(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, Error.SIGNED_IN_ERROR+": " + result.getStatus(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -139,7 +139,7 @@ public class GoogleAuth implements GoogleApiClient.OnConnectionFailedListener,Me
             e.printStackTrace();
         }
         final User loggedInUser = this.user;
-        mMeteor.call("createUserFromAdmin", new Object[]{userJson}, new ResultListener() {
+        mMeteor.call(MeteorMethods.CREATE_USER, new Object[]{userJson}, new ResultListener() {
             @Override
             public void onSuccess(String s) {
                 mMeteor.disconnect();
@@ -149,27 +149,26 @@ public class GoogleAuth implements GoogleApiClient.OnConnectionFailedListener,Me
 
             @Override
             public void onError(String s, String s1, String s2) {
-                Toast.makeText(context,"Login Failed",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,Error.LOG_IN_FAILED,Toast.LENGTH_SHORT).show();
                 mMeteor.disconnect();
             }
         });
     }
 
     private String getJson(User user) throws JSONException {
-
         JSONObject name = new JSONObject();
-        name.put("name", user.getDisplayName());
+        name.put(Authentication.USER_NAME, user.getDisplayName());
         JSONObject google = new JSONObject();
-        google.put("id", user.getId());
-        google.put("name", user.getDisplayName());
-        google.put("picture", user.getPhotoUrl());
-        google.put("verified_email", true);
-        google.put("email", user.getEmail());
+        google.put(Authentication.USER_ID, user.getId());
+        google.put(Authentication.USER_NAME, user.getDisplayName());
+        google.put(Authentication.PICTURE, user.getPhotoUrl());
+        google.put(Authentication.VERIFIED_EMAIL, true);
+        google.put(Authentication.USER_EMAIL, user.getEmail());
         JSONObject ggl = new JSONObject();
-        ggl.put("google", google);
-        ggl.put("profile", name);
+        ggl.put(Authentication.GOOGLE, google);
+        ggl.put(Authentication.PROFILE, name);
         JSONObject services = new JSONObject();
-        services.put("services", ggl);
+        services.put(Authentication.SERVICES, ggl);
         return services.toString();
     }
 
