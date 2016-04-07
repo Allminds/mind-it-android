@@ -60,6 +60,7 @@
             android:layout_gravity="center_horizontal"
             android:background="@drawable/buttonshape"
             android:fontFamily="sans-serif"
+            android:layout_marginLeft="20dp"
             android:shadowColor="#A8A8A8"
             android:text="   Create MindMap   "
             android:textAllCaps="false"

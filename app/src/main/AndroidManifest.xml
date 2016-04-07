@@ -15,9 +15,10 @@
             android:name="com.thoughtworks.mindit.view.MindmapActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_mindmap"
-            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize">
+
+        </activity>
 
         <activity
             android:name="com.thoughtworks.mindit.view.HomeActivity"

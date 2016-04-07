@@ -10,6 +10,7 @@ public class Constants {
     public static final String EMPTY_STRING = "";
     public static final String OK = "OK";
     public static final java.lang.String IMPORT_DIALOG_TITLE = "Enter URL";
+    public static final java.lang.String LOGIN_DIALOG_TITLE = "Need acces permission";
     public static final String ROOT_DELETE_ERROR = "Can not delete root node...";
     public static final String FONT_SERIF = "DroidSerif-Bold.ttf";
     public static final String EXCEPTION_NULL_OBSERVER = "Null Observer";

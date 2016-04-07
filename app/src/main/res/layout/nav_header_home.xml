@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/side_nav_bar"
     android:gravity="bottom"
     android:orientation="vertical"
@@ -11,12 +12,22 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <ImageView
+    <com.pkmmte.view.CircularImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@android:drawable/sym_def_app_icon"
+        app:border="true"
+        app:border_color="#EEEEEE"
+        app:border_width="0dp"
+        android:id="@+id/circular_profile_photo"
+        app:shadow="true" />
+
+    <!--<ImageView
         android:id="@+id/profile_photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:src="@android:drawable/sym_def_app_icon" />
+        android:src="@android:drawable/sym_def_app_icon" />-->
 
     <TextView
         android:layout_width="match_parent"

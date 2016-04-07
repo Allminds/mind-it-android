@@ -8,12 +8,12 @@ import com.thoughtworks.mindit.constant.Authentication;
 import com.thoughtworks.mindit.view.HomeActivity;
 
 public class SessionManager {
+    private static SessionManager instance;
     SharedPreferences sessionSharedPreferences;
     SharedPreferences.Editor editor;
     private User currentUser;
     private Context _context;
     private int PRIVATE_MODE = 0;
-    private static SessionManager instance;
 
     private SessionManager(Context context) {
         this._context = context;
@@ -22,14 +22,14 @@ public class SessionManager {
         instance = this;
     }
 
-    public static SessionManager getInstance(Context context){
-        if(instance == null){
+    public static SessionManager getInstance(Context context) {
+        if (instance == null) {
             return new SessionManager(context);
-        }
-        else {
+        } else {
             return instance;
         }
     }
+
     public void createLoginSession(User user) {
         editor.clear();
         editor.commit();
@@ -64,7 +64,7 @@ public class SessionManager {
         // Clearing all data from Shared Preferences
         editor.clear();
         editor.commit();
-
+        instance = null;
         // After logout redirect user to Loing Activity
         Intent i = new Intent(_context, HomeActivity.class);
         // Closing all the Activities

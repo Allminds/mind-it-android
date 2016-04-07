@@ -114,7 +114,7 @@ public class GoogleAuth implements GoogleApiClient.OnConnectionFailedListener,Me
             mMeteor = new Meteor(context, MindIt.WEB_SOCKET);
             mMeteor.setCallback(this);
         } else {
-            Toast.makeText(context, Error.SIGNED_IN_ERROR+": " + result.getStatus(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, Error.SIGNED_IN_ERROR, Toast.LENGTH_SHORT).show();
         }
     }
 

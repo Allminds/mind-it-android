@@ -31,9 +31,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.pkmmte.view.CircularImageView;
 import com.thoughtworks.mindit.R;
 import com.thoughtworks.mindit.Tracker;
 import com.thoughtworks.mindit.authentication.GoogleAuth;
+import com.thoughtworks.mindit.authentication.MindmapRequest;
 import com.thoughtworks.mindit.authentication.OnAuthenticationChanged;
 import com.thoughtworks.mindit.authentication.User;
 import com.thoughtworks.mindit.constant.Colors;
@@ -58,21 +60,24 @@ public class HomeActivity extends AppCompatActivity
     private Bitmap bitmap;
     private ProgressDialog pDialog;
     private NavigationView navigationView;
+    private MindmapRequest mindmapRequest;
+
     @Override
     protected void onNewIntent(Intent intent) {
         if (intent == null) {
             return;
         }
-        if (importDialog != null && importDialog.isShowing())
+        if (importDialog != null && importDialog.isShowing()) {
             importDialog.dismiss();
+        }
         Uri data = intent.getData();
         if (data != null) {
             String[] url = data.toString().split("/");
             if (tracker != null) {
                 isNewIntent = true;
-                tracker.resetTree();
             }
-            tracker = Tracker.getInstance(this, url[url.length - 1], Operation.OPEN);
+            String mindmapId = url[url.length - 1];
+            openMindmapById(mindmapId, Operation.OPEN);
         }
     }
 
@@ -97,6 +102,7 @@ public class HomeActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         Intent intent = getIntent();
+
         Uri data = intent.getData();
         if (data != null) {
             String[] url = data.toString().split("/");
@@ -120,15 +126,10 @@ public class HomeActivity extends AppCompatActivity
             }
         });
         googleAuth = new GoogleAuth((AppCompatActivity) this, (Context) this);
-
     }
 
     private void createMindmap() {
-        if (tracker != null) {
-            isNewIntent = true;
-            tracker.resetTree();
-        }
-        tracker = Tracker.getInstance(this, "", Operation.CREATE);
+        openMindmapById("", Operation.CREATE);
     }
 
     private void addVersionSettings() {
@@ -215,10 +216,7 @@ public class HomeActivity extends AppCompatActivity
                 String inputArray[] = input.split("/");
                 String url = inputArray[inputArray.length - 1];
                 url = url.trim();
-                if (tracker != null) {
-                    tracker.resetTree();
-                }
-                tracker = Tracker.getInstance(HomeActivity.this, url, Operation.OPEN);
+                openMindmapById(url, Operation.OPEN);
                 importDialog.dismiss();
             }
         });
@@ -229,6 +227,13 @@ public class HomeActivity extends AppCompatActivity
                 importDialog.dismiss();
             }
         });
+    }
+
+    private void openMindmapById(String url, Operation operation) {
+        if (tracker != null) {
+            tracker.resetTree();
+        }
+        tracker = Tracker.getInstance(HomeActivity.this, url, operation);
     }
 
     @Override
@@ -255,10 +260,9 @@ public class HomeActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.home, menu);
-        if (googleAuth.isSignedIn()){
+        if (googleAuth.isSignedIn()) {
             setUserProfile(googleAuth.getUser());
-        }
-        else {
+        } else {
             setDefaultProfile();
         }
         return true;
@@ -266,9 +270,6 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -288,13 +289,13 @@ public class HomeActivity extends AppCompatActivity
         if (id == R.id.login_logout) {
             Menu menu = navigationView.getMenu();
             MenuItem loginLogout = menu.getItem(0);
-            if(loginLogout.getTitle().toString().equalsIgnoreCase("login")){
+            if (loginLogout.getTitle().toString().equalsIgnoreCase("login")) {
                 googleAuth.signIn();
-            }
-            else {
+            } else {
                 googleAuth.signOut();
             }
-        } else if (id == R.id.nav_gallery) {
+        }
+        /*else if (id == R.id.nav_gallery) {
         } else if (id == R.id.nav_slideshow) {
             googleAuth.revokeAccess();
         } else if (id == R.id.nav_manage) {
@@ -305,6 +306,7 @@ public class HomeActivity extends AppCompatActivity
 
         }
 
+*/
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -330,12 +332,52 @@ public class HomeActivity extends AppCompatActivity
     public void onSignedIn(User user) {
         Toast.makeText(getApplicationContext(), MindIt.SIGN_IN_AS + user.getDisplayName(), Toast.LENGTH_SHORT).show();
         setUserProfile(googleAuth.getUser());
-        new LoadImage().execute(user.getPhotoUrl());
+        if (googleAuth.getUser().getPhotoUrl() != null) {
+            new LoadImage().execute(user.getPhotoUrl());
+        } else {
+            Bitmap defaultIcon = BitmapFactory.decodeResource(getResources(), R.drawable.default_profile);
+            setUserProfilePhoto(defaultIcon);
+        }
+        if (this.mindmapRequest != null && !this.mindmapRequest.isResponded()) {
+            this.mindmapRequest.setResponded(true);
+            openMindmapById(mindmapRequest.getId(), Operation.OPEN);
+        }
     }
 
     @Override
     public void onSignedOut() {
+        Toast.makeText(getApplicationContext(), "Successfully Signed Out", Toast.LENGTH_SHORT).show();
         setDefaultProfile();
+    }
+
+    @Override
+    public void onRevokedAccess() {
+        setDefaultProfile();
+    }
+
+
+    @Override
+    public void onSignInRequest(MindmapRequest mindmapRequest) {
+        this.mindmapRequest = mindmapRequest;
+        googleAuth.signIn();
+    }
+
+    private void setUserProfilePhoto(Bitmap image) {
+        CircularImageView circularImageView = (CircularImageView) findViewById(R.id.circular_profile_photo);
+        circularImageView.setImageBitmap(image);
+        circularImageView.setBorderWidth(1);
+        circularImageView.addShadow();
+    }
+
+    public void setUserProfile(User user) {
+        TextView userName = (TextView) findViewById(R.id.username);
+        userName.setText(user.getDisplayName());
+        TextView emailId = (TextView) findViewById(R.id.email_id);
+        emailId.setText(user.getEmail());
+        Menu menu = navigationView.getMenu();
+        MenuItem loginLogout = menu.getItem(0);
+        loginLogout.setTitle("Logout");
+        loginLogout.setIcon(R.drawable.logout);
     }
 
     private void setDefaultProfile() {
@@ -346,13 +388,12 @@ public class HomeActivity extends AppCompatActivity
         Menu menu = navigationView.getMenu();
         MenuItem loginLogout = menu.getItem(0);
         loginLogout.setTitle("Login");
+        loginLogout.setIcon(R.drawable.login);
+        CircularImageView circularImageView = (CircularImageView) findViewById(R.id.circular_profile_photo);
+        circularImageView.setImageResource(R.drawable.circular_icon);
+        circularImageView.setBorderWidth(0);
+        circularImageView.addShadow();
     }
-
-    @Override
-    public void onRevokedAccess() {
-        setDefaultProfile();
-    }
-
 
     private class LoadImage extends AsyncTask<String, String, Bitmap> {
         @Override
@@ -368,20 +409,14 @@ public class HomeActivity extends AppCompatActivity
                 bitmap = BitmapFactory.decodeStream((InputStream) new URL(args[0]).getContent());
             } catch (Exception e) {
                 e.printStackTrace();
+                Bitmap defaultIcon = BitmapFactory.decodeResource(getResources(), R.drawable.default_profile);
+                return null;
             }
             return bitmap;
         }
 
         protected void onPostExecute(Bitmap image) {
+            setUserProfilePhoto(image);
         }
-    }
-    public void setUserProfile(User user) {
-        TextView userName = (TextView) findViewById(R.id.username);
-        userName.setText(user.getDisplayName());
-        TextView emailId = (TextView) findViewById(R.id.email_id);
-        emailId.setText(user.getEmail());
-        Menu menu = navigationView.getMenu();
-        MenuItem loginLogout = menu.getItem(0);
-        loginLogout.setTitle("Logout");
     }
 }

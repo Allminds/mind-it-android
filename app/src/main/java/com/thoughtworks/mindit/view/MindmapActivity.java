@@ -15,7 +15,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,8 +42,8 @@ import java.util.ArrayList;
 public class MindmapActivity extends AppCompatActivity implements IMindmapView {
 
     public SharedPreferences sharedPreferences;
-    Menu menu;
     boolean menuOptionFlag = true;
+    private Menu menu;
     private CustomAdapter adapter;
     private Presenter presenter;
     private UINode clipboard;
@@ -52,6 +51,7 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
     private Toolbar toolbar;
     private NetworkReceiver networkReceiver;
     private ListView listView;
+    private String workingMindmapId;
 
     public ListView getListView() {
         return listView;
@@ -74,6 +74,9 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         listView.setAdapter(adapter);
         nodeList = adapter.getNodeList();
         networkReceiver = new NetworkReceiver(presenter, adapter);
+        showcase();
+    }
+    private void showcase() {
         if (sharedPreferences == null) {
             sharedPreferences = getSharedPreferences(Setting.SETTING_PREFERENCES, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -83,7 +86,6 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
             }
         }
 
-        //showcase...
         if (sharedPreferences.getBoolean(Setting.VERSION_2_FIRST_TIME, false)) {
             final Target homeTarget = new Target() {
                 @Override
@@ -173,14 +175,10 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
             menuOptionFlag = false;
             invalidateOptionsMenu();
         }
-
-
     }
-
     @Override
     public void onBackPressed() {
         final AlertDialog.Builder alertExit = new AlertDialog.Builder(this);
-        // alertExit.setTitle("Alert");
         alertExit.setMessage("Do you want to exit?");
         alertExit.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
@@ -204,7 +202,9 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(networkReceiver.getBroadcastReceiver());
+        if (networkReceiver != null) {
+            unregisterReceiver(networkReceiver.getBroadcastReceiver());
+        }
     }
 
     @Override
@@ -212,9 +212,9 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         super.onResume();
 
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(networkReceiver.getBroadcastReceiver(), filter);
-
-
+        if (networkReceiver != null) {
+            registerReceiver(networkReceiver.getBroadcastReceiver(), filter);
+        }
     }
 
     @Override
@@ -245,7 +245,6 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         if (menuOptionFlag == false) {
-            Log.v("msg", ".......In prepare method.....");
             menu.getItem(Constants.ADD).setEnabled(true);
             menu.getItem(Constants.DELETE).setEnabled(true);
             menu.getItem(Constants.INFO).setEnabled(true);

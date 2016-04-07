@@ -6,6 +6,7 @@ import com.thoughtworks.mindit.PublishSubscribe.IObserver;
 import com.thoughtworks.mindit.Tracker;
 import com.thoughtworks.mindit.constant.Constants;
 import com.thoughtworks.mindit.constant.Fields;
+import com.thoughtworks.mindit.constant.UpdateOption;
 import com.thoughtworks.mindit.model.Node;
 import com.thoughtworks.mindit.model.Tree;
 import com.thoughtworks.mindit.view.IMindmapView;
@@ -13,9 +14,6 @@ import com.thoughtworks.mindit.view.model.UINode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import com.thoughtworks.mindit.constant.UpdateOption;
-
-import static com.thoughtworks.mindit.constant.UpdateOption.*;
 
 
 public class Presenter implements IObserver {
@@ -32,11 +30,11 @@ public class Presenter implements IObserver {
         uiNode = null;
     }
 
-    public Presenter(Tracker tracker,IMindmapView iMindmapView) {
+    public Presenter(Tracker tracker, IMindmapView iMindmapView) {
         nodeTree = new HashMap<>();
         this.tracker = tracker;
 // tree.register(this);
-        mView=iMindmapView;
+        mView = iMindmapView;
         uiNode = null;
     }
 
@@ -44,8 +42,8 @@ public class Presenter implements IObserver {
         int depth = node.getDepth() * Constants.PADDING_FOR_DEPTH;
         UINode uiNode = new UINode(node.getName(), depth, node.getParentId());
         uiNode.setId(node.getId());
-        UINode uiNode1=nodeTree.get(node.getId());
-        if(uiNode1!=null)
+        UINode uiNode1 = nodeTree.get(node.getId());
+        if (uiNode1 != null)
             uiNode.setStatus(uiNode1.getStatus());
         nodeTree.put(node.getId(), uiNode);
         updateUIChildSubtree(node, uiNode);
@@ -100,8 +98,8 @@ public class Presenter implements IObserver {
             }
 
             childSubTree.add(i, uiNode1);
-            if(nodeTree.get(uiNode1.getId()) != null){
-                String status=nodeTree.get(uiNode1.getId()).getStatus();
+            if (nodeTree.get(uiNode1.getId()) != null) {
+                String status = nodeTree.get(uiNode1.getId()).getStatus();
                 uiNode1.setStatus(status);
             }
             nodeTree.put(uiNode1.getId(), uiNode1);
@@ -122,7 +120,7 @@ public class Presenter implements IObserver {
 
     public void updateNode(UINode uiNode) {
         Node node = tracker.getTree().getNode(uiNode.getId());
-        if(node!=null) {
+        if (node != null) {
             node.setName(uiNode.getName());
             tracker.updateNode(node);
         }
@@ -147,13 +145,11 @@ public class Presenter implements IObserver {
     public void update(String updateOption, String updateParameter) {
         switch (updateOption) {
             case UpdateOption.ADD:
-                Log.v("In Update:" , ""+tracker.getTree().getLastUpdatedNode());
                 if (uiNode == null) {
                     Node newNode = tracker.getTree().getLastUpdatedNode();
-                    if(nodeTree.get(newNode.getId()) == null)
+                    if (nodeTree.get(newNode.getId()) == null)
                         uiNode = convertModelNodeToUINode(newNode);
                     else {
-                        Log.v("In Update:", nodeTree.get(newNode.getId()).toString());
                         uiNode = nodeTree.get(newNode.getId());
                         uiNode.setName(newNode.getName());
                     }
@@ -206,13 +202,13 @@ public class Presenter implements IObserver {
         }
     }
 
-    public UINode getLeftFirstNode(){
-        Tree tree=tracker.getTree();
-        Node rootNode=tree.getRoot();
+    public UINode getLeftFirstNode() {
+        Tree tree = tracker.getTree();
+        Node rootNode = tree.getRoot();
 
         UINode leftFirstNode = null;
-        if(rootNode.getLeft().size() != 0)
-             leftFirstNode=nodeTree.get(rootNode.getLeft().get(0));
+        if (rootNode.getLeft().size() != 0)
+            leftFirstNode = nodeTree.get(rootNode.getLeft().get(0));
         return leftFirstNode;
     }
 

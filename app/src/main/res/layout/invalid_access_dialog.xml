@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:paddingTop="2dp"
+        android:background="@color/colorAccent" />
+
+    <TextView
+        android:layout_width="288dp"
+        android:layout_height="wrap_content"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:id="@+id/login_message"
+        android:textSize="22sp"
+        android:text="\nYou can not open this mindmap.\nIt is a private mindmap\n"
+        android:layout_gravity="center_horizontal" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorAccent" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:divider="?android:dividerHorizontal"
+
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+
+        <Button
+            android:id="@+id/login_error_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="70dp"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="OK"
+            android:textColor="#595858" />
+
+    </RelativeLayout>
+
+</LinearLayout>
