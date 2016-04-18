@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.support.v7.view.menu.ActionMenuItemView;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -28,7 +27,16 @@ class CustomAdapterHelper {
     private InputMethodManager lManager;
     private final CustomAdapter customAdapter;
     private ArrayList<UINode> nodeList;
+
     private int mode = Constants.SELECTION_MODE;
+
+    public void setMode(int mode) {
+        this.mode = mode;
+    }
+
+    public int getMode() {
+        return mode;
+    }
 
     public CustomAdapterHelper(CustomAdapter customAdapter) {
         this.customAdapter = customAdapter;
@@ -163,14 +171,18 @@ class CustomAdapterHelper {
         nodeHolder.editText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                mode = Constants.EDIT_MODE;
-                ActionMenuItemView add = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.add);
-                ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.delete);
-                delete.setVisibility(View.INVISIBLE);
-                add.setVisibility(View.INVISIBLE);
+                enableEditMode();
                 return false;
             }
         });
+    }
+
+    public void enableEditMode() {
+        mode = Constants.EDIT_MODE;
+        ActionMenuItemView add = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.add);
+        ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.delete);
+        delete.setVisibility(View.INVISIBLE);
+        add.setVisibility(View.INVISIBLE);
     }
 
 

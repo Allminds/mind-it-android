@@ -43,21 +43,32 @@
             android:background="?android:attr/selectableItemBackground"
             android:text="@android:string/cancel"
             android:textColor="#595858" />
-
-        <com.google.android.gms.common.SignInButton
+        <Button
             android:id="@+id/login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="50dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:gravity="center"
-            android:text="login"
-            android:textColor="#F39C38"
-
             android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="50dp" />
+            android:layout_toEndOf="@+id/login_error_ok"
+            android:layout_marginLeft="65dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="Sign In"
+            android:textColor="#595858"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentStart="false" />
+
+
+        <!--<com.google.android.gms.common.SignInButton-->
+            <!--android:id="@+id/login_button"-->
+            <!--android:layout_width="170dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="?android:attr/selectableItemBackground"-->
+            <!--android:gravity="center"-->
+            <!--android:text="login"-->
+            <!--android:textColor="#F39C38"-->
+
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_alignParentEnd="true" />-->
 
     </RelativeLayout>
 

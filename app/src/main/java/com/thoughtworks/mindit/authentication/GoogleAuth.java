@@ -149,7 +149,7 @@ public class GoogleAuth implements GoogleApiClient.OnConnectionFailedListener,Me
 
             @Override
             public void onError(String s, String s1, String s2) {
-                Toast.makeText(context,Error.LOG_IN_FAILED,Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,Error.LOG_IN_FAILED+s+" "+s1+" "+s2,Toast.LENGTH_SHORT).show();
                 mMeteor.disconnect();
             }
         });

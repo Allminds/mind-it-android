@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,6 +27,13 @@ public class JsonParserService {
         return isErrorOccurred;
     }
 
+    public static ArrayList<Node> parseToNodeList(String json)throws JsonSyntaxException{
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<Node>>(){
+        }.getType();
+        ArrayList<Node> nodes = gson.fromJson(json, type);
+        return nodes;
+    }
     public static Tree parse(String json) throws JsonSyntaxException {
         Gson gson = new Gson();
 

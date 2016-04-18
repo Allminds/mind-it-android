@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.gms.common.SignInButton;
 import com.thoughtworks.mindit.authentication.MindmapRequest;
 import com.thoughtworks.mindit.authentication.OnAuthenticationChanged;
 import com.thoughtworks.mindit.authentication.SessionManager;
@@ -160,6 +159,7 @@ public class Tracker implements MeteorCallback, ITracker {
                 } else if (errorCode.equalsIgnoreCase(Error.OTHER_USERS_MINDMAP)) {
                     accessError = Error.OTHER_USERS_MINDMAP;
                 }
+
             }
         });
     }
@@ -266,6 +266,11 @@ public class Tracker implements MeteorCallback, ITracker {
                 meteor.subscribe(MindIt.SUBSCRIPTION_NAME, data);
             }
         }).start();
+    }
+
+    public ArrayList<Node> allRootNodes(String email) {
+
+        return null;
     }
 
     @Override
@@ -421,7 +426,8 @@ public class Tracker implements MeteorCallback, ITracker {
         }
         loginDialog.setTitle(Constants.LOGIN_DIALOG_TITLE);
         loginDialog.setContentView(R.layout.login_dialog);
-        final SignInButton login = (SignInButton) loginDialog.findViewById(R.id.login_button);
+      //  final SignInButton login = (SignInButton) loginDialog.findViewById(R.id.login_button);
+        final Button login = (Button) loginDialog.findViewById(R.id.login_button);
         login.setFocusable(true);
         loginDialog.show();
         login.setOnClickListener(new View.OnClickListener() {
@@ -442,7 +448,28 @@ public class Tracker implements MeteorCallback, ITracker {
         });
     }
 
+    private void showNonAccessibleError() {
+        resetTree();
+        final Dialog errorDialog;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            errorDialog = new Dialog(context, android.R.style.Theme_Material_Light_Dialog_Alert);
+        } else {
+            errorDialog = new Dialog(context);
+        }
+        errorDialog.setTitle(Constants.LOGIN_DIALOG_TITLE);
+        errorDialog.setContentView(R.layout.invalid_access_dialog);
+        final Button cancel = (Button) errorDialog.findViewById(R.id.login_error_ok);
+        errorDialog.show();
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                errorDialog.dismiss();
+            }
+        });
+    }
+
     class WaitForTree extends AsyncTask<Tree, Void, String> {
+
         AlertDialog progressDialog;
 
         @Override
@@ -532,25 +559,7 @@ public class Tracker implements MeteorCallback, ITracker {
             }
 
         }
+
     }
 
-    private void showNonAccessibleError() {
-        resetTree();
-        final Dialog errorDialog;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            errorDialog = new Dialog(context, android.R.style.Theme_Material_Light_Dialog_Alert);
-        } else {
-            errorDialog = new Dialog(context);
-        }
-        errorDialog.setTitle(Constants.LOGIN_DIALOG_TITLE);
-        errorDialog.setContentView(R.layout.invalid_access_dialog);
-        final Button cancel = (Button) errorDialog.findViewById(R.id.login_error_ok);
-        errorDialog.show();
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                errorDialog.dismiss();
-            }
-        });
-    }
 }

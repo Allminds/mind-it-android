@@ -1,5 +1,6 @@
 package com.thoughtworks.mindit.view;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -18,6 +19,7 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -28,10 +30,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
 import com.pkmmte.view.CircularImageView;
+import com.thoughtworks.mindit.Config;
 import com.thoughtworks.mindit.R;
 import com.thoughtworks.mindit.Tracker;
 import com.thoughtworks.mindit.authentication.GoogleAuth;
@@ -41,19 +47,30 @@ import com.thoughtworks.mindit.authentication.User;
 import com.thoughtworks.mindit.constant.Colors;
 import com.thoughtworks.mindit.constant.Constants;
 import com.thoughtworks.mindit.constant.MindIt;
+import com.thoughtworks.mindit.constant.NetworkMessage;
 import com.thoughtworks.mindit.constant.Operation;
 import com.thoughtworks.mindit.constant.Setting;
+import com.thoughtworks.mindit.helper.MindmapsLoader;
+import com.thoughtworks.mindit.helper.OnMindmapOpenRequest;
+import com.thoughtworks.mindit.helper.OnMindmapsLoaded;
+import com.thoughtworks.mindit.model.Node;
+import com.thoughtworks.mindit.view.adapter.AllMindmapsAdapter;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+
+import dmax.dialog.SpotsDialog;
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnAuthenticationChanged {
+        implements NavigationView.OnNavigationItemSelectedListener, OnAuthenticationChanged, OnMindmapOpenRequest,
+        SwipeRefreshLayout.OnRefreshListener, OnMindmapsLoaded {
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
     public SharedPreferences sharedPreferences;
     private Tracker tracker;
     private boolean isNewIntent;
+    private AllMindmapsAdapter allMindmapsAdapter;
     private Dialog importDialog;
     private String root;
     private GoogleAuth googleAuth;
@@ -61,6 +78,11 @@ public class HomeActivity extends AppCompatActivity
     private ProgressDialog pDialog;
     private NavigationView navigationView;
     private MindmapRequest mindmapRequest;
+    private ArrayList<Node> rootNodes;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private ListView listView;
+    private ViewSwitcher switcher;
+    private AlertDialog mindmapsLoader;
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -74,6 +96,7 @@ public class HomeActivity extends AppCompatActivity
         if (data != null) {
             String[] url = data.toString().split("/");
             if (tracker != null) {
+                tracker.resetTree();
                 isNewIntent = true;
             }
             String mindmapId = url[url.length - 1];
@@ -105,8 +128,29 @@ public class HomeActivity extends AppCompatActivity
 
         Uri data = intent.getData();
         if (data != null) {
-            String[] url = data.toString().split("/");
-            tracker = Tracker.getInstance(this, url[url.length - 1], Operation.OPEN);
+            String[] link = data.toString().split("/");
+            String url = link[link.length - 1];
+            openMindmapById(url, Operation.OPEN);
+        }
+        googleAuth = new GoogleAuth((AppCompatActivity) this, (Context) this);
+        switcher = (ViewSwitcher) findViewById(R.id.viewSwitcher_signed_in);
+        if (Config.FEATURE_DASHBOARD) {
+            swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+            swipeRefreshLayout.setOnRefreshListener(this);
+            LinearLayout dashboardLayout = (LinearLayout) findViewById(R.id.dashboard_layout);
+            listView = (ListView) dashboardLayout.findViewById(R.id.listView_root_nodes);
+            this.rootNodes = new ArrayList<Node>();
+            allMindmapsAdapter = new AllMindmapsAdapter(HomeActivity.this, rootNodes);
+            listView.setAdapter(allMindmapsAdapter);
+            mindmapsLoader = new SpotsDialog(HomeActivity.this, NetworkMessage.DOWNLOAD);
+            mindmapsLoader.setTitle(MindIt.LOADING_TITLE);
+            mindmapsLoader.setMessage(MindIt.LOADING_MESSAGE);
+            if (!googleAuth.isSignedIn()) {
+                switcher.showNext();
+            } else {
+                mindmapsLoader.show();
+                loadMindmaps(googleAuth.getUser().getEmail());
+            }
         }
         Button importMindmap = (Button) findViewById(R.id.importMindmap);
         importMindmap.setOnClickListener(new View.OnClickListener() {
@@ -115,9 +159,6 @@ public class HomeActivity extends AppCompatActivity
                 importMindMap();
             }
         });
-        if (sharedPreferences == null) {
-            addVersionSettings();
-        }
         final Button createMindmap = (Button) findViewById(R.id.createMindmap);
         createMindmap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,11 +166,15 @@ public class HomeActivity extends AppCompatActivity
                 createMindmap();
             }
         });
-        googleAuth = new GoogleAuth((AppCompatActivity) this, (Context) this);
+        if (sharedPreferences == null) {
+            addVersionSettings();
+        }
     }
 
-    private void createMindmap() {
-        openMindmapById("", Operation.CREATE);
+    private void loadMindmaps(String email) {
+        if (email != null) {
+            MindmapsLoader.loadMindmaps(HomeActivity.this, email);
+        }
     }
 
     private void addVersionSettings() {
@@ -151,89 +196,6 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-    }
-
-    private void importMindMap() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            importDialog = new Dialog(this, android.R.style.Theme_Material_Light_Dialog_Alert);
-        } else {
-            importDialog = new Dialog(this);
-        }
-        importDialog.setTitle(Constants.IMPORT_DIALOG_TITLE);
-        importDialog.setContentView(R.layout.import_dialog);
-        importDialog.show();
-        final Button imports = (Button) importDialog.findViewById(R.id.imports);
-        imports.setFocusable(true);
-
-        final EditText editUrl = (EditText) importDialog.findViewById(R.id.editUrl);
-        editUrl.setSelection(editUrl.getText().length());
-        editUrl.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("")) {
-                    imports.setEnabled(false);
-                    imports.setTextColor(Color.parseColor(Colors.IMPORT_BUTTON_TEXT_COLOR_WHEN_DISABLED));
-                } else {
-                    imports.setEnabled(true);
-                    imports.setTextColor(Color.parseColor(Colors.IMPORT_BUTTON_TEXT_COLOR_WHEN_ENABLED));
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-
-        if (editUrl.getText().toString().equals("")) {
-            imports.setEnabled(false);
-            imports.setTextColor(Color.parseColor(Colors.IMPORT_BUTTON_TEXT_COLOR_WHEN_DISABLED));
-        } else {
-            imports.setEnabled(true);
-            imports.setTextColor(Color.parseColor("#595858"));
-        }
-        if (imports.isFocused()) {
-            imports.setBackgroundColor(Color.parseColor(Colors.IMPORT_DIALOG_BACKGROUND_COLOR_ON_FOCUS));
-        }
-        imports.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-
-                imports.setBackgroundColor(Color.parseColor(Colors.IMPORT_DIALOG_BACKGROUND_COLOR_ON_FOCUS_CHANGED));
-            }
-        });
-        imports.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String input = editUrl.getText().toString();
-                String inputArray[] = input.split("/");
-                String url = inputArray[inputArray.length - 1];
-                url = url.trim();
-                openMindmapById(url, Operation.OPEN);
-                importDialog.dismiss();
-            }
-        });
-        Button cancel = (Button) importDialog.findViewById(R.id.cancel);
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                importDialog.dismiss();
-            }
-        });
-    }
-
-    private void openMindmapById(String url, Operation operation) {
-        if (tracker != null) {
-            tracker.resetTree();
-        }
-        tracker = Tracker.getInstance(HomeActivity.this, url, operation);
     }
 
     @Override
@@ -319,6 +281,99 @@ public class HomeActivity extends AppCompatActivity
             tracker.resetTree();
     }
 
+    private void showAllMindmaps() {
+        if (tracker != null) {
+
+        }
+    }
+
+    private void importMindMap() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            importDialog = new Dialog(this, android.R.style.Theme_Material_Light_Dialog_Alert);
+        } else {
+            importDialog = new Dialog(this);
+        }
+        importDialog.setTitle(Constants.IMPORT_DIALOG_TITLE);
+        importDialog.setContentView(R.layout.import_dialog);
+        importDialog.show();
+        final Button imports = (Button) importDialog.findViewById(R.id.imports);
+        imports.setFocusable(true);
+
+        final EditText editUrl = (EditText) importDialog.findViewById(R.id.editUrl);
+        editUrl.setSelection(editUrl.getText().length());
+        editUrl.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().equals("")) {
+                    imports.setEnabled(false);
+                    imports.setTextColor(Color.parseColor(Colors.IMPORT_BUTTON_TEXT_COLOR_WHEN_DISABLED));
+                } else {
+                    imports.setEnabled(true);
+                    imports.setTextColor(Color.parseColor(Colors.IMPORT_BUTTON_TEXT_COLOR_WHEN_ENABLED));
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
+        if (editUrl.getText().toString().equals("")) {
+            imports.setEnabled(false);
+            imports.setTextColor(Color.parseColor(Colors.IMPORT_BUTTON_TEXT_COLOR_WHEN_DISABLED));
+        } else {
+            imports.setEnabled(true);
+            imports.setTextColor(Color.parseColor("#595858"));
+        }
+        if (imports.isFocused()) {
+            imports.setBackgroundColor(Color.parseColor(Colors.IMPORT_DIALOG_BACKGROUND_COLOR_ON_FOCUS));
+        }
+        imports.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                imports.setBackgroundColor(Color.parseColor(Colors.IMPORT_DIALOG_BACKGROUND_COLOR_ON_FOCUS_CHANGED));
+            }
+        });
+        imports.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String input = editUrl.getText().toString();
+                String inputArray[] = input.split("/");
+                String url = inputArray[inputArray.length - 1];
+                url = url.trim();
+                openMindmapById(url, Operation.OPEN);
+                importDialog.dismiss();
+            }
+        });
+        Button cancel = (Button) importDialog.findViewById(R.id.cancel);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                importDialog.dismiss();
+            }
+        });
+    }
+
+    private void createMindmap() {
+        openMindmapById("", Operation.CREATE);
+    }
+
+    private void openMindmapById(String url, Operation operation) {
+        if (tracker != null) {
+            tracker.resetTree();
+        }
+        tracker = Tracker.getInstance(HomeActivity.this, url, operation);
+    }
+
     public void setRoot(String root) {
         this.root = root;
         if (tracker != null) {
@@ -339,22 +394,33 @@ public class HomeActivity extends AppCompatActivity
             setUserProfilePhoto(defaultIcon);
         }
         if (this.mindmapRequest != null && !this.mindmapRequest.isResponded()) {
+            System.out.println("tt:- "+this.mindmapRequest+" "+this.mindmapRequest.isResponded());
+
             this.mindmapRequest.setResponded(true);
             openMindmapById(mindmapRequest.getId(), Operation.OPEN);
+        }
+        if (Config.FEATURE_DASHBOARD) {
+            mindmapsLoader.show();
+            switcher.showPrevious();
+            MindmapsLoader.loadMindmaps(HomeActivity.this, user.getEmail());
         }
     }
 
     @Override
     public void onSignedOut() {
-        Toast.makeText(getApplicationContext(), "Successfully Signed Out", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), MindIt.SIGNED_OUT_MESSAGE, Toast.LENGTH_SHORT).show();
         setDefaultProfile();
+        if (Config.FEATURE_DASHBOARD) {
+            switcher.showNext();
+            allMindmapsAdapter.setData(new ArrayList<Node>());
+            this.rootNodes = new ArrayList<Node>();
+        }
     }
 
     @Override
     public void onRevokedAccess() {
         setDefaultProfile();
     }
-
 
     @Override
     public void onSignInRequest(MindmapRequest mindmapRequest) {
@@ -395,6 +461,40 @@ public class HomeActivity extends AppCompatActivity
         circularImageView.addShadow();
     }
 
+    @Override
+    public void OnMindmapOpenRequest(String mindmapId) {
+        openMindmapById(mindmapId, Operation.OPEN);
+    }
+
+    @Override
+    public void onRefresh() {
+        loadMindmaps(googleAuth.getUser().getEmail());
+        swipeRefreshLayout.setRefreshing(true);
+
+    }
+
+    @Override
+    public void onMindmapsLoaded(ArrayList<Node> rootNodes) {
+        allMindmapsAdapter.setData(rootNodes);
+        allMindmapsAdapter.notifyDataSetChanged();
+        if (mindmapsLoader.isShowing()) {
+            mindmapsLoader.dismiss();
+        }
+        if (swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    @Override
+    public void onLoadingError(Error error) {
+        if (mindmapsLoader.isShowing()) {
+            mindmapsLoader.dismiss();
+        }
+        if (swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
     private class LoadImage extends AsyncTask<String, String, Bitmap> {
         @Override
         protected void onPreExecute() {
@@ -419,4 +519,5 @@ public class HomeActivity extends AppCompatActivity
             setUserProfilePhoto(image);
         }
     }
+
 }

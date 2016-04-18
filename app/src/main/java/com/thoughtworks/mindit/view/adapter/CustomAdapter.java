@@ -27,6 +27,7 @@ import java.util.ArrayList;
 
 public class CustomAdapter extends BaseAdapter {
     private final CustomAdapterHelper customAdapterHelper;
+    ListView listView;
     private Context context;
     private ArrayList<UINode> nodeList;
     private LayoutInflater layoutInflater;
@@ -34,11 +35,10 @@ public class CustomAdapter extends BaseAdapter {
     private int workingNodePosition = -1;
     private Presenter presenter;
     private int selectedNodePosition = 0;
-    ListView listView;
-    private UINode selectedNode=null;
-    private ArrayList<String> descendents=new ArrayList<>();
+    private UINode selectedNode = null;
+    private ArrayList<String> descendents = new ArrayList<>();
     private String operation = UpdateOption.ADD;
-
+    private NodeHolder nodeHolder;
     public CustomAdapter(Context context, Presenter presenter, ArrayList<UINode> uiNodes) {
         this.context = context;
         this.presenter = presenter;
@@ -47,7 +47,7 @@ public class CustomAdapter extends BaseAdapter {
         customAdapterHelper.expand(0, nodeList.get(0));
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
-        listView = ((MindmapActivity)context).getListView();
+        listView = ((MindmapActivity) context).getListView();
         Point size = new Point();
         display.getSize(size);
     }
@@ -65,7 +65,7 @@ public class CustomAdapter extends BaseAdapter {
     }
 
     public void setSelectedNodePosition(int selectedNodePosition) {
-        if(this.selectedNodePosition!=selectedNodePosition)
+        if (this.selectedNodePosition != selectedNodePosition)
             descendents.clear();
         this.selectedNodePosition = selectedNodePosition;
     }
@@ -121,22 +121,22 @@ public class CustomAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        final NodeHolder nodeHolder = new NodeHolder();
+        nodeHolder = new NodeHolder();
         final UINode currentNode = nodeList.get(position);
         final View rowView = layoutInflater.inflate(R.layout.layout_node, null);
         nodeHolder.separator = (LinearLayout) rowView.findViewById(R.id.separator);
         nodeHolder.separator.setVisibility(View.GONE);
 
-        nodeHolder.verticalLine=(LinearLayout)rowView.findViewById(R.id.verticle_line);
+        nodeHolder.verticalLine = (LinearLayout) rowView.findViewById(R.id.verticle_line);
 
         customAdapterHelper.initializeTextView(nodeHolder, rowView, currentNode);
         customAdapterHelper.setImageForExpandCollapse(nodeHolder, rowView, currentNode);
         customAdapterHelper.setEventToExpandCollapse(position, nodeHolder, currentNode);
 
         rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND));
-        if (position == workingNodePosition) {
-                customAdapterHelper.doOperation(nodeHolder, currentNode, operation);
 
+        if (position == workingNodePosition) {
+            customAdapterHelper.doOperation(nodeHolder, currentNode, operation);
         }
         if (position == 0) {
             nodeHolder.expandCollapseButton.setVisibility(View.INVISIBLE);
@@ -157,21 +157,20 @@ public class CustomAdapter extends BaseAdapter {
         if (selectedNodePosition == position) {
 
             //to disable delete option for root node
-            if(position==0){
-                ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity)context).findViewById(R.id.delete);
-                if(Config.SHOULD_NOT_SHOW_TUTORIAL){
+            if (position == 0) {
+                ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity) context).findViewById(R.id.delete);
+                if (Config.SHOULD_NOT_SHOW_TUTORIAL) {
 
-                    if(delete!=null)
+                    if (delete != null)
                         delete.setVisibility(View.INVISIBLE);
                 }
 
             }
 
 
-            selectedNode=currentNode;
-            if(currentNode.getStatus().equals(Constants.STATUS.EXPAND.toString())&&position!=0)
-                 descendents=currentNode.expandedChildrenCount(descendents);
-//            rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND_ON_SELECTION));
+            selectedNode = currentNode;
+            if (currentNode.getStatus().equals(Constants.STATUS.EXPAND.toString()) && position != 0)
+                descendents = currentNode.expandedChildrenCount(descendents);
 
             nodeHolder.clickableArea = (LinearLayout) rowView.findViewById(R.id.layout_node);
             nodeHolder.clickableArea.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND_ON_SELECTION));
@@ -187,10 +186,13 @@ public class CustomAdapter extends BaseAdapter {
             }
 
         }
-        customAdapterHelper.addPadding(position, rowView,nodeHolder,selectedNode);
-        if(descendents.contains(currentNode.getId())){
+        if (selectedNodePosition <= 0 || selectedNodePosition >= nodeList.size()) {
+            selectedNodePosition = 0;
+        }
+        customAdapterHelper.addPadding(position, rowView, nodeHolder, selectedNode);
+        if (descendents.contains(currentNode.getId())) {
             nodeHolder.verticalLine.setBackgroundColor(Color.parseColor("#FCAA35"));
-                nodeHolder.verticalLine.setVisibility(View.VISIBLE);
+            nodeHolder.verticalLine.setVisibility(View.VISIBLE);
         }
         return rowView;
     }
@@ -203,22 +205,20 @@ public class CustomAdapter extends BaseAdapter {
         nodeList.clear();
         nodeList.add(root);
         updateNodeList(root);
-        if(nodeList.indexOf(uiNode)!=-1){
+        if (nodeList.indexOf(uiNode) != -1) {
 
             this.setSelectedNodePosition(nodeList.indexOf(uiNode));
             this.setWorkingNodePosition(nodeList.indexOf(uiNode));
-        }
-        else {
+        } else {
             this.setSelectedNodePosition(this.getSelectedNodePosition() - 1);
             this.resetWorkingNodePosition();
         }
     }
 
     public void updateNodeList(UINode root) {
-        for (UINode child : root.getChildSubTree() ) {
+        for (UINode child : root.getChildSubTree()) {
             nodeList.add(child);
-            if(child.getStatus().equals(Constants.STATUS.EXPAND.toString()))
-            {
+            if (child.getStatus().equals(Constants.STATUS.EXPAND.toString())) {
                 updateNodeList(child);
             }
         }
@@ -238,6 +238,18 @@ public class CustomAdapter extends BaseAdapter {
 
     public void setOperation(String operation) {
         this.operation = operation;
+    }
+
+    public int getMode() {
+        return customAdapterHelper.getMode();
+    }
+
+    public void enableEditMode() {
+        customAdapterHelper.enableEditMode();
+    }
+
+    public int getSwitcherMode() {
+        return this.nodeHolder.switcher.getCurrentView().getId();
     }
 }
 

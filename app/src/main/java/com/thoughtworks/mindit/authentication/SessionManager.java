@@ -15,7 +15,7 @@ public class SessionManager {
     private Context _context;
     private int PRIVATE_MODE = 0;
 
-    private SessionManager(Context context) {
+    SessionManager(Context context) {
         this._context = context;
         sessionSharedPreferences = _context.getSharedPreferences(Authentication.SESSION_PREFERENCES, PRIVATE_MODE);
         editor = sessionSharedPreferences.edit();

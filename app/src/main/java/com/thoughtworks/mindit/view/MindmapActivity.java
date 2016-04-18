@@ -249,8 +249,11 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
             menu.getItem(Constants.DELETE).setEnabled(true);
             menu.getItem(Constants.INFO).setEnabled(true);
         }
+        System.out.println("hell:- "+adapter.getSwitcherMode()+" "+R.id.hidden_edit_view);
+        if(adapter.getSwitcherMode() == R.id.hidden_edit_view){
+            adapter.enableEditMode();
+        }
         return true;
-
     }
 
     @Override
