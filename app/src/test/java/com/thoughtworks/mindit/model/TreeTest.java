@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class TreeTest {
     private static Node root;
@@ -44,7 +45,7 @@ public class TreeTest {
     public void shouldNodeToBeAdded() {
         tree.addNode(child1);
         tree.addNode(child2);
-        assertEquals(true, tree.isAlreadyExists(child1));
+        assertNotEquals(tree.getNode(child1.getId()).getName(),tree.getNode(child2.getId()).getName());
     }
 
     @Test
@@ -63,9 +64,9 @@ public class TreeTest {
     @Test
     public void shouldUpdateExistingNodeInsteadOfAddingNewNode() throws Exception {
         tree = tree.addNode(child1);
-        child1.setName("child1New");
-        tree = tree.addNode(child1);
-        assertEquals(child1.getName(), tree.getNode(child1.getId()).getName());
+        Node child1Duplicate = new Node("child1Id", "child1Duplicate", root, root.getId(), 0);
+        tree = tree.addNode(child1Duplicate);
+        assertEquals(child1Duplicate.getName(), tree.getNode(child1.getId()).getName());
     }
 
     @Test
