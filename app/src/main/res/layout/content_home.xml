@@ -23,6 +23,37 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_gravity="center_vertical">
+
+        <LinearLayout
+            android:id="@+id/dashboard_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/root_node_list_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:textStyle="bold"
+                android:paddingLeft="5dp"
+                android:paddingTop="5dp"
+                android:text="My Mindmaps"
+                android:textSize="20dp" />
+
+            <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/swipe_refresh_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <ListView
+                    android:id="@+id/listView_root_nodes"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"></ListView>
+
+            </android.support.v4.widget.SwipeRefreshLayout>
+        </LinearLayout>
         <LinearLayout
             android:id="@+id/guest_ui_xml"
             android:layout_width="match_parent"
@@ -84,36 +115,6 @@
                     android:theme="@style/MyButton" />
 
             </LinearLayout>
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/dashboard_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/root_node_list_header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="10dp"
-                android:textStyle="bold"
-                android:paddingLeft="5dp"
-                android:paddingTop="5dp"
-                android:text="Your Mindmaps"
-                android:textSize="20dp" />
-
-            <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/swipe_refresh_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-
-                <ListView
-                    android:id="@+id/listView_root_nodes"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"></ListView>
-
-            </android.support.v4.widget.SwipeRefreshLayout>
         </LinearLayout>
     </ViewSwitcher>
 </LinearLayout>

@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu>
-    <!--<item-->
-        <!--android:id="@+id/action_settings"-->
-        <!--android:orderInCategory="100"-->
-        <!--android:title="@string/action_settings"-->
-        <!--app:showAsAction="never" />-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/import_mindmap"
+        android:orderInCategory="100"
+        android:title="import"
+        android:icon="@drawable/import_icon"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/create_mindmap"
+        android:orderInCategory="100"
+        android:title="create"
+        android:icon="@drawable/add"
+        app:showAsAction="always" />
 </menu>

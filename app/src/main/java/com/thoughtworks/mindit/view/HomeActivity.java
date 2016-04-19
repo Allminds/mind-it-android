@@ -235,9 +235,13 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        /*if (id == R.id.action_settings) {
+        if (id == R.id.import_mindmap) {
+            importMindMap();
             return true;
-        }*/
+        }
+        else if (id == R.id.create_mindmap){
+            createMindmap();
+        }
 
         return super.onOptionsItemSelected(item);
     }
