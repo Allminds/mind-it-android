@@ -144,12 +144,13 @@ class CustomAdapterHelper {
             nodeHolder.editText.requestFocus();
             nodeHolder.editText.setCursorVisible(true);
         }
+
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 Log.v("KeyCode:", "" + keyCode);
                 customAdapter.resetWorkingNodePosition();
-                if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.ACTION_DOWN || keyCode == KeyEvent.KEYCODE_BACK) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.ACTION_DOWN || keyCode == KeyEvent.KEYCODE_BACK ) {
 
                     if (operation == UpdateOption.ADD) {
                         updateTextOfNewNode(nodeHolder, currentNode, keyCode);
@@ -190,7 +191,6 @@ class CustomAdapterHelper {
         updateText(nodeHolder, currentNode);
         customAdapter.resetWorkingNodePosition();
         if (keyCode == KeyEvent.KEYCODE_ENTER) {
-
             customAdapter.getPresenter().addNode(currentNode);
         }
         if (keyCode == KeyEvent.KEYCODE_BACK) {

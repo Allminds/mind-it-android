@@ -42,11 +42,9 @@ public class AllMindmapsAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         holder = new ViewHolder();
-        if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.
                     getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.root_node, null);
-        }
         holder.mindmapName = (TextView) convertView.findViewById(R.id.root_node_id);
         holder.mindmapName.setText(rootNodes.get(position).getName());
         holder.mindmapName.setOnClickListener(new View.OnClickListener() {

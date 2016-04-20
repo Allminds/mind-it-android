@@ -36,6 +36,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.pkmmte.view.CircularImageView;
 import com.thoughtworks.mindit.Config;
 import com.thoughtworks.mindit.R;
@@ -81,6 +83,7 @@ public class HomeActivity extends AppCompatActivity
     private ArrayList<Node> rootNodes;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ListView listView;
+    FloatingActionMenu floatingActionMenu;
     private ViewSwitcher switcher;
     private AlertDialog mindmapsLoader;
 
@@ -134,6 +137,25 @@ public class HomeActivity extends AppCompatActivity
         }
         googleAuth = new GoogleAuth((AppCompatActivity) this, (Context) this);
         switcher = (ViewSwitcher) findViewById(R.id.viewSwitcher_signed_in);
+        floatingActionMenu = (FloatingActionMenu) findViewById(R.id.fab_menu);
+
+        FloatingActionButton createButton = (FloatingActionButton) findViewById(R.id.menu_item_create);
+        createButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                floatingActionMenu.close(true);
+                createMindmap();
+            }
+        });
+        FloatingActionButton importButton = (FloatingActionButton) findViewById(R.id.menu_item_import);
+        importButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                floatingActionMenu.close(true);
+
+                importMindMap();
+            }
+        });
         if (Config.FEATURE_DASHBOARD) {
             swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
             swipeRefreshLayout.setOnRefreshListener(this);
@@ -147,7 +169,9 @@ public class HomeActivity extends AppCompatActivity
             mindmapsLoader.setMessage(MindIt.LOADING_MESSAGE);
             if (!googleAuth.isSignedIn()) {
                 switcher.showNext();
+                floatingActionMenu.hideMenu(false);
             } else {
+                floatingActionMenu.showMenu(true);
                 mindmapsLoader.show();
                 loadMindmaps(googleAuth.getUser().getEmail());
             }
@@ -234,15 +258,6 @@ public class HomeActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.import_mindmap) {
-            importMindMap();
-            return true;
-        }
-        else if (id == R.id.create_mindmap){
-            createMindmap();
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -261,18 +276,6 @@ public class HomeActivity extends AppCompatActivity
                 googleAuth.signOut();
             }
         }
-        /*else if (id == R.id.nav_gallery) {
-        } else if (id == R.id.nav_slideshow) {
-            googleAuth.revokeAccess();
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-*/
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -398,7 +401,7 @@ public class HomeActivity extends AppCompatActivity
             setUserProfilePhoto(defaultIcon);
         }
         if (this.mindmapRequest != null && !this.mindmapRequest.isResponded()) {
-            System.out.println("tt:- "+this.mindmapRequest+" "+this.mindmapRequest.isResponded());
+            System.out.println("tt:- " + this.mindmapRequest + " " + this.mindmapRequest.isResponded());
 
             this.mindmapRequest.setResponded(true);
             openMindmapById(mindmapRequest.getId(), Operation.OPEN);
@@ -406,6 +409,7 @@ public class HomeActivity extends AppCompatActivity
         if (Config.FEATURE_DASHBOARD) {
             mindmapsLoader.show();
             switcher.showPrevious();
+            floatingActionMenu.showMenu(true);
             MindmapsLoader.loadMindmaps(HomeActivity.this, user.getEmail());
         }
     }
@@ -416,6 +420,7 @@ public class HomeActivity extends AppCompatActivity
         setDefaultProfile();
         if (Config.FEATURE_DASHBOARD) {
             switcher.showNext();
+            floatingActionMenu.hideMenu(false);
             allMindmapsAdapter.setData(new ArrayList<Node>());
             this.rootNodes = new ArrayList<Node>();
         }

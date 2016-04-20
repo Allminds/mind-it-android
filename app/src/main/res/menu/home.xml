@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
+    <!--<item
         android:id="@+id/import_mindmap"
         android:orderInCategory="100"
         android:title="import"
@@ -12,5 +12,5 @@
         android:orderInCategory="100"
         android:title="create"
         android:icon="@drawable/add"
-        app:showAsAction="always" />
+        app:showAsAction="always" />-->
 </menu>
