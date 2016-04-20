@@ -1,7 +1,5 @@
 package com.thoughtworks.mindit.presenter;
 
-import android.util.Log;
-
 import com.thoughtworks.mindit.PublishSubscribe.IObserver;
 import com.thoughtworks.mindit.Tracker;
 import com.thoughtworks.mindit.constant.Constants;
@@ -17,6 +15,7 @@ import java.util.HashMap;
 
 
 public class Presenter implements IObserver {
+
     private Tracker tracker;
     private HashMap<String, UINode> nodeTree;
     private UINode uiNode;
@@ -215,5 +214,8 @@ public class Presenter implements IObserver {
     public void registerForTree() {
         tracker = Tracker.getInstance();
         tracker.registerThisToTree(this);
+    }
+    public Tracker getTracker() {
+        return tracker;
     }
 }

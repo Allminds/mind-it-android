@@ -34,14 +34,14 @@ public class Node implements Serializable {
         this.position = (parent != null) ? ((this.rootId.equals(this.parentId) ? this.getFirstLevelChildPosition() : parent.getPosition())) : null;
     }
 
-    //Getters-setters start
-    public String getPosition() {
-        return position;
-    }
     public static void setDirectionToggler(boolean directionToggler) {
         Node.directionToggler = directionToggler;
     }
 
+    //Getters-setters start
+    public String getPosition() {
+        return position;
+    }
 
     public void setPosition(String position) {
         this.position = position;
@@ -184,18 +184,20 @@ public class Node implements Serializable {
 
     @Override
     public String toString() {
-        return "Node{" +
-                "id='" + _id + '\'' +
-                ", name='" + name + '\'' +
-                ", left='" + left + '\'' +
-                ", right='" + right + '\'' +
-                ", childSubTree=" + childSubTree +
-                ", parentId='" + parentId + '\'' +
-                ", rootId='" + rootId + '\'' +
-                ", depth=" + depth +
-                ", index=" + index +
-                ", position=" + position +
-                '}';
+
+        String jsonString = "";
+        jsonString = "{" +
+                "\"" + "_id" + "\"" + ":" + "\"" + _id + "\"" +
+                "," + "\"" + "name" + "\"" + ":" + "\"" + name + "\"" +
+                "," + "\"" + "left" + "\"" + ":" + left +
+                "," + "\"" + "right" + "\"" + ":" + right +
+                "," + "\"" + "childSubTree" + "\"" + ":" + childSubTree +
+                "," + "\"" + "position" + "\"" + ":" + position +
+                "," + "\"" + "parentId" + "\"" + ":" + parentId +
+                "," + "\"" + "rootId" + "\"" + ":" + parentId +
+                "," + "\"" + "index" + "\"" + ":" + parentId +
+                "}";
+        return jsonString;
     }
 
     @Override

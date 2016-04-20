@@ -1,6 +1,7 @@
 package com.thoughtworks.mindit.view.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,10 +43,11 @@ public class AllMindmapsAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         holder = new ViewHolder();
-            LayoutInflater inflater = (LayoutInflater) context.
-                    getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.root_node, null);
-        holder.mindmapName = (TextView) convertView.findViewById(R.id.root_node_id);
+        LayoutInflater inflater = (LayoutInflater) context.
+                getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        convertView = inflater.inflate(R.layout.root_node, null);
+        CardView cardView = (CardView) convertView.findViewById(R.id.card_view_root_node);
+        holder.mindmapName = (TextView) cardView.findViewById(R.id.root_node_id);
         holder.mindmapName.setText(rootNodes.get(position).getName());
         holder.mindmapName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,6 +66,26 @@ public class AllMindmapsAdapter extends BaseAdapter {
 
     public void setData(ArrayList<Node> data) {
         this.rootNodes = data;
+    }
+
+    public void addNodeToDashBoard(Node newNode) {
+        for (Node node : rootNodes) {
+            if (node.getId().equals(newNode.getId())) {
+                node.setName(newNode.getName());
+                return;
+            }
+        }
+        this.rootNodes.add(0, newNode);
+    }
+
+    private boolean isExist(Node newNode) {
+        for (Node node : rootNodes) {
+            if (node.getId().equals(newNode.getId())) {
+                node.setName(newNode.getName());
+                return true;
+            }
+        }
+        return false;
     }
 
     public static class ViewHolder {

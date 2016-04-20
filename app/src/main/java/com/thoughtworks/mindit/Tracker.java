@@ -553,7 +553,7 @@ public class Tracker implements MeteorCallback, ITracker {
                         showNonAccessibleError();
                     } else {
                         Intent intent = new Intent(context, MindmapActivity.class);
-                        context.startActivity(intent);
+                        ((HomeActivity)context).startActivityForResult(intent,MindIt.RC_ROOT_NODE);
                     }
                 }
             }

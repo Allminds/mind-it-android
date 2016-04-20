@@ -14,6 +14,7 @@ public class Constants {
     public static final String ROOT_DELETE_ERROR = "Can not delete root node...";
     public static final String FONT_SERIF = "DroidSerif-Bold.ttf";
     public static final String EXCEPTION_NULL_OBSERVER = "Null Observer";
+    public static final String NO_MINDMAPS_MESSAGE = "Currently, you don't have any mindmap.";
 
     public enum POSITION {
         LEFT("left"),

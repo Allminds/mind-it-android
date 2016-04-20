@@ -182,6 +182,9 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         alertExit.setMessage("Do you want to exit?");
         alertExit.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
+                Intent intent=new Intent();
+                intent.putExtra("node", presenter.getTracker().getTree().getRoot().toString());
+                setResult(RESULT_OK,intent);
                 finish();
             }
         });
@@ -249,7 +252,6 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
             menu.getItem(Constants.DELETE).setEnabled(true);
             menu.getItem(Constants.INFO).setEnabled(true);
         }
-        System.out.println("hell:- "+adapter.getSwitcherMode()+" "+R.id.hidden_edit_view);
         if(adapter.getSwitcherMode() == R.id.hidden_edit_view){
             adapter.enableEditMode();
         }

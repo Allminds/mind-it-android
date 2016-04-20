@@ -52,6 +52,7 @@ import com.thoughtworks.mindit.constant.MindIt;
 import com.thoughtworks.mindit.constant.NetworkMessage;
 import com.thoughtworks.mindit.constant.Operation;
 import com.thoughtworks.mindit.constant.Setting;
+import com.thoughtworks.mindit.helper.JsonParserService;
 import com.thoughtworks.mindit.helper.MindmapsLoader;
 import com.thoughtworks.mindit.helper.OnMindmapOpenRequest;
 import com.thoughtworks.mindit.helper.OnMindmapsLoaded;
@@ -70,6 +71,7 @@ public class HomeActivity extends AppCompatActivity
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
     public SharedPreferences sharedPreferences;
+    FloatingActionMenu floatingActionMenu;
     private Tracker tracker;
     private boolean isNewIntent;
     private AllMindmapsAdapter allMindmapsAdapter;
@@ -80,10 +82,8 @@ public class HomeActivity extends AppCompatActivity
     private ProgressDialog pDialog;
     private NavigationView navigationView;
     private MindmapRequest mindmapRequest;
-    private ArrayList<Node> rootNodes;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ListView listView;
-    FloatingActionMenu floatingActionMenu;
     private ViewSwitcher switcher;
     private AlertDialog mindmapsLoader;
 
@@ -161,7 +161,7 @@ public class HomeActivity extends AppCompatActivity
             swipeRefreshLayout.setOnRefreshListener(this);
             LinearLayout dashboardLayout = (LinearLayout) findViewById(R.id.dashboard_layout);
             listView = (ListView) dashboardLayout.findViewById(R.id.listView_root_nodes);
-            this.rootNodes = new ArrayList<Node>();
+            ArrayList<Node> rootNodes = new ArrayList<Node>();
             allMindmapsAdapter = new AllMindmapsAdapter(HomeActivity.this, rootNodes);
             listView.setAdapter(allMindmapsAdapter);
             mindmapsLoader = new SpotsDialog(HomeActivity.this, NetworkMessage.DOWNLOAD);
@@ -229,6 +229,11 @@ public class HomeActivity extends AppCompatActivity
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             googleAuth.onActivityResult(requestCode, resultCode, data);
+        }
+        if (requestCode == MindIt.RC_ROOT_NODE) {
+            Node node = JsonParserService.parseNode(data.getStringExtra("node"));
+            allMindmapsAdapter.addNodeToDashBoard(node);
+            allMindmapsAdapter.notifyDataSetChanged();
         }
     }
 
@@ -401,7 +406,7 @@ public class HomeActivity extends AppCompatActivity
             setUserProfilePhoto(defaultIcon);
         }
         if (this.mindmapRequest != null && !this.mindmapRequest.isResponded()) {
-            System.out.println("tt:- " + this.mindmapRequest + " " + this.mindmapRequest.isResponded());
+
 
             this.mindmapRequest.setResponded(true);
             openMindmapById(mindmapRequest.getId(), Operation.OPEN);
@@ -422,7 +427,6 @@ public class HomeActivity extends AppCompatActivity
             switcher.showNext();
             floatingActionMenu.hideMenu(false);
             allMindmapsAdapter.setData(new ArrayList<Node>());
-            this.rootNodes = new ArrayList<Node>();
         }
     }
 
@@ -484,7 +488,16 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public void onMindmapsLoaded(ArrayList<Node> rootNodes) {
-        allMindmapsAdapter.setData(rootNodes);
+        if (rootNodes != null ){
+            TextView noMindmapsMessage = (TextView) findViewById(R.id.no_mindmap_message);
+            if (rootNodes.size() == 0){
+                noMindmapsMessage.setText(Constants.NO_MINDMAPS_MESSAGE);
+            }
+            else {
+                noMindmapsMessage.setText(Constants.EMPTY_STRING);
+            }
+        }
+            allMindmapsAdapter.setData(rootNodes);
         allMindmapsAdapter.notifyDataSetChanged();
         if (mindmapsLoader.isShowing()) {
             mindmapsLoader.dismiss();
