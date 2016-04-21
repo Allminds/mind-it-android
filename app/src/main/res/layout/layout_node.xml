@@ -62,6 +62,7 @@
                         android:background="@android:color/transparent"
                         android:fontFamily="sans-serif-medium"
                         android:hint="Enter Text"
+                        android:imeOptions="actionDone"
                         android:inputType="textNoSuggestions|textMultiLine"
                         android:text=""
                         android:textColor="@color/text_color"

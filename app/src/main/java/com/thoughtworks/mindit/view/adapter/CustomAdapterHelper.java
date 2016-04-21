@@ -24,24 +24,24 @@ import com.thoughtworks.mindit.view.model.UINode;
 import java.util.ArrayList;
 
 class CustomAdapterHelper {
-    private InputMethodManager lManager;
     private final CustomAdapter customAdapter;
+    private InputMethodManager lManager;
     private ArrayList<UINode> nodeList;
 
     private int mode = Constants.SELECTION_MODE;
 
-    public void setMode(int mode) {
-        this.mode = mode;
+    public CustomAdapterHelper(CustomAdapter customAdapter) {
+        this.customAdapter = customAdapter;
+        this.nodeList = customAdapter.getNodeList();
+        initializeInputMethodManager(customAdapter);
     }
 
     public int getMode() {
         return mode;
     }
 
-    public CustomAdapterHelper(CustomAdapter customAdapter) {
-        this.customAdapter = customAdapter;
-        this.nodeList = customAdapter.getNodeList();
-        initializeInputMethodManager(customAdapter);
+    public void setMode(int mode) {
+        this.mode = mode;
     }
 
     private void initializeInputMethodManager(CustomAdapter customAdapter) {
@@ -92,8 +92,12 @@ class CustomAdapterHelper {
         mode = Constants.SELECTION_MODE;
         ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.delete);
         ActionMenuItemView add = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.add);
-        delete.setVisibility(View.VISIBLE);
-        add.setVisibility(View.VISIBLE);
+        if (delete != null) {
+            delete.setVisibility(View.VISIBLE);
+        }
+        if (add != null) {
+            add.setVisibility(View.VISIBLE);
+        }
         if (Config.FEATURE_EDIT) {
             editTextOfNode(nodeHolder, currentNode);
         }
@@ -150,7 +154,7 @@ class CustomAdapterHelper {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 Log.v("KeyCode:", "" + keyCode);
                 customAdapter.resetWorkingNodePosition();
-                if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.ACTION_DOWN || keyCode == KeyEvent.KEYCODE_BACK ) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.ACTION_DOWN || keyCode == KeyEvent.KEYCODE_BACK) {
 
                     if (operation == UpdateOption.ADD) {
                         updateTextOfNewNode(nodeHolder, currentNode, keyCode);
@@ -162,8 +166,12 @@ class CustomAdapterHelper {
                     mode = Constants.SELECTION_MODE;
                     ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.delete);
                     ActionMenuItemView add = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.add);
-                    delete.setVisibility(View.VISIBLE);
-                    add.setVisibility(View.VISIBLE);
+                    if (delete != null) {
+                        delete.setVisibility(View.VISIBLE);
+                    }
+                    if (add != null) {
+                        add.setVisibility(View.VISIBLE);
+                    }
                     return true;
                 }
                 return false;
@@ -182,8 +190,12 @@ class CustomAdapterHelper {
         mode = Constants.EDIT_MODE;
         ActionMenuItemView add = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.add);
         ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.delete);
-        delete.setVisibility(View.INVISIBLE);
-        add.setVisibility(View.INVISIBLE);
+        if (delete != null) {
+            delete.setVisibility(View.INVISIBLE);
+        }
+        if (add != null) {
+            add.setVisibility(View.INVISIBLE);
+        }
     }
 
 
@@ -194,7 +206,7 @@ class CustomAdapterHelper {
             customAdapter.getPresenter().addNode(currentNode);
         }
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-           // int lastFocusedNode == customAdapter.getWorkingNodePosition()
+            // int lastFocusedNode == customAdapter.getWorkingNodePosition()
             removeFromParentChildSubTree(nodeList.indexOf(currentNode));
             nodeList.remove(nodeList.indexOf(currentNode));
 
@@ -220,12 +232,16 @@ class CustomAdapterHelper {
         UINode node = new UINode(Constants.EMPTY_STRING, parent.getDepth() + Constants.PADDING_FOR_DEPTH, parent.getId());
         nodeList.add(childPosition, node);
         boolean addedInParent = parent.addChild(node);
-        Context actionMenuContext =  customAdapter.getContext();
-        if(actionMenuContext != null) {
+        Context actionMenuContext = customAdapter.getContext();
+        if (actionMenuContext != null) {
             ActionMenuItemView add = (ActionMenuItemView) ((MindmapActivity) actionMenuContext).findViewById(R.id.add);
-            add.setVisibility(View.INVISIBLE);
+            if (add != null) {
+                add.setVisibility(View.INVISIBLE);
+            }
             ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity) actionMenuContext).findViewById(R.id.delete);
-            delete.setVisibility(View.INVISIBLE);
+            if (delete != null) {
+                delete.setVisibility(View.INVISIBLE);
+            }
         }
         customAdapter.notifyDataSetChanged();
         if (nodeList.contains(node) && addedInParent)
