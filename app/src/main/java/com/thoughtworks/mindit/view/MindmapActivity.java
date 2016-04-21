@@ -454,8 +454,15 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
     }
 
     @Override
-    public void updateChildTree(UINode existingParent) {
-        adapter.updateChildSubTree(existingParent);
+    public void updateChildTree(final UINode existingParent) {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                adapter.updateChildSubTree(existingParent);
+
+            }
+        });
     }
 
 
