@@ -357,13 +357,20 @@ public class HomeActivity extends AppCompatActivity
         imports.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 String input = editUrl.getText().toString();
                 String inputArray[] = input.split("/");
-                String url = inputArray[inputArray.length - 1];
-                url = url.trim();
-                openMindmapById(url, Operation.OPEN);
-                importDialog.dismiss();
+                if(input.contains("sharedLink")){
+                    String url = "sharedLink/" + inputArray[inputArray.length - 1];
+                    url = url.trim();
+                    openMindmapById(url, Operation.OPEN);
+                    importDialog.dismiss();
+                }
+                else {
+                    String url = inputArray[inputArray.length - 1];
+                    url = url.trim();
+                    openMindmapById(url, Operation.OPEN);
+                    importDialog.dismiss();
+                }
             }
         });
         Button cancel = (Button) importDialog.findViewById(R.id.cancel);
