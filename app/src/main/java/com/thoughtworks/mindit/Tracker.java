@@ -301,7 +301,6 @@ public class Tracker implements MeteorCallback, ITracker {
     public void onAdded(String collectionName, String documentID, String fieldsJson) {
         Node node = JsonParserService.parseNode(fieldsJson);
         node.set_id(documentID);
-        Log.v("In onAdded:", node.toString());
         if (tree != null && !tree.isAlreadyExists(node)) {
             tree.addNodeFromWeb(node);
         }
