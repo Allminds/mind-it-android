@@ -76,7 +76,10 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         listView.setAdapter(adapter);
         nodeList = adapter.getNodeList();
         networkReceiver = new NetworkReceiver(presenter, adapter);
-        showcase();
+//        showcase();
+        Config.SHOULD_NOT_SHOW_TUTORIAL = true;
+        menuOptionFlag = false;
+        invalidateOptionsMenu();
     }
     private void showcase() {
         if (sharedPreferences == null) {
@@ -87,7 +90,6 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
                 editor.commit();
             }
         }
-
         if (sharedPreferences.getBoolean(Setting.VERSION_2_FIRST_TIME, false)) {
             final Target homeTarget = new Target() {
                 @Override

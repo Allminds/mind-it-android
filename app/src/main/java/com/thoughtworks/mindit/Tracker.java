@@ -147,7 +147,7 @@ public class Tracker implements MeteorCallback, ITracker {
         } else {
             data[1] = "*";
         }
-        data[2] = "write";
+        data[2] = "private";
         if(MindIt.LinkType.contains("readOnlyLink")){
             data[2] = "read";
         } else if(MindIt.LinkType.contains("readWriteLink")){
