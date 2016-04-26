@@ -6,7 +6,7 @@ android {
         config {
             keyAlias 'mindit'
             keyPassword 'twmindit'
-            storeFile file('/Users/gopinathlangote/Desktop/allminds/release/minditandroid.keystore')
+            storeFile file('/Users/sjadhav/Downloads/release/minditandroid.keystore')
             storePassword 'twmindit'
         }
     }
@@ -31,6 +31,9 @@ android {
         }*/
         release {
             signingConfig signingConfigs.config
+        }
+        debug {
+            proguardFile '/Users/sjadhav/Downloads/release/minditandroid.keystore'
         }
     }
     testOptions {
@@ -64,5 +67,4 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:8.3.0'
     compile 'com.pkmmte.view:circularimageview:1.1'
     compile 'com.github.clans:fab:1.6.3'
-
 }

@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +33,7 @@ import com.thoughtworks.mindit.Config;
 import com.thoughtworks.mindit.NetworkReceiver;
 import com.thoughtworks.mindit.R;
 import com.thoughtworks.mindit.constant.Constants;
+import com.thoughtworks.mindit.constant.MindIt;
 import com.thoughtworks.mindit.constant.Setting;
 import com.thoughtworks.mindit.presenter.Presenter;
 import com.thoughtworks.mindit.view.adapter.CustomAdapter;
@@ -225,13 +227,13 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         // Inflate the menu; this adds items to the action bar if it is present.
         this.menu = menu;
         getMenuInflater().inflate(R.menu.actions, menu);
-        if (Config.FEATURE_ADD) {
+        if (Config.FEATURE_ADD ) {
             MenuItem add = menu.getItem(Constants.ADD);
             add.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
             add.setEnabled(false);
             add.setVisible(true);
         }
-        if (Config.FEATURE_DELETE) {
+        if (Config.FEATURE_DELETE ) {
             MenuItem delete = menu.getItem(Constants.DELETE);
             delete.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
             delete.setEnabled(false);

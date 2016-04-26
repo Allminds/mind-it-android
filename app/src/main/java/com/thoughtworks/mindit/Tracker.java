@@ -141,11 +141,19 @@ public class Tracker implements MeteorCallback, ITracker {
         String[] data = new String[3];
         data[0] = rootId;
         SessionManager sessionManager = SessionManager.getInstance(context);
+        data[1] = "*";
         if (sessionManager.isLoggedIn()) {
             data[1] = sessionManager.getUserDetails().getEmail();
         } else {
             data[1] = "*";
         }
+        data[2] = "write";
+        if(MindIt.LinkType.contains("readOnlyLink")){
+            data[2] = "read";
+        } else if(MindIt.LinkType.contains("readWriteLink")){
+            data[2] = "write";
+        }
+
         meteor.call(MeteorMethods.FIND_TREE, data, new ResultListener() {
             @Override
             public void onSuccess(String jsonResponse) {
