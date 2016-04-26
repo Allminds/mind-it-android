@@ -227,14 +227,13 @@ public class MindmapActivity extends AppCompatActivity implements IMindmapView {
         // Inflate the menu; this adds items to the action bar if it is present.
         this.menu = menu;
         getMenuInflater().inflate(R.menu.actions, menu);
-        Log.v("In onCreateOptionMenu", MindIt.linkType);
-        if (Config.FEATURE_ADD && MindIt.linkType.equals("readWriteLink")) {
+        if (Config.FEATURE_ADD ) {
             MenuItem add = menu.getItem(Constants.ADD);
             add.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
             add.setEnabled(false);
             add.setVisible(true);
         }
-        if (Config.FEATURE_DELETE && MindIt.linkType.equals("readWriteLink")) {
+        if (Config.FEATURE_DELETE ) {
             MenuItem delete = menu.getItem(Constants.DELETE);
             delete.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
             delete.setEnabled(false);

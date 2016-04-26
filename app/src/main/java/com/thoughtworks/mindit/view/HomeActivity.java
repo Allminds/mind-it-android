@@ -25,6 +25,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,18 +53,24 @@ import com.thoughtworks.mindit.constant.MindIt;
 import com.thoughtworks.mindit.constant.NetworkMessage;
 import com.thoughtworks.mindit.constant.Operation;
 import com.thoughtworks.mindit.constant.Setting;
+import com.thoughtworks.mindit.helper.ITracker;
 import com.thoughtworks.mindit.helper.JsonParserService;
+import com.thoughtworks.mindit.helper.Meteor;
 import com.thoughtworks.mindit.helper.MindmapsLoader;
 import com.thoughtworks.mindit.helper.OnMindmapOpenRequest;
 import com.thoughtworks.mindit.helper.OnMindmapsLoaded;
 import com.thoughtworks.mindit.model.Node;
 import com.thoughtworks.mindit.view.adapter.AllMindmapsAdapter;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 
 import dmax.dialog.SpotsDialog;
+import im.delight.android.ddp.ResultListener;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnAuthenticationChanged, OnMindmapOpenRequest,
@@ -98,12 +105,18 @@ public class HomeActivity extends AppCompatActivity
         Uri data = intent.getData();
         if (data != null) {
             String[] url = data.toString().split("/");
-            if (tracker != null) {
-                tracker.resetTree();
-                isNewIntent = true;
+            if (data.toString().contains("sharedLink/")) {
+                handleSharedLink(data.toString());
+            } else {
+                MindIt.LinkType = "private";
+                if (tracker != null) {
+                    tracker.resetTree();
+                    isNewIntent = true;
+                }
+                String mindmapId = url[url.length - 1];
+                openMindmapById(mindmapId, Operation.OPEN);
             }
-            String mindmapId = url[url.length - 1];
-            openMindmapById(mindmapId, Operation.OPEN);
+
         }
     }
 
@@ -131,9 +144,17 @@ public class HomeActivity extends AppCompatActivity
 
         Uri data = intent.getData();
         if (data != null) {
-            String[] link = data.toString().split("/");
-            String url = link[link.length - 1];
-            openMindmapById(url, Operation.OPEN);
+            String[] url = data.toString().split("/");
+            if (data.toString().contains("sharedLink/")) {
+                handleSharedLink(data.toString());
+            } else {
+                MindIt.LinkType = "public";
+                if (tracker != null) {
+                    tracker.resetTree();
+                }
+                String mindmapId = url[url.length - 1];
+                openMindmapById(mindmapId, Operation.OPEN);
+            }
         }
         googleAuth = new GoogleAuth((AppCompatActivity) this, (Context) this);
         switcher = (ViewSwitcher) findViewById(R.id.viewSwitcher_signed_in);
@@ -230,7 +251,7 @@ public class HomeActivity extends AppCompatActivity
         if (requestCode == RC_SIGN_IN) {
             googleAuth.onActivityResult(requestCode, resultCode, data);
         }
-        if (requestCode == MindIt.RC_ROOT_NODE) {
+        if (requestCode == MindIt.RC_ROOT_NODE && data != null && MindIt.LinkType.equals("private")) {
             Node node = JsonParserService.parseNode(data.getStringExtra("node"));
             allMindmapsAdapter.addNodeToDashBoard(node);
             allMindmapsAdapter.notifyDataSetChanged();
@@ -357,27 +378,110 @@ public class HomeActivity extends AppCompatActivity
         imports.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String input = editUrl.getText().toString();
-                String inputArray[] = input.split("/");
-                if(input.contains("sharedLink")){
-                    String url = "sharedLink/" + inputArray[inputArray.length - 1];
-                    url = url.trim();
-                    openMindmapById(url, Operation.OPEN);
-                    importDialog.dismiss();
-                }
-                else {
-                    String url = inputArray[inputArray.length - 1];
-                    url = url.trim();
-                    openMindmapById(url, Operation.OPEN);
-                    importDialog.dismiss();
+
+                    final String input = editUrl.getText().toString();
+                    String inputArray[] = input.split("/");
+                    if (input.contains("sharedLink/")) {
+                        handleSharedLink(input);
+                        importDialog.dismiss();
+                    } else {
+                        MindIt.LinkType = "private";
+                        String rootId = inputArray[inputArray.length - 1];
+                        rootId = rootId.trim();
+                        openMindmapById(rootId, Operation.OPEN);
+                        importDialog.dismiss();
+                    }
                 }
             }
+
+            );
+            Button cancel = (Button) importDialog.findViewById(R.id.cancel);
+            cancel.setOnClickListener(new View.OnClickListener()
+
+            {
+                @Override
+                public void onClick (View v){
+                importDialog.dismiss();
+            }
+            }
+
+            );
+        }
+
+    private void handleSharedLink(final String input) {
+        String inputArray[] = input.split("/");
+        Meteor meteor = new Meteor(HomeActivity.this, MindIt.WEB_SOCKET, new ITracker() {
+            @Override
+            public void onAdded(String collectionName, String documentID, String fieldsJson) {
+
+            }
+
+            @Override
+            public void onChanged(String collectionName, String documentID, String updatedValuesJson, String removedValuesJson) {
+
+            }
+
+            @Override
+            public void onRemoved(String collectionName, String documentID) {
+
+            }
         });
-        Button cancel = (Button) importDialog.findViewById(R.id.cancel);
-        cancel.setOnClickListener(new View.OnClickListener() {
+
+        meteor.call("getRootNodeFromLink", new String[]{"sharedLink/" + inputArray[inputArray.length - 1]}, new ResultListener() {
+            @Override
+            public void onSuccess(String s) {
+                String rootId;
+
+                try {
+                    JSONObject jsonFields = JsonParserService.rawParse(s);
+                    rootId = jsonFields.getString("rootId");
+                    String linkFromJSON = jsonFields.getString("readOnlyLink");
+                    if (!linkFromJSON.equals("") && input.contains(linkFromJSON)) {
+                        MindIt.LinkType = "readOnlyLink";
+                    } else {
+                        MindIt.LinkType = "readWriteLink";
+                    }
+                    Log.v("In OnSuccess:", MindIt.LinkType);
+                    if (!googleAuth.isSignedIn() && MindIt.LinkType.equals("readWriteLink")) {
+                        requestForLogin(rootId);
+
+
+                    } else {
+                        openMindmapById(rootId, Operation.OPEN);
+                    }
+                } catch (JSONException e) {
+                    Log.v("In Exception:", e.toString());
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onError(String s, String s1, String s2) {
+                Toast.makeText(getApplicationContext(), "Invalid Link", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void requestForLogin(final String mindmapId) {
+        final Dialog loginDialog;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            loginDialog = new Dialog(HomeActivity.this, android.R.style.Theme_Material_Light_Dialog_Alert);
+        } else {
+            loginDialog = new Dialog(HomeActivity.this);
+        }
+        loginDialog.setTitle(Constants.LOGIN_DIALOG_TITLE);
+        loginDialog.setContentView(R.layout.login_dialog);
+        //  final SignInButton login = (SignInButton) loginDialog.findViewById(R.id.login_button);
+        final Button login = (Button) loginDialog.findViewById(R.id.login_button);
+        login.setFocusable(true);
+        loginDialog.show();
+        login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                importDialog.dismiss();
+                loginDialog.dismiss();
+                MindmapRequest mindmapRequest = new MindmapRequest(mindmapId, false);
+                HomeActivity.this.onSignInRequest(mindmapRequest);
             }
         });
     }
@@ -495,16 +599,15 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public void onMindmapsLoaded(ArrayList<Node> rootNodes) {
-        if (rootNodes != null ){
+        if (rootNodes != null) {
             TextView noMindmapsMessage = (TextView) findViewById(R.id.no_mindmap_message);
-            if (rootNodes.size() == 0){
+            if (rootNodes.size() == 0) {
                 noMindmapsMessage.setText(Constants.NO_MINDMAPS_MESSAGE);
-            }
-            else {
+            } else {
                 noMindmapsMessage.setText(Constants.EMPTY_STRING);
             }
         }
-            allMindmapsAdapter.setData(rootNodes);
+        allMindmapsAdapter.setData(rootNodes);
         allMindmapsAdapter.notifyDataSetChanged();
         if (mindmapsLoader.isShowing()) {
             mindmapsLoader.dismiss();

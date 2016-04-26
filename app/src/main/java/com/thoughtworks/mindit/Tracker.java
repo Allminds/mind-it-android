@@ -141,45 +141,24 @@ public class Tracker implements MeteorCallback, ITracker {
         String[] data = new String[3];
         data[0] = rootId;
         SessionManager sessionManager = SessionManager.getInstance(context);
+        data[1] = "*";
         if (sessionManager.isLoggedIn()) {
             data[1] = sessionManager.getUserDetails().getEmail();
         } else {
             data[1] = "*";
         }
+        data[2] = "write";
+        if(MindIt.LinkType.contains("readOnlyLink")){
+            data[2] = "read";
+        } else if(MindIt.LinkType.contains("readWriteLink")){
+            data[2] = "write";
+        }
+
         meteor.call(MeteorMethods.FIND_TREE, data, new ResultListener() {
             @Override
             public void onSuccess(final String jsonResponse) {
-                Log.v("In RootId",Tracker.this.rootId);
-
-                if(Tracker.this.rootId.contains("sharedLink")) {
-                    meteor.call("getTypeOfLink", new String[]{Tracker.this.rootId}, new ResultListener() {
-                        @Override
-                        public void onSuccess(String type) {
-                            Log.v("In getTypeOfLink",type);
-                            if(type.contains("readOnlyLink")) {
-                                MindIt.linkType = "readOnlyLink";
-                            } else {
-                                MindIt.linkType = "readWriteLink";
-                            }
                             tree = JsonParserService.parse(jsonResponse);
-                            Tracker.this.rootId = tree.getRoot().getId();
-                            Toast.makeText(context,Tracker.this.rootId,Toast.LENGTH_LONG).show();
-                            meteor.subscribe(MindIt.SUBSCRIPTION_NAME, new String[]{Tracker.this.rootId});
                         }
-                        @Override
-                        public void onError(String s, String s1, String s2) {
-                            Log.v("In getTypeOfLink",s+"  "+s1+"  "+s2);
-
-                        }
-                    });
-
-                } else{
-                    tree = JsonParserService.parse(jsonResponse);
-                    Tracker.this.rootId = tree.getRoot().getId();
-                    meteor.subscribe(MindIt.SUBSCRIPTION_NAME, new String[]{Tracker.this.rootId});
-                }
-
-            }
 
             @Override
             public void onError(String errorCode, String s1, String s2) {

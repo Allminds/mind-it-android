@@ -95,10 +95,10 @@ class CustomAdapterHelper {
         mode = Constants.SELECTION_MODE;
         ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.delete);
         ActionMenuItemView add = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.add);
-        if (delete != null && MindIt.linkType.equals("readWriteLink")) {
+        if (delete != null && MindIt.LinkType.equals("readWriteLink")) {
             delete.setVisibility(View.VISIBLE);
         }
-        if (add != null && MindIt.linkType.equals("readWriteLink")) {
+        if (add != null && MindIt.LinkType.equals("readWriteLink")) {
             add.setVisibility(View.VISIBLE);
         }
         if (Config.FEATURE_EDIT ) {
