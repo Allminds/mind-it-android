@@ -410,10 +410,10 @@ public class HomeActivity extends AppCompatActivity
 
     private void handleSharedLink(final String input) {
         String inputArray[] = input.split("/");
-        Meteor meteor = new Meteor(HomeActivity.this, MindIt.WEB_SOCKET, new ITracker() {
+        final Meteor meteor = new Meteor(HomeActivity.this, MindIt.WEB_SOCKET, new ITracker() {
             @Override
             public void onAdded(String collectionName, String documentID, String fieldsJson) {
-
+                Log.v("In Handle",fieldsJson);
             }
 
             @Override
@@ -431,7 +431,7 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onSuccess(String s) {
                 String rootId;
-
+                meteor.disconnect();
                 try {
                     JSONObject jsonFields = JsonParserService.rawParse(s);
                     rootId = jsonFields.getString("rootId");

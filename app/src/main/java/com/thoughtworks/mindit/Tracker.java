@@ -264,7 +264,7 @@ public class Tracker implements MeteorCallback, ITracker {
             public void run() {
                 while (rootId == null) ;
                 findTree(rootId);
-                String[] data = new String[2];
+                String[] data = new String[3];
                 data[0] = rootId;
                 SessionManager sessionManager = SessionManager.getInstance(context);
                 if (sessionManager.isLoggedIn()) {
@@ -272,6 +272,13 @@ public class Tracker implements MeteorCallback, ITracker {
                 } else {
                     data[1] = "*";
                 }
+                data[2] = "private";
+                if(MindIt.LinkType.contains("readOnlyLink")){
+                    data[2] = "read";
+                } else if(MindIt.LinkType.contains("readWriteLink")){
+                    data[2] = "write";
+                }
+                meteor.subscribe(MindIt.SUBSCRIPTION_NAME, data);
             }
         }).start();
     }
@@ -308,6 +315,8 @@ public class Tracker implements MeteorCallback, ITracker {
     @Override
     public void onAdded(String collectionName, String documentID, String fieldsJson) {
         Node node = JsonParserService.parseNode(fieldsJson);
+        Log.v("In Added", fieldsJson);
+
         node.set_id(documentID);
         if (tree != null && !tree.isAlreadyExists(node)) {
             tree.addNodeFromWeb(node);
@@ -316,6 +325,7 @@ public class Tracker implements MeteorCallback, ITracker {
 
     @Override
     public void onChanged(String collectionName, String documentID, String updatedValuesJson, String removedValuesJson) {
+        Log.v("In Changed", updatedValuesJson);
         Node node = tree.getNode(documentID);
         try {
             Thread.sleep(500);
@@ -563,9 +573,7 @@ public class Tracker implements MeteorCallback, ITracker {
                     }
                 }
             }
-
         }
-
     }
 
 }
