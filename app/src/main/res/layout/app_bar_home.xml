@@ -86,7 +86,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/import_icon"
-            fab:fab_label="Import"
+            fab:fab_label="Open"
             app:rippleColor="#F39C38"
             android:background="@color/colorAccent"
             fab:fab_colorNormal="@color/colorAccent"
