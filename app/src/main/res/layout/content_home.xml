@@ -38,7 +38,8 @@
                 android:paddingLeft="5dp"
                 android:paddingTop="5dp"
                 android:text="My Mindmaps"
-                android:textSize="20dp"
+                android:typeface="serif"
+                android:textSize="18dp"
                 android:textStyle="bold" />
 
             <TextView

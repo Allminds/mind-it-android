@@ -7,16 +7,19 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.thoughtworks.mindit.Config;
 import com.thoughtworks.mindit.R;
 import com.thoughtworks.mindit.constant.Constants;
+import com.thoughtworks.mindit.constant.MindIt;
 import com.thoughtworks.mindit.constant.UpdateOption;
 import com.thoughtworks.mindit.view.MindmapActivity;
 import com.thoughtworks.mindit.view.model.UINode;
@@ -92,13 +95,13 @@ class CustomAdapterHelper {
         mode = Constants.SELECTION_MODE;
         ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.delete);
         ActionMenuItemView add = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.add);
-        if (delete != null) {
+        if (delete != null && MindIt.LinkType.equals("readWriteLink")) {
             delete.setVisibility(View.VISIBLE);
         }
-        if (add != null) {
+        if (add != null && MindIt.LinkType.equals("readWriteLink")) {
             add.setVisibility(View.VISIBLE);
         }
-        if (Config.FEATURE_EDIT) {
+        if (Config.FEATURE_EDIT ) {
             editTextOfNode(nodeHolder, currentNode);
         }
         lManager.hideSoftInputFromWindow(nodeHolder.editText.getWindowToken(), 0);
@@ -152,27 +155,10 @@ class CustomAdapterHelper {
         nodeHolder.editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                Log.v("KeyCode:", "" + keyCode);
                 customAdapter.resetWorkingNodePosition();
                 if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.ACTION_DOWN || keyCode == KeyEvent.KEYCODE_BACK) {
 
-                    if (operation == UpdateOption.ADD) {
-                        updateTextOfNewNode(nodeHolder, currentNode, keyCode);
-                    } else if (operation == UpdateOption.UPDATE) {
-                        updateTextOfCurrentNode(nodeHolder, currentNode);
-
-                    }
-                    lManager.hideSoftInputFromWindow(nodeHolder.editText.getWindowToken(), 0);
-                    mode = Constants.SELECTION_MODE;
-                    ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.delete);
-                    ActionMenuItemView add = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.add);
-                    if (delete != null) {
-                        delete.setVisibility(View.VISIBLE);
-                    }
-                    if (add != null) {
-                        add.setVisibility(View.VISIBLE);
-                    }
-                    return true;
+                    return updateToDatabase(keyCode, operation, nodeHolder, currentNode);
                 }
                 return false;
             }
@@ -184,6 +170,33 @@ class CustomAdapterHelper {
                 return false;
             }
         });
+        nodeHolder.editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                updateToDatabase(KeyEvent.KEYCODE_ENTER,operation,nodeHolder, currentNode);
+                return true;
+            }
+        });
+    }
+
+    private boolean updateToDatabase(int keyCode, String operation, NodeHolder nodeHolder, UINode currentNode) {
+        if (operation == UpdateOption.ADD) {
+            updateTextOfNewNode(nodeHolder, currentNode, keyCode);
+        } else if (operation == UpdateOption.UPDATE) {
+            updateTextOfCurrentNode(nodeHolder, currentNode);
+
+        }
+        lManager.hideSoftInputFromWindow(nodeHolder.editText.getWindowToken(), 0);
+        mode = Constants.SELECTION_MODE;
+        ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.delete);
+        ActionMenuItemView add = (ActionMenuItemView) ((MindmapActivity) customAdapter.getContext()).findViewById(R.id.add);
+        if (delete != null) {
+            delete.setVisibility(View.VISIBLE);
+        }
+        if (add != null) {
+            add.setVisibility(View.VISIBLE);
+        }
+        return true;
     }
 
     public void enableEditMode() {

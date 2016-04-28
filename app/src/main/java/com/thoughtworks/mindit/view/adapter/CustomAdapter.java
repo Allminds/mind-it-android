@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.support.v7.view.menu.ActionMenuItemView;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import com.thoughtworks.mindit.Config;
 import com.thoughtworks.mindit.R;
 import com.thoughtworks.mindit.constant.Colors;
 import com.thoughtworks.mindit.constant.Constants;
+import com.thoughtworks.mindit.constant.MindIt;
 import com.thoughtworks.mindit.constant.UpdateOption;
 import com.thoughtworks.mindit.presenter.Presenter;
 import com.thoughtworks.mindit.view.MindmapActivity;
@@ -135,7 +137,7 @@ public class CustomAdapter extends BaseAdapter {
 
         rowView.setBackgroundColor(Color.parseColor(Colors.NODE_BACKGROUND));
 
-        if (position == workingNodePosition) {
+        if (position == workingNodePosition && !MindIt.LinkType.equals("readOnlyLink")) {
             customAdapterHelper.doOperation(nodeHolder, currentNode, operation);
         }
         if (position == 0) {
@@ -153,6 +155,19 @@ public class CustomAdapter extends BaseAdapter {
             nodeHolder.separator.setVisibility(View.VISIBLE);
             nodeHolder.separator.setBackgroundColor(Color.parseColor(Colors.SEPARATOR_COLOR));
             resetSeparatorPosition();
+        }
+
+        if(MindIt.LinkType.equals("readOnlyLink")){
+            Log.v("In If",MindIt.LinkType);
+            ActionMenuItemView delete = (ActionMenuItemView) ((MindmapActivity) context).findViewById(R.id.delete);
+
+                if (delete != null)
+                    delete.setVisibility(View.INVISIBLE);
+
+            ActionMenuItemView add = (ActionMenuItemView) ((MindmapActivity) context).findViewById(R.id.add);
+
+                if (add != null)
+                    add.setVisibility(View.INVISIBLE);
         }
         if (selectedNodePosition == position) {
 

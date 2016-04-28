@@ -47,7 +47,7 @@ import java.util.Map;
 import dmax.dialog.SpotsDialog;
 import im.delight.android.ddp.MeteorCallback;
 import im.delight.android.ddp.ResultListener;
-
+import com.thoughtworks.mindit.constant.LinkType;
 public class Tracker implements MeteorCallback, ITracker {
     private static Tracker instance;
     private Meteor meteor;
@@ -60,7 +60,7 @@ public class Tracker implements MeteorCallback, ITracker {
 
         this.rootId = rootId;
         this.context = context;
-        Meteor.setLoggingEnabled(true);
+       Meteor.setLoggingEnabled(true);
         startAsyncTask();
         meteor = new Meteor(context, MindIt.WEB_SOCKET, this);
 
@@ -141,16 +141,24 @@ public class Tracker implements MeteorCallback, ITracker {
         String[] data = new String[3];
         data[0] = rootId;
         SessionManager sessionManager = SessionManager.getInstance(context);
+        data[1] = "*";
         if (sessionManager.isLoggedIn()) {
             data[1] = sessionManager.getUserDetails().getEmail();
         } else {
             data[1] = "*";
         }
+        data[2] = "private";
+        if(MindIt.LinkType.contains("readOnlyLink")){
+            data[2] = "read";
+        } else if(MindIt.LinkType.contains("readWriteLink")){
+            data[2] = "write";
+        }
+
         meteor.call(MeteorMethods.FIND_TREE, data, new ResultListener() {
             @Override
-            public void onSuccess(String jsonResponse) {
-                tree = JsonParserService.parse(jsonResponse);
-            }
+            public void onSuccess(final String jsonResponse) {
+                            tree = JsonParserService.parse(jsonResponse);
+                        }
 
             @Override
             public void onError(String errorCode, String s1, String s2) {
@@ -247,6 +255,7 @@ public class Tracker implements MeteorCallback, ITracker {
 
     @Override
     public void onConnect(boolean b) {
+        Log.v("In OnConnect", b+"");
         if (rootId == null) {
             rootId = createMindMap();
         }
@@ -255,13 +264,19 @@ public class Tracker implements MeteorCallback, ITracker {
             public void run() {
                 while (rootId == null) ;
                 findTree(rootId);
-                String[] data = new String[2];
+                String[] data = new String[3];
                 data[0] = rootId;
                 SessionManager sessionManager = SessionManager.getInstance(context);
                 if (sessionManager.isLoggedIn()) {
                     data[1] = sessionManager.getUserDetails().getEmail();
                 } else {
                     data[1] = "*";
+                }
+                data[2] = "private";
+                if(MindIt.LinkType.contains("readOnlyLink")){
+                    data[2] = "read";
+                } else if(MindIt.LinkType.contains("readWriteLink")){
+                    data[2] = "write";
                 }
                 meteor.subscribe(MindIt.SUBSCRIPTION_NAME, data);
             }
@@ -300,8 +315,9 @@ public class Tracker implements MeteorCallback, ITracker {
     @Override
     public void onAdded(String collectionName, String documentID, String fieldsJson) {
         Node node = JsonParserService.parseNode(fieldsJson);
+        Log.v("In Added", fieldsJson);
+
         node.set_id(documentID);
-        Log.v("In onAdded:", node.toString());
         if (tree != null && !tree.isAlreadyExists(node)) {
             tree.addNodeFromWeb(node);
         }
@@ -309,6 +325,7 @@ public class Tracker implements MeteorCallback, ITracker {
 
     @Override
     public void onChanged(String collectionName, String documentID, String updatedValuesJson, String removedValuesJson) {
+        Log.v("In Changed", updatedValuesJson);
         Node node = tree.getNode(documentID);
         try {
             Thread.sleep(500);
@@ -516,7 +533,6 @@ public class Tracker implements MeteorCallback, ITracker {
                     e.printStackTrace();
                 }
             }
-
             if (!accessError.equalsIgnoreCase(Error.NO_ERROR)) {
                 return accessError;
             }
@@ -557,9 +573,7 @@ public class Tracker implements MeteorCallback, ITracker {
                     }
                 }
             }
-
         }
-
     }
 
 }
